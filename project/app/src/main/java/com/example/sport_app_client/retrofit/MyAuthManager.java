@@ -7,7 +7,9 @@ public class MyAuthManager {
     private String token;
     private static MyAuthManager instance;
 
-    private MyAuthManager(){}
+    private MyAuthManager(){
+        this.token = "";
+    }
 
     public static MyAuthManager getInstance() {
         if (instance == null) {

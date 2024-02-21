@@ -3,11 +3,11 @@ package com.example.sport_app_client;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.example.sport_app_client.retrofit.MyAuthManager;
+import com.example.sport_app_client.retrofit.RetrofitService;
+
+import retrofit2.Retrofit;
 
 public class HomepageActivity extends AppCompatActivity {
 
@@ -16,6 +16,7 @@ public class HomepageActivity extends AppCompatActivity {
 
     /* Vars */
     private MyAuthManager authManager;
+    private Retrofit retrofit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,26 +26,15 @@ public class HomepageActivity extends AppCompatActivity {
 
         initVars();
         initViews();
-        test();
     }
 
     private void initVars() {
         this.authManager = MyAuthManager.getInstance();
+        this.retrofit = new RetrofitService().getRetrofit();
     }
 
     private void initViews() {
 
     }
 
-    private void test() {
-        TextView tv = findViewById(R.id.testTV);
-        tv.setText(authManager.getUser().getUserName() + " " + authManager.getUser().getRole().toString());
-        Button btn = findViewById(R.id.testBTN);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-    }
 }

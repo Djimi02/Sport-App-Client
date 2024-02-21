@@ -1,5 +1,6 @@
 package com.example.sport_app_client.retrofit.api;
 
+import com.example.sport_app_client.model.User;
 import com.example.sport_app_client.retrofit.request.SignInRequest;
 import com.example.sport_app_client.retrofit.request.SignUpRequest;
 import com.example.sport_app_client.retrofit.response.JwtAuthenticationResponse;
@@ -14,4 +15,5 @@ public interface AuthAPI {
 
     @POST("/auth/signin")
     Call<JwtAuthenticationResponse> signIn(@Body SignInRequest signInRequest);
+
 }
