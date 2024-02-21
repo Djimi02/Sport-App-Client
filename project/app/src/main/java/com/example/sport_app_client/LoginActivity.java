@@ -14,8 +14,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.sport_app_client.model.User;
+import com.example.sport_app_client.retrofit.MyAuthManager;
+import com.example.sport_app_client.retrofit.RetrofitService;
+import com.example.sport_app_client.retrofit.api.AuthAPI;
+import com.example.sport_app_client.retrofit.request.SignInRequest;
+import com.example.sport_app_client.retrofit.response.JwtAuthenticationResponse;
 
 import java.io.IOException;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -29,6 +42,9 @@ public class LoginActivity extends AppCompatActivity {
 
     /* Vars */
     private long lastClickTime;
+    private Retrofit retrofit;
+    private AuthAPI authAPI;
+    private MyAuthManager authManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +58,10 @@ public class LoginActivity extends AppCompatActivity {
 
     private void initVars() {
         lastClickTime = 0;
+
+        this.retrofit = new RetrofitService().getRetrofit();
+        this.authAPI = retrofit.create(AuthAPI.class);
+        this.authManager = MyAuthManager.getInstances();
     }
 
     private void initViews() {
@@ -83,6 +103,36 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void logIn() {
+        String email = emailET.getText().toString().trim();
+        String pass = passwordET.getText().toString().trim();
+
+        if (!isDataValid(email, pass)) {
+            return;
+        }
+        // Data is valid
+
+        SignInRequest newSignInRequest = new SignInRequest(email, pass);
+        authAPI.signIn(newSignInRequest).enqueue(new Callback<JwtAuthenticationResponse>() {
+            @Override
+            public void onResponse(Call<JwtAuthenticationResponse> call, Response<JwtAuthenticationResponse> response) {
+                if (response.code() == 200) {
+                    authManager.setToken(response.body().getToken());
+//                    authManager.setUser(new User(userName, email, pass1));
+                    Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(LoginActivity.this, HomepageActivity.class));
+                } else if (response.code() == 403) {
+                    Toast.makeText(LoginActivity.this, "Incorrect email or password!", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(LoginActivity.this, "Something went wrong!", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JwtAuthenticationResponse> call, Throwable t) {
+
+            }
+        });
+
     }
 
     private boolean isDataValid(String email, String password) {

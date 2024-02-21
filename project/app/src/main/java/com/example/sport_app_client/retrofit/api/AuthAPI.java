@@ -13,5 +13,5 @@ public interface AuthAPI {
     Call<JwtAuthenticationResponse> signUp(@Body SignUpRequest signUpRequest);
 
     @POST("/auth/signin")
-    Call<JwtAuthenticationResponse> signIp(@Body SignInRequest signInRequest);
+    Call<JwtAuthenticationResponse> signIn(@Body SignInRequest signInRequest);
 }
