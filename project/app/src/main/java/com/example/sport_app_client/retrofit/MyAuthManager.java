@@ -16,6 +16,10 @@ public class MyAuthManager {
         return instance;
     }
 
+    public static void deleteInstance() {
+        instance = null;
+    }
+
     public User getUser() {
         return user;
     }
