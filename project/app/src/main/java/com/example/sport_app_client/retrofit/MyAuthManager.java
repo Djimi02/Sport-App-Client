@@ -9,7 +9,7 @@ public class MyAuthManager {
 
     private MyAuthManager(){}
 
-    public static MyAuthManager getInstances() {
+    public static MyAuthManager getInstance() {
         if (instance == null) {
             instance = new MyAuthManager();
         }

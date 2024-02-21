@@ -61,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
 
         this.retrofit = new RetrofitService().getRetrofit();
         this.authAPI = retrofit.create(AuthAPI.class);
-        this.authManager = MyAuthManager.getInstances();
+        this.authManager = MyAuthManager.getInstance();
     }
 
     private void initViews() {
@@ -117,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onResponse(Call<JwtAuthenticationResponse> call, Response<JwtAuthenticationResponse> response) {
                 if (response.code() == 200) {
                     authManager.setToken(response.body().getToken());
-//                    authManager.setUser(new User(userName, email, pass1));
+                    authManager.setUser(response.body().getUser());
                     Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(LoginActivity.this, HomepageActivity.class));
                 } else if (response.code() == 403) {
