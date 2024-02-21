@@ -3,12 +3,28 @@ package com.example.sport_app_client;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import com.example.sport_app_client.model.User;
+import com.example.sport_app_client.retrofit.MyAuthManager;
+import com.example.sport_app_client.retrofit.RetrofitService;
+import com.example.sport_app_client.retrofit.api.AuthAPI;
+import com.example.sport_app_client.retrofit.request.SignUpRequest;
+import com.example.sport_app_client.retrofit.response.JwtAuthenticationResponse;
+
+import org.json.JSONObject;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -18,6 +34,11 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText repeatPasswordET;
     private EditText userNameET;
     private Button registerBTN;
+
+    /* Vars */
+    private Retrofit retrofit;
+    private AuthAPI authAPI;
+    private MyAuthManager authManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +51,9 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void initVars() {
-
+        this.retrofit = new RetrofitService().getRetrofit();
+        this.authAPI = retrofit.create(AuthAPI.class);
+        this.authManager = MyAuthManager.getInstances();
     }
 
     private void initViews() {
@@ -49,6 +72,40 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void register() {
+        String email = emailET.getText().toString().trim();
+        String pass1 = passwordET.getText().toString().trim();
+        String pass2 = repeatPasswordET.getText().toString().trim();
+        String userName = userNameET.getText().toString().trim();
+
+        if (!isDataValid(email, pass1, pass2, userName)) {
+            return;
+        }
+        // Data is valid
+
+        SignUpRequest newSignUpRequest = new SignUpRequest(userName, email, pass1);
+        this.authAPI.signUp(newSignUpRequest).enqueue(new Callback<JwtAuthenticationResponse>() {
+            @Override
+            public void onResponse(Call<JwtAuthenticationResponse> call, Response<JwtAuthenticationResponse> response) {
+                if (response.code() == 200) {
+                    authManager.setToken(response.body().getToken());
+                    authManager.setUser(new User(userName, email, pass1));
+                    Toast.makeText(RegisterActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(RegisterActivity.this, HomepageActivity.class));
+                } else if (response.code() == 400) {
+                    try {
+                        Toast.makeText(RegisterActivity.this, response.errorBody().string(), Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        Toast.makeText(RegisterActivity.this, "Something went wrong!", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JwtAuthenticationResponse> call, Throwable t) {
+                Toast.makeText(RegisterActivity.this, "Something went wrong!", Toast.LENGTH_SHORT).show();
+                System.out.println(t.toString());
+            }
+        });
     }
 
     private boolean isDataValid(String email, String password, String repPassword, String nickName) {
