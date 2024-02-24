@@ -115,6 +115,7 @@ public class LoginActivity extends AppCompatActivity {
         authAPI.signIn(newSignInRequest).enqueue(new Callback<JwtAuthenticationResponse>() {
             @Override
             public void onResponse(Call<JwtAuthenticationResponse> call, Response<JwtAuthenticationResponse> response) {
+                Toast.makeText(LoginActivity.this, "on response", Toast.LENGTH_SHORT).show();
                 if (response.code() == 200) {
                     authManager.setToken(response.body().getToken());
                     authManager.setUser(response.body().getUser());
@@ -129,9 +130,11 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<JwtAuthenticationResponse> call, Throwable t) {
-
+                Toast.makeText(LoginActivity.this, "on failure", Toast.LENGTH_SHORT).show();
+                System.out.println(t.toString());
             }
         });
+        Toast.makeText(this, "after request", Toast.LENGTH_SHORT).show();
 
     }
 
