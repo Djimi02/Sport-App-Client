@@ -53,6 +53,5 @@ public abstract class Member {
     public void setSport(Sports sport) {
         this.sport = sport;
     }
-
     public abstract int numberOfGroups();
 }
