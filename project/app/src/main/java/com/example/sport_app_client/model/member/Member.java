@@ -15,11 +15,21 @@ public abstract class Member {
     protected User user;
     protected Sports sport;
 
+    protected int totalWins;
+    protected int totalGames;
+
     public Member() {}
 
     public Member(String nickname, Sports sport) {
         this.nickname = nickname;
         this.sport = sport;
+
+        initVars();
+    }
+
+    private void initVars() {
+        this.totalWins = 0;
+        this.totalGames = 0;
     }
 
     public Long getId() {
@@ -53,5 +63,20 @@ public abstract class Member {
     public void setSport(Sports sport) {
         this.sport = sport;
     }
-    public abstract int numberOfGroups();
+
+    public int getTotalWins() {
+        return totalWins;
+    }
+
+    public void setTotalWins(int totalWins) {
+        this.totalWins = totalWins;
+    }
+
+    public int getTotalGames() {
+        return totalGames;
+    }
+
+    public void setTotalGames(int totalGames) {
+        this.totalGames = totalGames;
+    }
 }

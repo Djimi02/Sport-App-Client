@@ -33,9 +33,4 @@ public class FootballMember extends Member {
     private void initVars() {
         this.numOfGoalsScored = 0;
     }
-
-    @Override
-    public int numberOfGroups() {
-        return 10;
-    }
 }
