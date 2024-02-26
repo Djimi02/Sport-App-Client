@@ -2,6 +2,7 @@ package com.example.sport_app_client.model.member;
 
 import com.example.sport_app_client.model.Sports;
 import com.example.sport_app_client.model.User;
+import com.example.sport_app_client.model.group.Group;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -15,14 +16,17 @@ public abstract class Member {
     protected User user;
     protected Sports sport;
 
+    protected Group group;
+
     protected int totalWins;
     protected int totalGames;
 
     public Member() {}
 
-    public Member(String nickname, Sports sport) {
+    public Member(String nickname, Sports sport, Group group) {
         this.nickname = nickname;
         this.sport = sport;
+        this.group = group;
 
         initVars();
     }
@@ -78,5 +82,13 @@ public abstract class Member {
 
     public void setTotalGames(int totalGames) {
         this.totalGames = totalGames;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
     }
 }
