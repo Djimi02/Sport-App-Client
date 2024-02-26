@@ -1,10 +1,15 @@
 package com.example.sport_app_client;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.sport_app_client.adapter.UserGroupsRVAdapter;
+import com.example.sport_app_client.interfaces.UserGroupClickListener;
 import com.example.sport_app_client.model.User;
 import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.model.member.Member;
@@ -16,10 +21,13 @@ import java.util.List;
 
 import retrofit2.Retrofit;
 
-public class HomepageActivity extends AppCompatActivity {
+public class HomepageActivity extends AppCompatActivity implements UserGroupClickListener {
 
     /* Views */
-
+    private TextView totalGamesTV;
+    private TextView totalGroupsTV;
+    private TextView totalWinsTV;
+    private RecyclerView userGroupsRV;
 
     /* Vars */
     private MyAuthManager authManager;
@@ -51,7 +59,14 @@ public class HomepageActivity extends AppCompatActivity {
     }
 
     private void initViews() {
+        this.totalGroupsTV = findViewById(R.id.homepageTotalGroupsTV);
+        this.totalWinsTV = findViewById(R.id.homepageTotalWinsTV);
+        this.totalGamesTV = findViewById(R.id.homepageTotalGamesTV);
 
+        this.userGroupsRV = findViewById(R.id.homepageGroupsRV);
+        UserGroupsRVAdapter userGroupsRVAdapter = new UserGroupsRVAdapter(authManager.getUser().getMembers(), this);
+        userGroupsRV.setAdapter(userGroupsRVAdapter);
+        userGroupsRV.setLayoutManager(new LinearLayoutManager(this));
 
         computeGeneralStats();
     }
@@ -63,7 +78,7 @@ public class HomepageActivity extends AppCompatActivity {
 
         // Compute total groups
         this.totalGroups = authManager.getUser().getMembers().size();
-        // TODO: update the view that holds the stat
+        this.totalGroupsTV.setText("Total groups = " + totalGroups);
 
         // Compute total wins
         int wins = 0;
@@ -74,7 +89,13 @@ public class HomepageActivity extends AppCompatActivity {
         }
         this.totalWins = wins;
         this.totalGames = games;
-        // TODO: update the view that holds the stat
+        this.totalWinsTV.setText("Total wins = " + totalWins);
+        this.totalGamesTV.setText("Total games = " + totalGames);
     }
 
+    @Override
+    public void onClick(Long groupID) {
+        // TODO: go to group page and send the group ID as parameter in the intent
+        Toast.makeText(this, "Click", Toast.LENGTH_SHORT).show();
+    }
 }
