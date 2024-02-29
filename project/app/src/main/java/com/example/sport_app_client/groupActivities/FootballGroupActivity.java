@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.sport_app_client.R;
+import com.example.sport_app_client.helpers.LogOutHandler;
 import com.example.sport_app_client.model.group.FootballGroup;
 import com.example.sport_app_client.retrofit.RetrofitService;
 import com.example.sport_app_client.retrofit.api.GroupAPI;
@@ -41,8 +42,8 @@ public class FootballGroupActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Long groupID = intent.getLongExtra("group_id", -1);
         if (groupID == -1) { // Something went wrong with intent data
-            Toast.makeText(this, "Something went wrong with intent data", Toast.LENGTH_SHORT).show();
-            // TODO: maybe return back to homepage
+            Toast.makeText(this, "Something went wrong with intent data", Toast.LENGTH_SHORT).show(); // delete later
+            LogOutHandler.logout(FootballGroupActivity.this, "Try again later!");
             return;
         }
 
@@ -59,6 +60,7 @@ public class FootballGroupActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<FootballGroup> call, Throwable t) {
                 Toast.makeText(FootballGroupActivity.this, "group request failed", Toast.LENGTH_SHORT).show();
+                LogOutHandler.logout(FootballGroupActivity.this, "Try again later!");
             }
         });
     }

@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.sport_app_client.helpers.LogOutHandler;
 import com.example.sport_app_client.retrofit.MyAuthManager;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -49,7 +50,7 @@ public class SettingsActivity extends AppCompatActivity {
         logoutBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                logout();
+                LogOutHandler.logout(SettingsActivity.this, "Logged out Successfully!");
             }
         });
 
@@ -64,12 +65,5 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
-    private void logout() {
-        MyAuthManager.deleteInstance();
-        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-        // Flags to clear the back stack of activities
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
-    }
+
 }
