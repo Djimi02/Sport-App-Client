@@ -51,6 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         this.getSupportActionBar().hide();
+        Toast.makeText(this, "On create!", Toast.LENGTH_SHORT).show();
 
         initVars();
         initViews();
@@ -86,7 +87,9 @@ public class LoginActivity extends AppCompatActivity {
         goToRegisterBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
             }
         });
 
@@ -97,6 +100,7 @@ public class LoginActivity extends AppCompatActivity {
         forgotPasswordTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(LoginActivity.this, "reset email dialog xD", Toast.LENGTH_SHORT).show();
 //                openResetEmailDialog();
             }
         });
@@ -119,7 +123,10 @@ public class LoginActivity extends AppCompatActivity {
                     authManager.setToken(response.body().getToken());
                     authManager.setUser(response.body().getUser());
                     Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(LoginActivity.this, HomepageActivity.class));
+
+                    Intent intent = new Intent(LoginActivity.this, HomepageActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(intent);
                 } else if (response.code() == 403) {
                     Toast.makeText(LoginActivity.this, "Incorrect email or password!", Toast.LENGTH_LONG).show();
                 } else {

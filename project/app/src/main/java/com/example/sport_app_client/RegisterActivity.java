@@ -45,6 +45,7 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         this.getSupportActionBar().hide();
+        Toast.makeText(this, "On create!", Toast.LENGTH_SHORT).show();
 
         initVars();
         initViews();
@@ -90,7 +91,10 @@ public class RegisterActivity extends AppCompatActivity {
                     authManager.setToken(response.body().getToken());
                     authManager.setUser(response.body().getUser());
                     Toast.makeText(RegisterActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(RegisterActivity.this, HomepageActivity.class));
+
+                    Intent intent = new Intent(RegisterActivity.this, HomepageActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(intent);
                 } else if (response.code() == 400) {
                     try {
                         Toast.makeText(RegisterActivity.this, response.errorBody().string(), Toast.LENGTH_LONG).show();

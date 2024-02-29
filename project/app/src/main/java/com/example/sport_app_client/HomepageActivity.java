@@ -1,11 +1,14 @@
 package com.example.sport_app_client;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +34,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     private TextView totalGroupsTV;
     private TextView totalWinsTV;
     private RecyclerView userGroupsRV;
+    private Button settingsBTN;
 
     /* Vars */
     private MyAuthManager authManager;
@@ -44,6 +48,15 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homepage);
         this.getSupportActionBar().hide();
+        Toast.makeText(this, "On create!", Toast.LENGTH_SHORT).show();
+
+        // Empty back button implementation
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+
+            }
+        });
 
         initVars();
         initViews();
@@ -68,6 +81,16 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         UserGroupsRVAdapter userGroupsRVAdapter = new UserGroupsRVAdapter(authManager.getUser().getMembers(), this);
         userGroupsRV.setAdapter(userGroupsRVAdapter);
         userGroupsRV.setLayoutManager(new LinearLayoutManager(this));
+
+        this.settingsBTN = findViewById(R.id.homepageSettingsBTN);
+        settingsBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+            }
+        });
     }
 
     private void computeGeneralStats() {

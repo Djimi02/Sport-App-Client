@@ -16,6 +16,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/homepageSettingsBTN"
+            android:text="Settings"/>
+
         <TextView
             android:id="@+id/homepageTotalGamesTV"
             android:layout_width="wrap_content"
