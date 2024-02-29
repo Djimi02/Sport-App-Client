@@ -4,12 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sport_app_client.adapter.UserGroupsRVAdapter;
+import com.example.sport_app_client.groupActivities.FootballGroupActivity;
 import com.example.sport_app_client.interfaces.UserGroupClickListener;
+import com.example.sport_app_client.model.Sports;
 import com.example.sport_app_client.model.User;
 import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.model.member.Member;
@@ -44,9 +47,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
 
         initVars();
         initViews();
-        System.out.println("totalGames= " + totalGames);
-        System.out.println("totalGroups= " + totalGroups);
-        System.out.println("totalWins= " + totalWins);
+        computeGeneralStats();
     }
 
     private void initVars() {
@@ -67,8 +68,6 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         UserGroupsRVAdapter userGroupsRVAdapter = new UserGroupsRVAdapter(authManager.getUser().getMembers(), this);
         userGroupsRV.setAdapter(userGroupsRVAdapter);
         userGroupsRV.setLayoutManager(new LinearLayoutManager(this));
-
-        computeGeneralStats();
     }
 
     private void computeGeneralStats() {
@@ -94,8 +93,16 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     }
 
     @Override
-    public void onClick(Long groupID) {
-        // TODO: go to group page and send the group ID as parameter in the intent
-        Toast.makeText(this, "Click", Toast.LENGTH_SHORT).show();
+    public void goToGroupActivity(Long groupID, Sports sport) {
+
+        switch (sport) {
+            case FOOTBALL:
+                Intent intent = new Intent(HomepageActivity.this, FootballGroupActivity.class);
+                intent.putExtra("group_id", groupID);
+                startActivity(intent);
+                break;
+            default:
+                break;
+        }
     }
 }

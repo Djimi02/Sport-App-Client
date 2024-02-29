@@ -12,9 +12,12 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
         android:theme="@style/Theme.SportAppClient"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name="com.example.sport_app_client.groupActivities.FootballGroupActivity"
+            android:exported="false" />
         <activity
             android:name=".HomepageActivity"
             android:exported="false" />
