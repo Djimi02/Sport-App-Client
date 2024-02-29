@@ -129,7 +129,8 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<JwtAuthenticationResponse> call, Throwable t) {
-                Toast.makeText(LoginActivity.this, "on failure", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "Something went wrong!", Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, "Please try again later!", Toast.LENGTH_LONG).show();
                 System.out.println(t.toString());
             }
         });

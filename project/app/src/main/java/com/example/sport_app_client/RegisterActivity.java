@@ -102,7 +102,8 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<JwtAuthenticationResponse> call, Throwable t) {
-                Toast.makeText(RegisterActivity.this, "Something went wrong!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterActivity.this, "Something went wrong!", Toast.LENGTH_LONG).show();
+                Toast.makeText(RegisterActivity.this, "Please try again later!", Toast.LENGTH_LONG).show();
                 System.out.println(t.toString());
             }
         });
