@@ -1,6 +1,7 @@
 package com.example.sport_app_client;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -8,7 +9,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +39,11 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     private TextView totalWinsTV;
     private RecyclerView userGroupsRV;
     private Button settingsBTN;
+    private Button createGroupBTN;
+
+    /* Dialog */
+    private AlertDialog.Builder dialogBuilder;
+    private AlertDialog dialog;
 
     /* Vars */
     private MyAuthManager authManager;
@@ -91,6 +100,14 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
                 startActivity(intent);
             }
         });
+
+        this.createGroupBTN = findViewById(R.id.homepageCreateGroupBTN);
+        createGroupBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openCreateGroupDialog();
+            }
+        });
     }
 
     private void computeGeneralStats() {
@@ -113,6 +130,39 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         this.totalGames = games;
         this.totalWinsTV.setText("Total wins = " + totalWins);
         this.totalGamesTV.setText("Total games = " + totalGames);
+    }
+
+    private void openCreateGroupDialog() {
+        // Build dialog
+        dialogBuilder = new AlertDialog.Builder(this);
+        final View popupView = getLayoutInflater().inflate(R.layout.create_group_dialog, null);
+
+        final EditText groupNameET = popupView.findViewById(R.id.createGroupDialogET);
+        final Spinner spinner = popupView.findViewById(R.id.createGroupDialogSpinner);
+        spinner.setAdapter(new ArrayAdapter<Sports>(this, android.R.layout.simple_spinner_item, Sports.values()));
+        final Button createBTN = popupView.findViewById(R.id.createGroupDialogBTN);
+        createBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String groupName = groupNameET.getText().toString().trim();
+                if (groupName.isEmpty()) {
+                    groupNameET.setError("Add group name!");
+                    return;
+                } else if (spinner.getSelectedItemPosition() == 0) {
+                    Toast.makeText(HomepageActivity.this, "Select a sport!", Toast.LENGTH_SHORT).show();
+                }
+
+                // TODO: create and save group to the server
+                // Maybe let the server create it and wait for the response
+            }
+        });
+
+
+
+        // Show dialog
+        dialogBuilder.setView(popupView);
+        dialog = dialogBuilder.create();
+        dialog.show();
     }
 
     @Override
