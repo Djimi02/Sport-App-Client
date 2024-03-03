@@ -1,14 +1,23 @@
 package com.example.sport_app_client.groupActivities;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.sport_app_client.HomepageActivity;
 import com.example.sport_app_client.R;
 import com.example.sport_app_client.helpers.LogOutHandler;
+import com.example.sport_app_client.model.Sports;
 import com.example.sport_app_client.model.group.FootballGroup;
+import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.retrofit.RetrofitService;
 import com.example.sport_app_client.retrofit.api.FootballGroupAPI;
 
@@ -20,6 +29,11 @@ import retrofit2.Retrofit;
 public class FootballGroupActivity extends AppCompatActivity {
 
     /* Views */
+    private Button addMemberBTN;
+
+    /* Dialog */
+    private AlertDialog.Builder dialogBuilder;
+    private AlertDialog dialog;
 
     /* Vars */
     private FootballGroup group;
@@ -109,6 +123,55 @@ public class FootballGroupActivity extends AppCompatActivity {
     }
 
     private void initViews() {
+        this.addMemberBTN = findViewById(R.id.footballpageAddMemberBTN);
+        addMemberBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openAddMemberDialog();
+            }
+        });
+    }
 
+    private void openAddMemberDialog() {
+        // Build dialog
+        dialogBuilder = new AlertDialog.Builder(this);
+        final View popupView = getLayoutInflater().inflate(R.layout.add_member_dialog, null);
+
+        final EditText memberNameET = popupView.findViewById(R.id.addFootballMemberDialogET);
+        final Button addBTN = popupView.findViewById(R.id.addFootballMemberDialogBTN);
+        addBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String memberName = memberNameET.getText().toString().trim();
+                if (memberName.isEmpty()) {
+                    memberNameET.setError("Input member name!");
+                    return;
+                } else if (memberName.length() > 12) {
+                    memberNameET.setError("Name can be 12 characters max!");
+                    return;
+                }
+                groupAPI.addFootballMember(group.getId(), memberName).enqueue(new Callback<FootballMember>() {
+                    @Override
+                    public void onResponse(Call<FootballMember> call, Response<FootballMember> response) {
+                        if (response.code() == 200) { // OK
+                            group.addMember(response.body());
+                            Toast.makeText(FootballGroupActivity.this, "Member added successfully!", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<FootballMember> call, Throwable t) {
+                        Toast.makeText(FootballGroupActivity.this, "group request failed", Toast.LENGTH_SHORT).show();
+                        LogOutHandler.logout(FootballGroupActivity.this, "Try again later!");
+                    }
+                });
+            }
+        });
+
+        // Show dialog
+        dialogBuilder.setView(popupView);
+        dialog = dialogBuilder.create();
+        dialog.show();
     }
 }
