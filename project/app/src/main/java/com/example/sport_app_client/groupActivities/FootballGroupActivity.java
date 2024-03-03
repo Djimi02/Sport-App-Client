@@ -81,6 +81,9 @@ public class FootballGroupActivity extends AppCompatActivity {
                 if (response.code() == 200) { // OK
                     group = response.body();
                     Toast.makeText(FootballGroupActivity.this, group.getName(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(FootballGroupActivity.this, "This action cannot be done now!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FootballGroupActivity.this, "Try again later!", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -106,6 +109,9 @@ public class FootballGroupActivity extends AppCompatActivity {
                 if (response.code() == 200) { // ok
                     group = response.body();
                     Toast.makeText(FootballGroupActivity.this, group.getName(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(FootballGroupActivity.this, "This action cannot be done now!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FootballGroupActivity.this, "Try again later!", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -157,6 +163,9 @@ public class FootballGroupActivity extends AppCompatActivity {
                             group.addMember(response.body());
                             Toast.makeText(FootballGroupActivity.this, "Member added successfully!", Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
+                        } else {
+                            Toast.makeText(FootballGroupActivity.this, "This action cannot be done now!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(FootballGroupActivity.this, "Try again later!", Toast.LENGTH_SHORT).show();
                         }
                     }
 
