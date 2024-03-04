@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import com.example.sport_app_client.HomepageActivity;
 import com.example.sport_app_client.R;
+import com.example.sport_app_client.SettingsActivity;
+import com.example.sport_app_client.gameActivities.FootballGameActivity;
 import com.example.sport_app_client.helpers.LogOutHandler;
 import com.example.sport_app_client.model.Sports;
 import com.example.sport_app_client.model.group.FootballGroup;
@@ -30,6 +32,7 @@ public class FootballGroupActivity extends AppCompatActivity {
 
     /* Views */
     private Button addMemberBTN;
+    private Button addGameBTN;
 
     /* Dialog */
     private AlertDialog.Builder dialogBuilder;
@@ -134,6 +137,16 @@ public class FootballGroupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 openAddMemberDialog();
+            }
+        });
+
+        this.addGameBTN = findViewById(R.id.footballpageAddGameBTN);
+        addGameBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(FootballGroupActivity.this, FootballGameActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
             }
         });
     }
