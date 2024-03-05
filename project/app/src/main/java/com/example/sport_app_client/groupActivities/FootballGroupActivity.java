@@ -17,6 +17,7 @@ import com.example.sport_app_client.R;
 import com.example.sport_app_client.SettingsActivity;
 import com.example.sport_app_client.gameActivities.FootballGameActivity;
 import com.example.sport_app_client.helpers.LogOutHandler;
+import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.model.Sports;
 import com.example.sport_app_client.model.group.FootballGroup;
 import com.example.sport_app_client.model.member.FootballMember;
@@ -144,6 +145,7 @@ public class FootballGroupActivity extends AppCompatActivity {
         addGameBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MyGlobals.footballMembers = group.getMembers();
                 Intent intent = new Intent(FootballGroupActivity.this, FootballGameActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
