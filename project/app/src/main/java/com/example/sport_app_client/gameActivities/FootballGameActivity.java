@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import com.example.sport_app_client.R;
 import com.example.sport_app_client.adapter.GameMembersRVAdapter;
@@ -26,9 +27,13 @@ import java.util.List;
 public class FootballGameActivity extends AppCompatActivity implements OnGameMemberDragListener {
 
     /* Views */
+    private ViewFlipper viewFlipper;
+    private Button backBTN;
+    private Button nextBTN;
     private RecyclerView membersRV;
     private RecyclerView team1RV;
     private RecyclerView team2RV;
+
 
     /* Vars */
     private List<FootballMember> members;
@@ -54,12 +59,41 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
     }
 
     private void initViews() {
-        this.membersRV = findViewById(R.id.footballgameactivityMembersRV);
+        this.viewFlipper = findViewById(R.id.footballgameactivityVF);
+
+        this.backBTN = findViewById(R.id.footballgameactivityBackBTN);
+        backBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewFlipper.showPrevious();
+                nextBTN.setEnabled(true);
+
+                if (viewFlipper.getDisplayedChild() == 0) {
+                    backBTN.setEnabled(false);
+                }
+            }
+        });
+        backBTN.setEnabled(false);
+
+        this.nextBTN = findViewById(R.id.footballgameactivityNextBTN);
+        nextBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewFlipper.showNext();
+                backBTN.setEnabled(true);
+
+                if (viewFlipper.getDisplayedChild() == 2) {
+                    nextBTN.setEnabled(false);
+                }
+            }
+        });
+
+        this.membersRV = findViewById(R.id.footballgameStep1MembersRV);
         GameMembersRVAdapter membersAdapter = new GameMembersRVAdapter(members, this);
         membersRV.setAdapter(membersAdapter);
         membersRV.setLayoutManager(new LinearLayoutManager(this));
 
-        this.team1RV = findViewById(R.id.footballgameactivityTeam1RV);
+        this.team1RV = findViewById(R.id.footballgameStep1Team1RV);
         GameTeamsRVAdapter team1Adapter = new GameTeamsRVAdapter(team1);
         team1RV.setAdapter(team1Adapter);
         team1RV.setLayoutManager(new LinearLayoutManager(this));
@@ -78,7 +112,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
             }
         });
 
-        this.team2RV = findViewById(R.id.footballgameactivityTeam2RV);
+        this.team2RV = findViewById(R.id.footballgameStep1Team2RV);
         GameTeamsRVAdapter team2Adapter = new GameTeamsRVAdapter(team2);
         team2RV.setAdapter(team2Adapter);
         team2RV.setLayoutManager(new LinearLayoutManager(this));

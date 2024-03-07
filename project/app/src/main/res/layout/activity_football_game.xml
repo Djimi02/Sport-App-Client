@@ -1,47 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".gameActivities.FootballGameActivity">
+    tools:context=".gameActivities.FootballGameActivity"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="progres bar"
+        android:textSize="@dimen/_30sdp"/>
+
+    <ViewFlipper
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/footballgameactivityVF">
+
+        <include layout="@layout/football_game_step_1" />
+
+        <include layout="@layout/football_game_step_2"/>
+
+        <include layout="@layout/football_game_step_3"/>
+
+    </ViewFlipper>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="wrap_content">
 
-        <TextView
+        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Members"/>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/footballgameactivityMembersRV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:text="back"
+            android:id="@+id/footballgameactivityBackBTN"/>
 
-        <TextView
+        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Team1"/>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/footballgameactivityTeam1RV"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_100sdp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Team2"/>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/footballgameactivityTeam2RV"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_100sdp"/>
+            android:text="next"
+            android:id="@+id/footballgameactivityNextBTN"/>
 
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
