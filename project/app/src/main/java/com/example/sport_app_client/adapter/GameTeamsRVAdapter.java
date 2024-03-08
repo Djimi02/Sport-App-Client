@@ -38,6 +38,14 @@ public class GameTeamsRVAdapter extends RecyclerView.Adapter<GameTeamsRVAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.memberNameTV.setText("" + members.get(position).getNickname());
+        Member memberToBeDeleted = members.get(position);
+        holder.removeMemberBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                members.remove(memberToBeDeleted);
+                notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
@@ -55,14 +63,7 @@ public class GameTeamsRVAdapter extends RecyclerView.Adapter<GameTeamsRVAdapter.
 
             this.memberNameTV = view.findViewById(R.id.gameMemberNameTV);
             this.removeMemberBTN = view.findViewById(R.id.memberItemRemoveMemberBTN);
-            removeMemberBTN.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int position = getAdapterPosition();
-                    members.remove(position);
-                    notifyItemChanged(position);
-                }
-            });
+
         }
     }
 }
