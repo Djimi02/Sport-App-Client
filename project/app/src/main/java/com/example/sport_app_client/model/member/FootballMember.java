@@ -14,7 +14,10 @@ public class FootballMember extends Member {
 
     private List<FootballGame> games;
 
-    private int numOfGoalsScored;
+    private int goals;
+    private int assists;
+    private int saves;
+    private int fouls;
 
     public FootballMember() {}
 
@@ -25,16 +28,13 @@ public class FootballMember extends Member {
     }
 
     private void initVars() {
-        this.numOfGoalsScored = 0;
+        this.goals = 0;
+        this.assists = 0;
+        this.saves = 0;
+        this.fouls = 0;
     }
 
-    public int getNumOfGoalsScored() {
-        return numOfGoalsScored;
-    }
-
-    public void setNumOfGoalsScored(int numOfGoalsScored) {
-        this.numOfGoalsScored = numOfGoalsScored;
-    }
+    /* GETTER AND SETTERS */
 
     public List<FootballGame> getGames() {
         return games;
@@ -42,5 +42,37 @@ public class FootballMember extends Member {
 
     public void setGames(List<FootballGame> games) {
         this.games = games;
+    }
+
+    public int getGoals() {
+        return goals;
+    }
+
+    public void setGoals(int goals) {
+        this.goals = goals;
+    }
+
+    public int getAssists() {
+        return assists;
+    }
+
+    public void setAssists(int assists) {
+        this.assists = assists;
+    }
+
+    public int getSaves() {
+        return saves;
+    }
+
+    public void setSaves(int saves) {
+        this.saves = saves;
+    }
+
+    public int getFouls() {
+        return fouls;
+    }
+
+    public void setFouls(int fouls) {
+        this.fouls = fouls;
     }
 }

@@ -53,9 +53,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     /* Vars */
     private MyAuthManager authManager;
     private Retrofit retrofit;
-    private int totalGames;
     private int totalGroups;
-    private int totalWins;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,9 +79,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         this.authManager = MyAuthManager.getInstance();
         this.retrofit = new RetrofitService().getRetrofit();
 
-        this.totalGames = 0;
         this.totalGroups = 0;
-        this.totalWins = 0;
     }
 
     private void initViews() {
@@ -124,17 +120,9 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         this.totalGroups = authManager.getUser().getMembers().size();
         this.totalGroupsTV.setText("Total groups = " + totalGroups);
 
-        // Compute total wins
-        int wins = 0;
-        int games = 0;
-        for (Member member : authManager.getUser().getMembers()) {
-            wins += member.getTotalWins();
-            games += member.getTotalGames();
-        }
-        this.totalWins = wins;
-        this.totalGames = games;
-        this.totalWinsTV.setText("Total wins = " + totalWins);
-        this.totalGamesTV.setText("Total games = " + totalGames);
+        // TODO: implement general user statics with separate request
+        this.totalWinsTV.setText("Total wins = to be implemented");
+        this.totalGamesTV.setText("Total wins = to be implemented");
     }
 
     private void openCreateGroupDialog() {
