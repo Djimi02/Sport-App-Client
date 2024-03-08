@@ -44,8 +44,8 @@ public class UserGroupsRVAdapter extends RecyclerView.Adapter<UserGroupsRVAdapte
     public void onBindViewHolder(@NonNull UserGroupsRVAdapter.ViewHolder holder, int position) {
         // set values for each holder given its position
         holder.groupName.setText("Group: " + members.get(position).getGroup().getName());
-        holder.totalGames.setText("" + members.get(position).getTotalGames());
-        holder.totalWins.setText("" + members.get(position).getTotalWins());
+        holder.totalGames.setText("totalGames");
+        holder.totalWins.setText("totalWins");
     }
 
     @Override

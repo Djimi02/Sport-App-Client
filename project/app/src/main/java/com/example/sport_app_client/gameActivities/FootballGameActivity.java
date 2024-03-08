@@ -4,16 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.ClipData;
 import android.os.Bundle;
 import android.view.DragEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.example.sport_app_client.R;
+import com.example.sport_app_client.adapter.FootballGameMembersRVAdapter;
 import com.example.sport_app_client.adapter.GameMembersRVAdapter;
 import com.example.sport_app_client.adapter.GameTeamsRVAdapter;
 import com.example.sport_app_client.helpers.MyGlobals;
@@ -31,12 +29,14 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
     private Button backBTN;
     private Button nextBTN;
     private RecyclerView membersRV;
-    private RecyclerView team1RV;
-    private RecyclerView team2RV;
+    private RecyclerView step1Team1RV;
+    private RecyclerView step1Team2RV;
+    private RecyclerView step2Team1RV;
+    private RecyclerView step2Team2RV;
 
 
     /* Vars */
-    private List<FootballMember> members;
+    private List<FootballMember> members; // links to the real members so modification is propagated
     private List<FootballMember> team1;
     private List<FootballMember> team2;
     private FootballMember draggedMember;
@@ -82,22 +82,31 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
                 viewFlipper.showNext();
                 backBTN.setEnabled(true);
 
+                if (viewFlipper.getDisplayedChild() == 1) {
+                    step2Team1RV.getAdapter().notifyDataSetChanged();
+                    step2Team2RV.getAdapter().notifyDataSetChanged();
+                }
+
                 if (viewFlipper.getDisplayedChild() == 2) {
                     nextBTN.setEnabled(false);
                 }
             }
         });
 
+        initRecyclerViews();
+    }
+
+    private void initRecyclerViews() {
         this.membersRV = findViewById(R.id.footballgameStep1MembersRV);
         GameMembersRVAdapter membersAdapter = new GameMembersRVAdapter(members, this);
         membersRV.setAdapter(membersAdapter);
         membersRV.setLayoutManager(new LinearLayoutManager(this));
 
-        this.team1RV = findViewById(R.id.footballgameStep1Team1RV);
-        GameTeamsRVAdapter team1Adapter = new GameTeamsRVAdapter(team1);
-        team1RV.setAdapter(team1Adapter);
-        team1RV.setLayoutManager(new LinearLayoutManager(this));
-        team1RV.setOnDragListener(new View.OnDragListener() {
+        this.step1Team1RV = findViewById(R.id.footballgameStep1Team1RV);
+        GameTeamsRVAdapter step1Team1Adapter = new GameTeamsRVAdapter(team1);
+        step1Team1RV.setAdapter(step1Team1Adapter);
+        step1Team1RV.setLayoutManager(new LinearLayoutManager(this));
+        step1Team1RV.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View view, DragEvent dragEvent) {
                 switch (dragEvent.getAction()) {
@@ -105,18 +114,18 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
                         if (!(team2.contains(draggedMember) || team1.contains(draggedMember))) {
                             team1.add(draggedMember);
                         }
-                        team1Adapter.notifyDataSetChanged();
+                        step1Team1Adapter.notifyDataSetChanged();
                         break;
                 }
                 return true;
             }
         });
 
-        this.team2RV = findViewById(R.id.footballgameStep1Team2RV);
-        GameTeamsRVAdapter team2Adapter = new GameTeamsRVAdapter(team2);
-        team2RV.setAdapter(team2Adapter);
-        team2RV.setLayoutManager(new LinearLayoutManager(this));
-        team2RV.setOnDragListener(new View.OnDragListener() {
+        this.step1Team2RV = findViewById(R.id.footballgameStep1Team2RV);
+        GameTeamsRVAdapter step1Team2Adapter = new GameTeamsRVAdapter(team2);
+        step1Team2RV.setAdapter(step1Team2Adapter);
+        step1Team2RV.setLayoutManager(new LinearLayoutManager(this));
+        step1Team2RV.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View view, DragEvent dragEvent) {
                 switch (dragEvent.getAction()) {
@@ -124,12 +133,22 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
                         if (!(team2.contains(draggedMember) || team1.contains(draggedMember))) {
                             team2.add(draggedMember);
                         }
-                        team2Adapter.notifyDataSetChanged();
+                        step1Team2Adapter.notifyDataSetChanged();
                         break;
                 }
                 return true;
             }
         });
+
+        this.step2Team1RV = findViewById(R.id.footballgameStep2Team1RV);
+        FootballGameMembersRVAdapter step2Team1Adapter = new FootballGameMembersRVAdapter(team1);
+        step2Team1RV.setAdapter(step2Team1Adapter);
+        step2Team1RV.setLayoutManager(new LinearLayoutManager(this));
+
+        this.step2Team2RV = findViewById(R.id.footballgameStep2Team2RV);
+        FootballGameMembersRVAdapter step2Team2Adapter = new FootballGameMembersRVAdapter(team2);
+        step2Team2RV.setAdapter(step2Team2Adapter);
+        step2Team2RV.setLayoutManager(new LinearLayoutManager(this));
     }
 
 

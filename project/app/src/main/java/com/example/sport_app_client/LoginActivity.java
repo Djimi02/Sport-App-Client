@@ -129,7 +129,14 @@ public class LoginActivity extends AppCompatActivity {
                     startActivity(intent);
                 } else if (response.code() == 403) {
                     Toast.makeText(LoginActivity.this, "Incorrect email or password!", Toast.LENGTH_LONG).show();
-                } else {
+                } else if (response.code() == 400) {
+                    try {
+                        Toast.makeText(LoginActivity.this, response.errorBody().string(), Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        Toast.makeText(LoginActivity.this, "Something went wrong!", Toast.LENGTH_LONG).show();
+                    }
+                }
+                else {
                     Toast.makeText(LoginActivity.this, "Something went wrong!", Toast.LENGTH_LONG).show();
                 }
             }
