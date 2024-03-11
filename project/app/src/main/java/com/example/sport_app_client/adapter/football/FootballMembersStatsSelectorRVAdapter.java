@@ -18,12 +18,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class FootballGameMembersRVAdapter extends RecyclerView.Adapter<FootballGameMembersRVAdapter.ViewHolder> {
+public class FootballMembersStatsSelectorRVAdapter extends RecyclerView.Adapter<FootballMembersStatsSelectorRVAdapter.ViewHolder> {
 
     private List<FootballMember> members;
     private HashMap<FootballMember, List<EditText>> map;
 
-    public FootballGameMembersRVAdapter(List<FootballMember> members) {
+    public FootballMembersStatsSelectorRVAdapter(List<FootballMember> members) {
         this.members = members;
         this.map = new HashMap<>();
     }
@@ -36,7 +36,7 @@ public class FootballGameMembersRVAdapter extends RecyclerView.Adapter<FootballG
 
         View spotView = inflater.inflate(R.layout.football_game_member_item_rv, parent, false);
 
-        FootballGameMembersRVAdapter.ViewHolder viewHolder = new FootballGameMembersRVAdapter.ViewHolder(spotView);
+        FootballMembersStatsSelectorRVAdapter.ViewHolder viewHolder = new FootballMembersStatsSelectorRVAdapter.ViewHolder(spotView);
         return viewHolder;
     }
 
