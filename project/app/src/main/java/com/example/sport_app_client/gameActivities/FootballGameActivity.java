@@ -20,9 +20,16 @@ import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.interfaces.OnGameMemberDragListener;
 import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.model.member.Member;
+import com.example.sport_app_client.retrofit.RetrofitService;
+import com.example.sport_app_client.retrofit.api.FootballGroupAPI;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class FootballGameActivity extends AppCompatActivity implements OnGameMemberDragListener {
 
@@ -47,6 +54,10 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
     private List<FootballMember> step3Team1;
     private List<FootballMember> step3Team2;
 
+    /* Retrofit */
+    private Retrofit retrofit;
+    private FootballGroupAPI footballGroupAPI;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +75,9 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
         this.team2 = new ArrayList<>();
         this.step3Team1 = new ArrayList<>();
         this.step3Team2 = new ArrayList<>();
+
+        this.retrofit = new RetrofitService().getRetrofit();
+        this.footballGroupAPI = retrofit.create(FootballGroupAPI.class);
     }
 
     private void initViews() {
@@ -102,9 +116,41 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
 
                     // For each member send request to the server to save it
                     for (int i = 0; i < team1.size(); i++) {
+                        footballGroupAPI.updateFootballMember(team1.get(i)).enqueue(new Callback<Void>() {
+                            @Override
+                            public void onResponse(Call<Void> call, Response<Void> response) {
+                                if (response.code() == 200) {
+
+                                } else {
+                                    // TODO: HANDLE NOT SAVED MEMBER
+                                    Toast.makeText(FootballGameActivity.this, "member saving failed", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Void> call, Throwable t) {
+                                Toast.makeText(FootballGameActivity.this, "member saving failed", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                         System.out.println(team1.get(i).getNickname() + " = " + team1.get(i).getGoals());
                     }
                     for (int i = 0; i < team2.size(); i++) {
+                        footballGroupAPI.updateFootballMember(team2.get(i)).enqueue(new Callback<Void>() {
+                            @Override
+                            public void onResponse(Call<Void> call, Response<Void> response) {
+                                if (response.code() == 200) {
+
+                                } else {
+                                    // TODO: HANDLE
+                                    Toast.makeText(FootballGameActivity.this, "member saving failed", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Void> call, Throwable t) {
+                                Toast.makeText(FootballGameActivity.this, "member saving failed", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                         System.out.println(team2.get(i).getNickname() + " = " + team2.get(i).getGoals());
                     }
 

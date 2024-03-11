@@ -4,6 +4,7 @@ import com.example.sport_app_client.model.group.FootballGroup;
 import com.example.sport_app_client.model.member.FootballMember;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -19,5 +20,8 @@ public interface FootballGroupAPI {
 
     @POST("/group/football/add/member/{groupid}/{name}")
     Call<FootballMember> addFootballMember(@Path("groupid") Long groupID, @Path("name") String memberName);
+
+    @POST("/group/football/update/member")
+    Call<Void> updateFootballMember(@Body FootballMember member);
 
 }
