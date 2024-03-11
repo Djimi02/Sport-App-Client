@@ -107,7 +107,12 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
         nextBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (viewFlipper.getDisplayedChild() == 2) {
+                if (viewFlipper.getDisplayedChild() == 0) {
+                    if (Math.abs(team1.size() - team2.size()) > 1) {
+                        Toast.makeText(FootballGameActivity.this, "Team size difference of not allowed!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                } else if (viewFlipper.getDisplayedChild() == 2) { // confirm game pressed
                     Toast.makeText(FootballGameActivity.this, "save game", Toast.LENGTH_SHORT).show();
 
                     // This will update the member objects in this.team1 and this.team2
@@ -163,15 +168,15 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
                 viewFlipper.showNext();
                 backBTN.setEnabled(true);
 
-                if (viewFlipper.getDisplayedChild() == 1) {
+                if (viewFlipper.getDisplayedChild() == 1) { // confirm teams pressed
+
+                    
                     nextBTN.setText("Confirm Stats");
 
                     // Update step 2 based on step 1
                     step2Team1RV.getAdapter().notifyDataSetChanged();
                     step2Team2RV.getAdapter().notifyDataSetChanged();
-                }
-
-                if (viewFlipper.getDisplayedChild() == 2) {
+                } else if (viewFlipper.getDisplayedChild() == 2) {
                     nextBTN.setText("Confirm Game");
 
                     // update step 3 based on step 2
