@@ -78,6 +78,102 @@ public class FootballMembersStatsSelectorRVAdapter extends RecyclerView.Adapter<
                 }
             }
         });
+
+        holder.memberAssistsBTN1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int value = 0;
+                try {
+                    value = Integer.parseInt(holder.memberAssistsET.getText().toString());
+                } catch (Exception e) {
+                    value = 0;
+                }
+                if (value > 0) {
+                    value--;
+                    holder.memberAssistsET.setText(Integer.toString(value));
+                }
+            }
+        });
+        holder.memberAssistsET.setText(Integer.toString(0));
+        holder.memberAssistsBTN2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int value = 0;
+                try {
+                    value = Integer.parseInt(holder.memberAssistsET.getText().toString());
+                } catch (Exception e) {
+                    value = 0;
+                }
+                if (value <= 99) {
+                    value++;
+                    holder.memberAssistsET.setText(Integer.toString(value));
+                }
+            }
+        });
+
+        holder.memberSavesBTN1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int value = 0;
+                try {
+                    value = Integer.parseInt(holder.memberSavesET.getText().toString());
+                } catch (Exception e) {
+                    value = 0;
+                }
+                if (value > 0) {
+                    value--;
+                    holder.memberSavesET.setText(Integer.toString(value));
+                }
+            }
+        });
+        holder.memberSavesET.setText(Integer.toString(0));
+        holder.memberSavesBTN2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int value = 0;
+                try {
+                    value = Integer.parseInt(holder.memberSavesET.getText().toString());
+                } catch (Exception e) {
+                    value = 0;
+                }
+                if (value <= 99) {
+                    value++;
+                    holder.memberSavesET.setText(Integer.toString(value));
+                }
+            }
+        });
+
+        holder.memberFoulsBTN1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int value = 0;
+                try {
+                    value = Integer.parseInt(holder.memberFoulsET.getText().toString());
+                } catch (Exception e) {
+                    value = 0;
+                }
+                if (value > 0) {
+                    value--;
+                    holder.memberFoulsET.setText(Integer.toString(value));
+                }
+            }
+        });
+        holder.memberFoulsET.setText(Integer.toString(0));
+        holder.memberFoulsBTN2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int value = 0;
+                try {
+                    value = Integer.parseInt(holder.memberFoulsET.getText().toString());
+                } catch (Exception e) {
+                    value = 0;
+                }
+                if (value <= 99) {
+                    value++;
+                    holder.memberFoulsET.setText(Integer.toString(value));
+                }
+            }
+        });
     }
 
     @Override
