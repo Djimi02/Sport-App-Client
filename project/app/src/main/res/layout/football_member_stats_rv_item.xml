@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="name"
+        android:id="@+id/footballMemberStatsItemNameTV"
+        android:layout_weight="1"/>
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="goals"
+        android:id="@+id/footballMemberStatsItemGoalTV"
+        android:layout_weight="1"/>
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="assists"
+        android:id="@+id/footballMemberStatsItemAssistsTV"
+        android:layout_weight="1"/>
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="saves"
+        android:id="@+id/footballMemberStatsItemSavesTV"
+        android:layout_weight="1"/>
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="fouls"
+        android:id="@+id/footballMemberStatsItemFoulsTV"
+        android:layout_weight="1"/>
+
+</LinearLayout>

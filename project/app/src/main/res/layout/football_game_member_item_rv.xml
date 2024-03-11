@@ -10,32 +10,141 @@
         android:id="@+id/footballGameMemberItemNameTV"
         android:layout_weight="1"/>
 
-    <TextView
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="goals"
-        android:id="@+id/footballGameMemberItemGoalsTV"
-        android:layout_weight="1"/>
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="assists"
-        android:id="@+id/footballGameMemberItemAssistsTV"
-        android:layout_weight="1"/>
+        <Button
+            android:id="@+id/footballGameMemberItemGoalsBTN1"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:text="-"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="saves"
-        android:id="@+id/footballGameMemberItemSavesTV"
-        android:layout_weight="1"/>
+        <EditText
+            android:id="@+id/footballGameMemberItemGoalsET"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:ems="1"
+            android:inputType="number" />
 
-    <TextView
+        <Button
+            android:id="@+id/footballGameMemberItemGoalsBTN2"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:text="+"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="fouls"
-        android:id="@+id/footballGameMemberItemFoulsTV"
-        android:layout_weight="1"/>
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/footballGameMemberItemAssistsBTN1"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:text="-"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"/>
+
+        <EditText
+            android:id="@+id/footballGameMemberItemAssistsET"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:ems="1"
+            android:inputType="number" />
+
+        <Button
+            android:id="@+id/footballGameMemberItemAssistsBTN2"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:text="+"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/footballGameMemberItemSavesBTN1"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:text="-"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"/>
+
+        <EditText
+            android:id="@+id/footballGameMemberItemSavesET"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:ems="1"
+            android:inputType="number" />
+
+        <Button
+            android:id="@+id/footballGameMemberItemSavesBTN2"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:text="+"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/footballGameMemberItemFoulsBTN1"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:text="-"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"/>
+
+        <EditText
+            android:id="@+id/footballGameMemberItemFoulsET"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:ems="1"
+            android:inputType="number" />
+
+        <Button
+            android:id="@+id/footballGameMemberItemFoulsBTN2"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:text="+"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"/>
+
+    </LinearLayout>
 
 </LinearLayout>

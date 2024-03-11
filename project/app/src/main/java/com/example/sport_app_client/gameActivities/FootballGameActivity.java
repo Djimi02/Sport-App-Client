@@ -8,12 +8,14 @@ import android.os.Bundle;
 import android.view.DragEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.example.sport_app_client.R;
-import com.example.sport_app_client.adapter.FootballGameMembersRVAdapter;
+import com.example.sport_app_client.adapter.football.FootballGameMembersRVAdapter;
 import com.example.sport_app_client.adapter.GameMembersRVAdapter;
 import com.example.sport_app_client.adapter.GameTeamsRVAdapter;
+import com.example.sport_app_client.adapter.football.FootballMemberStatsRVAdapter;
 import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.interfaces.OnGameMemberDragListener;
 import com.example.sport_app_client.model.member.FootballMember;
@@ -33,6 +35,8 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
     private RecyclerView step1Team2RV;
     private RecyclerView step2Team1RV;
     private RecyclerView step2Team2RV;
+    private RecyclerView step3Team1RV;
+    private RecyclerView step3Team2RV;
 
 
     /* Vars */
@@ -40,6 +44,8 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
     private List<FootballMember> team1;
     private List<FootballMember> team2;
     private FootballMember draggedMember;
+    private List<FootballMember> step3Team1;
+    private List<FootballMember> step3Team2;
 
 
     @Override
@@ -56,6 +62,8 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
         this.members = MyGlobals.footballMembers;
         this.team1 = new ArrayList<>();
         this.team2 = new ArrayList<>();
+        this.step3Team1 = new ArrayList<>();
+        this.step3Team2 = new ArrayList<>();
     }
 
     private void initViews() {
@@ -70,25 +78,63 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
 
                 if (viewFlipper.getDisplayedChild() == 0) {
                     backBTN.setEnabled(false);
+                    nextBTN.setText("Confirm Teams");
+                }
+
+                if (viewFlipper.getDisplayedChild() == 1) {
+                    nextBTN.setText("Confirm Stats");
                 }
             }
         });
         backBTN.setEnabled(false);
 
         this.nextBTN = findViewById(R.id.footballgameactivityNextBTN);
+        this.nextBTN.setText("Confirm Teams");
         nextBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (viewFlipper.getDisplayedChild() == 2) {
+                    Toast.makeText(FootballGameActivity.this, "save game", Toast.LENGTH_SHORT).show();
+
+                    // This will update the member objects in this.team1 and this.team2
+                    ((FootballGameMembersRVAdapter)step2Team1RV.getAdapter()).updateMembersWithNewStats();
+                    ((FootballGameMembersRVAdapter)step2Team2RV.getAdapter()).updateMembersWithNewStats();
+
+                    // For each member send request to the server to save it
+                    for (int i = 0; i < team1.size(); i++) {
+                        System.out.println(team1.get(i).getNickname() + " = " + team1.get(i).getGoals());
+                    }
+                    for (int i = 0; i < team2.size(); i++) {
+                        System.out.println(team2.get(i).getNickname() + " = " + team2.get(i).getGoals());
+                    }
+
+                    // TODO: SAVE GAME
+
+                    finish();
+                    return;
+                }
+                
                 viewFlipper.showNext();
                 backBTN.setEnabled(true);
 
                 if (viewFlipper.getDisplayedChild() == 1) {
+                    nextBTN.setText("Confirm Stats");
+
+                    // Update step 2 based on step 1
                     step2Team1RV.getAdapter().notifyDataSetChanged();
                     step2Team2RV.getAdapter().notifyDataSetChanged();
                 }
 
                 if (viewFlipper.getDisplayedChild() == 2) {
-                    nextBTN.setEnabled(false);
+                    nextBTN.setText("Confirm Game");
+
+                    // update step 3 based on step 2
+                    step3Team1.clear();
+                    step3Team1.addAll(((FootballGameMembersRVAdapter)step2Team1RV.getAdapter()).getCurrentGameStats());
+                    step3Team1RV.getAdapter().notifyDataSetChanged();
+                    step3Team2.clear();
+                    step3Team2.addAll(((FootballGameMembersRVAdapter)step2Team2RV.getAdapter()).getCurrentGameStats());
+                    step3Team2RV.getAdapter().notifyDataSetChanged();
                 }
             }
         });
@@ -97,6 +143,8 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
     }
 
     private void initRecyclerViews() {
+
+        // Step 1
         this.membersRV = findViewById(R.id.footballgameStep1MembersRV);
         GameMembersRVAdapter membersAdapter = new GameMembersRVAdapter(members, this);
         membersRV.setAdapter(membersAdapter);
@@ -140,6 +188,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
             }
         });
 
+        // Step 2
         this.step2Team1RV = findViewById(R.id.footballgameStep2Team1RV);
         FootballGameMembersRVAdapter step2Team1Adapter = new FootballGameMembersRVAdapter(team1);
         step2Team1RV.setAdapter(step2Team1Adapter);
@@ -149,12 +198,22 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
         FootballGameMembersRVAdapter step2Team2Adapter = new FootballGameMembersRVAdapter(team2);
         step2Team2RV.setAdapter(step2Team2Adapter);
         step2Team2RV.setLayoutManager(new LinearLayoutManager(this));
+
+        // Step 3
+        this.step3Team1RV = findViewById(R.id.footballgameStep3Team1RV);
+        FootballMemberStatsRVAdapter step3Team1Adapter = new FootballMemberStatsRVAdapter(step3Team1);
+        step3Team1RV.setAdapter(step3Team1Adapter);
+        step3Team1RV.setLayoutManager(new LinearLayoutManager(this));
+
+        this.step3Team2RV = findViewById(R.id.footballgameStep3Team2RV);
+        FootballMemberStatsRVAdapter step3Team2Adapter = new FootballMemberStatsRVAdapter(step3Team2);
+        step3Team2RV.setAdapter(step3Team2Adapter);
+        step3Team2RV.setLayoutManager(new LinearLayoutManager(this));
     }
 
 
     @Override
     public void draggedMember(Member member) {
         this.draggedMember = (FootballMember) member;
-        this.membersRV.getAdapter().notifyDataSetChanged();
     }
 }

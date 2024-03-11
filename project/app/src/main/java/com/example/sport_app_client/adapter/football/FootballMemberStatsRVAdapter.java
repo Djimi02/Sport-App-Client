@@ -1,7 +1,6 @@
-package com.example.sport_app_client.adapter;
+package com.example.sport_app_client.adapter.football;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +14,14 @@ import com.example.sport_app_client.model.member.FootballMember;
 
 import java.util.List;
 
-public class FootballGameMembersRVAdapter extends RecyclerView.Adapter<FootballGameMembersRVAdapter.ViewHolder> {
+public class FootballMemberStatsRVAdapter extends RecyclerView.Adapter<FootballMemberStatsRVAdapter.ViewHolder> {
 
     private List<FootballMember> members;
 
-    public FootballGameMembersRVAdapter(List<FootballMember> members) {
+    public FootballMemberStatsRVAdapter(List<FootballMember> members) {
         this.members = members;
     }
+
 
     @NonNull
     @Override
@@ -29,25 +29,33 @@ public class FootballGameMembersRVAdapter extends RecyclerView.Adapter<FootballG
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        View spotView = inflater.inflate(R.layout.football_game_member_item_rv, parent, false);
+        View spotView = inflater.inflate(R.layout.football_member_stats_rv_item, parent, false);
 
-        FootballGameMembersRVAdapter.ViewHolder viewHolder = new FootballGameMembersRVAdapter.ViewHolder(spotView);
+        FootballMemberStatsRVAdapter.ViewHolder viewHolder = new FootballMemberStatsRVAdapter.ViewHolder(spotView);
         return viewHolder;
     }
 
     // set values for each holder given its position
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.memberNameTV.setText(members.get(position).getNickname()+"");
+        holder.memberNameTV.setText(members.get(position).getNickname().toString());
         holder.memberGoalsTV.setText(Integer.toString(members.get(position).getGoals()));
         holder.memberAssistsTV.setText(Integer.toString(members.get(position).getAssists()));
         holder.memberSavesTV.setText(Integer.toString(members.get(position).getSaves()));
-        holder.memberFoultsTV.setText(Integer.toString(members.get(position).getFouls()));
+        holder.memberFoulsTV.setText(Integer.toString(members.get(position).getFouls()));
     }
 
     @Override
     public int getItemCount() {
         return this.members.size();
+    }
+
+    public List<FootballMember> getMembers() {
+        return this.members;
+    }
+
+    public void setMembers(List<FootballMember> members) {
+        this.members = members;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -56,16 +64,17 @@ public class FootballGameMembersRVAdapter extends RecyclerView.Adapter<FootballG
         private final TextView memberGoalsTV;
         private final TextView memberAssistsTV;
         private final TextView memberSavesTV;
-        private final TextView memberFoultsTV;
+        private final TextView memberFoulsTV;
+
 
         public ViewHolder(View view) {
             super(view);
 
-            this.memberNameTV = view.findViewById(R.id.footballGameMemberItemNameTV);
-            this.memberGoalsTV = view.findViewById(R.id.footballGameMemberItemGoalsTV);
-            this.memberAssistsTV = view.findViewById(R.id.footballGameMemberItemAssistsTV);
-            this.memberSavesTV = view.findViewById(R.id.footballGameMemberItemSavesTV);
-            this.memberFoultsTV = view.findViewById(R.id.footballGameMemberItemFoulsTV);
+            this.memberNameTV = view.findViewById(R.id.footballMemberStatsItemNameTV);
+            this.memberGoalsTV = view.findViewById(R.id.footballMemberStatsItemGoalTV);
+            this.memberAssistsTV = view.findViewById(R.id.footballMemberStatsItemAssistsTV);
+            this.memberSavesTV = view.findViewById(R.id.footballMemberStatsItemSavesTV);
+            this.memberFoulsTV = view.findViewById(R.id.footballMemberStatsItemFoulsTV);
         }
     }
 }
