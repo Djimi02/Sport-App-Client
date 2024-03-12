@@ -184,8 +184,8 @@ public class FootballMembersStatsSelectorRVAdapter extends RecyclerView.Adapter<
     /**
     The method returns the stats that are currently viewable in step 2 layout.
      */
-    public List<FootballMember> getCurrentGameStats() {
-        List<FootballMember> tempMembers = new ArrayList<>();
+    public HashMap<FootballMember, FootballMember> getCurrentGameStats() {
+        HashMap<FootballMember, FootballMember> output = new HashMap<>();
         for (int i = 0; i < members.size(); i++) {
             FootballMember member = members.get(i);
             FootballMember tempMember = new FootballMember();
@@ -194,20 +194,10 @@ public class FootballMembersStatsSelectorRVAdapter extends RecyclerView.Adapter<
             tempMember.setAssists(Integer.parseInt(map.get(member).get(1).getText().toString()));
             tempMember.setSaves(Integer.parseInt(map.get(member).get(2).getText().toString()));
             tempMember.setFouls(Integer.parseInt(map.get(member).get(3).getText().toString()));
-            tempMembers.add(tempMember);
-        }
-        return tempMembers;
-    }
 
-    /** The method updates the stats of the members in this.members, by summing
-    * their values with the currently viewable stats in step 2 layout. */
-    public void updateMembersWithNewStats() {
-        for (FootballMember member : map.keySet()) {
-            member.setGoals(member.getGoals() + Integer.parseInt(map.get(member).get(0).getText().toString()));
-            member.setAssists(member.getAssists() + Integer.parseInt(map.get(member).get(1).getText().toString()));
-            member.setSaves(member.getSaves() + Integer.parseInt(map.get(member).get(2).getText().toString()));
-            member.setFouls(member.getFouls() + Integer.parseInt(map.get(member).get(3).getText().toString()));
+            output.put(member, tempMember);
         }
+        return output;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

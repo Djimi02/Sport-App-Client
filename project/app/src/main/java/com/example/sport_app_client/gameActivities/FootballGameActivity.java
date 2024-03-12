@@ -24,6 +24,7 @@ import com.example.sport_app_client.retrofit.RetrofitService;
 import com.example.sport_app_client.retrofit.api.FootballGroupAPI;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
@@ -33,7 +34,7 @@ import retrofit2.Retrofit;
 
 public class FootballGameActivity extends AppCompatActivity implements OnGameMemberDragListener {
 
-    /* Views */
+    /** Views */
     private ViewFlipper viewFlipper;
     private Button backBTN;
     private Button nextBTN;
@@ -46,15 +47,17 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
     private RecyclerView step3Team2RV;
 
 
-    /* Vars */
+    /** Vars */
     private List<FootballMember> members; // links to the real members so modification is propagated
     private List<FootballMember> team1;
     private List<FootballMember> team2;
     private FootballMember draggedMember;
     private List<FootballMember> step3Team1;
     private List<FootballMember> step3Team2;
+    HashMap<FootballMember, FootballMember> currentGameStatsTeam1;
+    HashMap<FootballMember, FootballMember> currentGameStatsTeam2;
 
-    /* Retrofit */
+    /** Retrofit */
     private Retrofit retrofit;
     private FootballGroupAPI footballGroupAPI;
 
@@ -87,17 +90,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
         backBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                viewFlipper.showPrevious();
-                nextBTN.setEnabled(true);
-
-                if (viewFlipper.getDisplayedChild() == 0) {
-                    backBTN.setEnabled(false);
-                    nextBTN.setText("Confirm Teams");
-                }
-
-                if (viewFlipper.getDisplayedChild() == 1) {
-                    nextBTN.setText("Confirm Stats");
-                }
+                backBtnPressed();
             }
         });
         backBTN.setEnabled(false);
@@ -107,90 +100,153 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
         nextBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (viewFlipper.getDisplayedChild() == 0) {
-                    if (Math.abs(team1.size() - team2.size()) > 1) {
-                        Toast.makeText(FootballGameActivity.this, "Team size difference of not allowed!", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                } else if (viewFlipper.getDisplayedChild() == 2) { // confirm game pressed
-                    Toast.makeText(FootballGameActivity.this, "save game", Toast.LENGTH_SHORT).show();
-
-                    // This will update the member objects in this.team1 and this.team2
-                    ((FootballMembersStatsSelectorRVAdapter)step2Team1RV.getAdapter()).updateMembersWithNewStats();
-                    ((FootballMembersStatsSelectorRVAdapter)step2Team2RV.getAdapter()).updateMembersWithNewStats();
-
-                    // For each member send request to the server to save it
-                    for (int i = 0; i < team1.size(); i++) {
-                        footballGroupAPI.updateFootballMember(team1.get(i)).enqueue(new Callback<Void>() {
-                            @Override
-                            public void onResponse(Call<Void> call, Response<Void> response) {
-                                if (response.code() == 200) {
-
-                                } else {
-                                    // TODO: HANDLE NOT SAVED MEMBER
-                                    Toast.makeText(FootballGameActivity.this, "member saving failed", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<Void> call, Throwable t) {
-                                Toast.makeText(FootballGameActivity.this, "member saving failed", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        System.out.println(team1.get(i).getNickname() + " = " + team1.get(i).getGoals());
-                    }
-                    for (int i = 0; i < team2.size(); i++) {
-                        footballGroupAPI.updateFootballMember(team2.get(i)).enqueue(new Callback<Void>() {
-                            @Override
-                            public void onResponse(Call<Void> call, Response<Void> response) {
-                                if (response.code() == 200) {
-
-                                } else {
-                                    // TODO: HANDLE
-                                    Toast.makeText(FootballGameActivity.this, "member saving failed", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<Void> call, Throwable t) {
-                                Toast.makeText(FootballGameActivity.this, "member saving failed", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        System.out.println(team2.get(i).getNickname() + " = " + team2.get(i).getGoals());
-                    }
-
-                    // TODO: SAVE GAME
-
-                    finish();
-                    return;
-                }
-                
-                viewFlipper.showNext();
-                backBTN.setEnabled(true);
-
-                if (viewFlipper.getDisplayedChild() == 1) { // confirm teams pressed
-
-                    
-                    nextBTN.setText("Confirm Stats");
-
-                    // Update step 2 based on step 1
-                    step2Team1RV.getAdapter().notifyDataSetChanged();
-                    step2Team2RV.getAdapter().notifyDataSetChanged();
-                } else if (viewFlipper.getDisplayedChild() == 2) {
-                    nextBTN.setText("Confirm Game");
-
-                    // update step 3 based on step 2
-                    step3Team1.clear();
-                    step3Team1.addAll(((FootballMembersStatsSelectorRVAdapter)step2Team1RV.getAdapter()).getCurrentGameStats());
-                    step3Team1RV.getAdapter().notifyDataSetChanged();
-                    step3Team2.clear();
-                    step3Team2.addAll(((FootballMembersStatsSelectorRVAdapter)step2Team2RV.getAdapter()).getCurrentGameStats());
-                    step3Team2RV.getAdapter().notifyDataSetChanged();
-                }
+                nextBtnPressed();
             }
         });
 
         initRecyclerViews();
+    }
+
+    /**
+     * This method implements the functionality of "NEXT" button.
+     */
+    private void nextBtnPressed() {
+        if (viewFlipper.getDisplayedChild() == 0) { // Confirm teams pressed
+            if (Math.abs(team1.size() - team2.size()) > 1) {
+                Toast.makeText(FootballGameActivity.this, "Team size difference of not allowed!", Toast.LENGTH_SHORT).show();
+                return;
+            } else if (team1.size() == 0 || team2.size() == 0) {
+                Toast.makeText(FootballGameActivity.this, "Empty teams are not allowed!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        else if (viewFlipper.getDisplayedChild() == 2) { // Confirm game pressed
+            // Update members
+            footballGroupAPI.updateFootballMembers(updateMembersWithNewStats()).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.code() == 200) {
+                        Toast.makeText(FootballGameActivity.this, "Game created successfully!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(FootballGameActivity.this, "Game creation failed!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(FootballGameActivity.this, "Try again later!", Toast.LENGTH_SHORT).show();
+                        undoUpdateMembersWithNewStats();
+                        finish();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Toast.makeText(FootballGameActivity.this, "Game creation failed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FootballGameActivity.this, "Try again later!", Toast.LENGTH_SHORT).show();
+                    undoUpdateMembersWithNewStats();
+                    finish();
+                }
+            });
+
+            // TODO: SAVE GAME
+
+            finish();
+            return;
+        }
+
+        viewFlipper.showNext();
+        backBTN.setEnabled(true);
+
+        if (viewFlipper.getDisplayedChild() == 1) { // After confirm teams pressed
+            nextBTN.setText("Confirm Stats");
+
+            // Update step 2 based on step 1
+            step2Team1RV.getAdapter().notifyDataSetChanged();
+            step2Team2RV.getAdapter().notifyDataSetChanged();
+        }
+        else if (viewFlipper.getDisplayedChild() == 2) { // After confirm stats pressed
+            nextBTN.setText("Confirm Game");
+
+            // update step 3 based on step 2
+            step3Team1.clear();
+            step3Team1.addAll(((FootballMembersStatsSelectorRVAdapter)step2Team1RV.getAdapter()).getCurrentGameStats().values());
+            step3Team1RV.getAdapter().notifyDataSetChanged();
+            step3Team2.clear();
+            step3Team2.addAll(((FootballMembersStatsSelectorRVAdapter)step2Team2RV.getAdapter()).getCurrentGameStats().values());
+            step3Team2RV.getAdapter().notifyDataSetChanged();
+        }
+    }
+
+    private List<FootballMember> updateMembersWithNewStats() {
+        List<FootballMember> output = new ArrayList<>();
+
+        currentGameStatsTeam1 =
+                ((FootballMembersStatsSelectorRVAdapter) step2Team1RV.getAdapter()).getCurrentGameStats();
+        for (FootballMember member : currentGameStatsTeam1.keySet()) {
+            FootballMember tempMember = currentGameStatsTeam1.get(member);
+
+            member.setGoals(member.getGoals() + tempMember.getGoals());
+            member.setAssists(member.getAssists() + tempMember.getAssists());
+            member.setSaves(member.getSaves() + tempMember.getSaves());
+            member.setFouls(member.getFouls() + tempMember.getFouls());
+
+            output.add(member);
+        }
+
+        currentGameStatsTeam2 =
+                ((FootballMembersStatsSelectorRVAdapter) step2Team2RV.getAdapter()).getCurrentGameStats();
+        for (FootballMember member : currentGameStatsTeam2.keySet()) {
+            FootballMember tempMember = currentGameStatsTeam2.get(member);
+
+            member.setGoals(member.getGoals() + tempMember.getGoals());
+            member.setAssists(member.getAssists() + tempMember.getAssists());
+            member.setSaves(member.getSaves() + tempMember.getSaves());
+            member.setFouls(member.getFouls() + tempMember.getFouls());
+
+            output.add(member);
+        }
+
+        return output;
+    }
+
+    private void undoUpdateMembersWithNewStats() {
+        currentGameStatsTeam1 =
+                ((FootballMembersStatsSelectorRVAdapter) step2Team1RV.getAdapter()).getCurrentGameStats();
+        for (FootballMember member : currentGameStatsTeam1.keySet()) {
+            FootballMember tempMember = currentGameStatsTeam1.get(member);
+
+            member.setGoals(member.getGoals() - tempMember.getGoals());
+            member.setAssists(member.getAssists() - tempMember.getAssists());
+            member.setSaves(member.getSaves() - tempMember.getSaves());
+            member.setFouls(member.getFouls() - tempMember.getFouls());
+        }
+
+        currentGameStatsTeam2 =
+                ((FootballMembersStatsSelectorRVAdapter) step2Team2RV.getAdapter()).getCurrentGameStats();
+        for (FootballMember member : currentGameStatsTeam2.keySet()) {
+            FootballMember tempMember = currentGameStatsTeam2.get(member);
+
+            member.setGoals(member.getGoals() - tempMember.getGoals());
+            member.setAssists(member.getAssists() - tempMember.getAssists());
+            member.setSaves(member.getSaves() - tempMember.getSaves());
+            member.setFouls(member.getFouls() - tempMember.getFouls());
+        }
+    }
+
+    /**
+     * This method implements the functionality of "BACK" button.
+     */
+    private void backBtnPressed() {
+        viewFlipper.showPrevious();
+        if (!nextBTN.isEnabled()) {
+            nextBTN.setEnabled(true);
+        }
+
+        if (viewFlipper.getDisplayedChild() == 0) { // Back to step 1
+            backBTN.setEnabled(false);
+            nextBTN.setText("Confirm Teams");
+        }
+
+        if (viewFlipper.getDisplayedChild() == 1) { // Back to step 2
+            nextBTN.setText("Confirm Stats");
+        }
     }
 
     private void initRecyclerViews() {
@@ -261,7 +317,6 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
         step3Team2RV.setAdapter(step3Team2Adapter);
         step3Team2RV.setLayoutManager(new LinearLayoutManager(this));
     }
-
 
     @Override
     public void draggedMember(Member member) {
