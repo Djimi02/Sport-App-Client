@@ -18,7 +18,11 @@ public abstract class Member {
 
     protected Group group;
 
-    public Member() {}
+    protected Integer wins;
+    protected Integer draws;
+    protected Integer loses;
+
+    public Member() {initVars();}
 
     public Member(String nickname, Sports sport, Group group) {
         this.nickname = nickname;
@@ -29,6 +33,9 @@ public abstract class Member {
     }
 
     private void initVars() {
+        this.wins = 0;
+        this.draws = 0;
+        this.loses = 0;
     }
 
     public Long getId() {
@@ -69,5 +76,29 @@ public abstract class Member {
 
     public void setGroup(Group group) {
         this.group = group;
+    }
+
+    public Integer getWins() {
+        return wins;
+    }
+
+    public void setWins(Integer wins) {
+        this.wins = wins;
+    }
+
+    public Integer getDraws() {
+        return draws;
+    }
+
+    public void setDraws(Integer draws) {
+        this.draws = draws;
+    }
+
+    public Integer getLoses() {
+        return loses;
+    }
+
+    public void setLoses(Integer loses) {
+        this.loses = loses;
     }
 }

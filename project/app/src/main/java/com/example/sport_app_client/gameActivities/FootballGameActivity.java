@@ -18,7 +18,6 @@ import com.example.sport_app_client.adapter.GameTeamsRVAdapter;
 import com.example.sport_app_client.adapter.football.FootballMemberStatsViewRVAdapter;
 import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.interfaces.OnGameMemberDragListener;
-import com.example.sport_app_client.model.game.FootballGame;
 import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.model.member.Member;
 import com.example.sport_app_client.retrofit.RetrofitService;
@@ -26,7 +25,6 @@ import com.example.sport_app_client.retrofit.api.FootballGroupAPI;
 import com.example.sport_app_client.retrofit.request.AddNewFootballGameRequest;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -57,6 +55,8 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
     private FootballMember draggedMember;
     private List<FootballMember> step3Team1;
     private List<FootballMember> step3Team2;
+    private List<FootballMember> allMembersWithUpdatedStats;
+    private List<FootballMember> allTemporaryMembers; // represent game stats
     private HashMap<FootballMember, FootballMember> currentGameStatsTeam1;
     private HashMap<FootballMember, FootballMember> currentGameStatsTeam2;
     private Integer victory;
@@ -82,6 +82,8 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
         this.team2 = new ArrayList<>();
         this.step3Team1 = new ArrayList<>();
         this.step3Team2 = new ArrayList<>();
+        this.allMembersWithUpdatedStats = new ArrayList<>();
+        this.allTemporaryMembers = new ArrayList<>();
 
         this.retrofit = new RetrofitService().getRetrofit();
         this.footballGroupAPI = retrofit.create(FootballGroupAPI.class);
@@ -125,14 +127,15 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
             }
         }
         else if (viewFlipper.getDisplayedChild() == 2) { // Confirm game pressed
+            collectGameStats(); // Collect game stats
+
+            // Create request
             AddNewFootballGameRequest request = new AddNewFootballGameRequest();
-            request.setUpdatedMembers(updateMembersWithNewStats()); // updateMembersWithNewStats() should be called first
+            request.setUpdatedMembers(allMembersWithUpdatedStats);
             request.setGroupID(MyGlobals.footballGroup.getId());
             request.setVictory(victory);
-            ArrayList<FootballMember> allGameMembersStats = new ArrayList<>();
-            allGameMembersStats.addAll(currentGameStatsTeam1.values());
-            allGameMembersStats.addAll(currentGameStatsTeam2.values());
-            request.setMembersGameStats(allGameMembersStats);
+            request.setMembersGameStats(allTemporaryMembers);
+
             // Send request
             footballGroupAPI.addNewFootballGame(request).enqueue(new Callback<Void>() {
                 @Override
@@ -143,7 +146,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
                     } else {
                         Toast.makeText(FootballGameActivity.this, "Game creation failed!", Toast.LENGTH_SHORT).show();
                         Toast.makeText(FootballGameActivity.this, "Try again later!", Toast.LENGTH_SHORT).show();
-                        undoUpdateMembersWithNewStats();
+                        undoCollectGameStats();
                         System.out.println("CODE = " + response.code());
                         finish();
                     }
@@ -153,7 +156,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
                 public void onFailure(Call<Void> call, Throwable t) {
                     Toast.makeText(FootballGameActivity.this, "Game creation failed!", Toast.LENGTH_SHORT).show();
                     Toast.makeText(FootballGameActivity.this, "Try again later!", Toast.LENGTH_SHORT).show();
-                    undoUpdateMembersWithNewStats();
+                    undoCollectGameStats();
                     System.out.println(t.toString());
                     finish();
                 }
@@ -185,53 +188,73 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
         }
     }
 
-    private List<FootballMember> updateMembersWithNewStats() {
-        List<FootballMember> output = new ArrayList<>();
+    /**
+     * Updates all selected members with their new stat selected in step 2
+     * and adds them in this.allMembersWithUpdatedStats and adds all game stats
+     * in this.allTemporaryMembers.
+     */
+    private void collectGameStats() {
 
+        // Collect and update team1 members with stats from the game
         int team1TotalGoals = 0;
         currentGameStatsTeam1 =
                 ((FootballMembersStatsSelectorRVAdapter) step2Team1RV.getAdapter()).getCurrentGameStats();
         for (FootballMember member : currentGameStatsTeam1.keySet()) {
             FootballMember tempMember = currentGameStatsTeam1.get(member);
+            tempMember.setPartOfTeam1(true);
 
             member.setGoals(member.getGoals() + tempMember.getGoals());
             member.setAssists(member.getAssists() + tempMember.getAssists());
             member.setSaves(member.getSaves() + tempMember.getSaves());
             member.setFouls(member.getFouls() + tempMember.getFouls());
 
-            output.add(member);
+            allMembersWithUpdatedStats.add(member);
+            allTemporaryMembers.add(tempMember);
 
             team1TotalGoals =+ tempMember.getGoals();
         }
 
+        // Collect and update team2 members with stats from the game
         int team2TotalGoals = 0;
         currentGameStatsTeam2 =
                 ((FootballMembersStatsSelectorRVAdapter) step2Team2RV.getAdapter()).getCurrentGameStats();
         for (FootballMember member : currentGameStatsTeam2.keySet()) {
             FootballMember tempMember = currentGameStatsTeam2.get(member);
+            tempMember.setPartOfTeam1(false);
 
             member.setGoals(member.getGoals() + tempMember.getGoals());
             member.setAssists(member.getAssists() + tempMember.getAssists());
             member.setSaves(member.getSaves() + tempMember.getSaves());
             member.setFouls(member.getFouls() + tempMember.getFouls());
 
-            output.add(member);
+            allMembersWithUpdatedStats.add(member);
+            allTemporaryMembers.add(tempMember);
 
             team2TotalGoals =+ tempMember.getGoals();
         }
 
+        // Increment wins/draws/loses
         if (team1TotalGoals > team2TotalGoals) {
             this.victory = -1;
+            new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> {member.setWins(member.getWins()+1);});
+            new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> {member.setLoses(member.getLoses()+1);});
         } else if (team2TotalGoals > team1TotalGoals) {
             this.victory = 1;
+            new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> {member.setWins(member.getWins()+1);});
+            new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> {member.setLoses(member.getLoses()+1);});
         } else {
-            victory = 0;
+            this.victory = 0;
+            new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> {member.setDraws(member.getDraws()+1);});
+            new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> {member.setDraws(member.getDraws()+1);});
         }
 
-        return output;
     }
 
-    private void undoUpdateMembersWithNewStats() {
+    /**
+     * Undoes the updates over the selected members that were done by updateMembersWithNewStats()
+     * and clears this.allMembersWithUpdatedStats and this.allTemporaryMembers.
+     */
+    private void undoCollectGameStats() {
         currentGameStatsTeam1 =
                 ((FootballMembersStatsSelectorRVAdapter) step2Team1RV.getAdapter()).getCurrentGameStats();
         for (FootballMember member : currentGameStatsTeam1.keySet()) {
@@ -253,6 +276,9 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
             member.setSaves(member.getSaves() - tempMember.getSaves());
             member.setFouls(member.getFouls() - tempMember.getFouls());
         }
+
+        this.allMembersWithUpdatedStats.clear();
+        this.allTemporaryMembers.clear();
     }
 
     /**
