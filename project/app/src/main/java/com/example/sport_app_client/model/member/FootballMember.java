@@ -11,15 +11,15 @@ import java.util.List;
 
 public class FootballMember extends Member {
 
-
-    private List<FootballGame> games;
-
     private int goals;
     private int assists;
     private int saves;
     private int fouls;
+    private Boolean isPartOfTeam1; // used for games
 
-    public FootballMember() {}
+    public FootballMember() {
+        setSport(Sports.FOOTBALL);
+    }
 
     public FootballMember(String nickname, FootballGroup group) {
         super(nickname, Sports.FOOTBALL, group);
@@ -32,17 +32,10 @@ public class FootballMember extends Member {
         this.assists = 0;
         this.saves = 0;
         this.fouls = 0;
+        this.isPartOfTeam1 = null;
     }
 
     /* GETTER AND SETTERS */
-
-    public List<FootballGame> getGames() {
-        return games;
-    }
-
-    public void setGames(List<FootballGame> games) {
-        this.games = games;
-    }
 
     public int getGoals() {
         return goals;
@@ -74,5 +67,13 @@ public class FootballMember extends Member {
 
     public void setFouls(int fouls) {
         this.fouls = fouls;
+    }
+
+    public Boolean getPartOfTeam1() {
+        return isPartOfTeam1;
+    }
+
+    public void setPartOfTeam1(Boolean partOfTeam1) {
+        isPartOfTeam1 = partOfTeam1;
     }
 }

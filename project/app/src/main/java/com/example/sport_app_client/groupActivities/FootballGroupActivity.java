@@ -146,6 +146,7 @@ public class FootballGroupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 MyGlobals.footballMembers = group.getMembers();
+                MyGlobals.footballGroup = group;
                 Intent intent = new Intent(FootballGroupActivity.this, FootballGameActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);

@@ -18,12 +18,15 @@ import com.example.sport_app_client.adapter.GameTeamsRVAdapter;
 import com.example.sport_app_client.adapter.football.FootballMemberStatsViewRVAdapter;
 import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.interfaces.OnGameMemberDragListener;
+import com.example.sport_app_client.model.game.FootballGame;
 import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.model.member.Member;
 import com.example.sport_app_client.retrofit.RetrofitService;
 import com.example.sport_app_client.retrofit.api.FootballGroupAPI;
+import com.example.sport_app_client.retrofit.request.AddNewFootballGameRequest;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -54,8 +57,9 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
     private FootballMember draggedMember;
     private List<FootballMember> step3Team1;
     private List<FootballMember> step3Team2;
-    HashMap<FootballMember, FootballMember> currentGameStatsTeam1;
-    HashMap<FootballMember, FootballMember> currentGameStatsTeam2;
+    private HashMap<FootballMember, FootballMember> currentGameStatsTeam1;
+    private HashMap<FootballMember, FootballMember> currentGameStatsTeam2;
+    private Integer victory;
 
     /** Retrofit */
     private Retrofit retrofit;
@@ -121,8 +125,16 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
             }
         }
         else if (viewFlipper.getDisplayedChild() == 2) { // Confirm game pressed
-            // Update members
-            footballGroupAPI.updateFootballMembers(updateMembersWithNewStats()).enqueue(new Callback<Void>() {
+            AddNewFootballGameRequest request = new AddNewFootballGameRequest();
+            request.setUpdatedMembers(updateMembersWithNewStats()); // updateMembersWithNewStats() should be called first
+            request.setGroupID(MyGlobals.footballGroup.getId());
+            request.setVictory(victory);
+            ArrayList<FootballMember> allGameMembersStats = new ArrayList<>();
+            allGameMembersStats.addAll(currentGameStatsTeam1.values());
+            allGameMembersStats.addAll(currentGameStatsTeam2.values());
+            request.setMembersGameStats(allGameMembersStats);
+            // Send request
+            footballGroupAPI.addNewFootballGame(request).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.code() == 200) {
@@ -132,6 +144,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
                         Toast.makeText(FootballGameActivity.this, "Game creation failed!", Toast.LENGTH_SHORT).show();
                         Toast.makeText(FootballGameActivity.this, "Try again later!", Toast.LENGTH_SHORT).show();
                         undoUpdateMembersWithNewStats();
+                        System.out.println("CODE = " + response.code());
                         finish();
                     }
                 }
@@ -141,13 +154,11 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
                     Toast.makeText(FootballGameActivity.this, "Game creation failed!", Toast.LENGTH_SHORT).show();
                     Toast.makeText(FootballGameActivity.this, "Try again later!", Toast.LENGTH_SHORT).show();
                     undoUpdateMembersWithNewStats();
+                    System.out.println(t.toString());
                     finish();
                 }
             });
 
-            // TODO: SAVE GAME
-
-            finish();
             return;
         }
 
@@ -177,6 +188,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
     private List<FootballMember> updateMembersWithNewStats() {
         List<FootballMember> output = new ArrayList<>();
 
+        int team1TotalGoals = 0;
         currentGameStatsTeam1 =
                 ((FootballMembersStatsSelectorRVAdapter) step2Team1RV.getAdapter()).getCurrentGameStats();
         for (FootballMember member : currentGameStatsTeam1.keySet()) {
@@ -188,8 +200,11 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
             member.setFouls(member.getFouls() + tempMember.getFouls());
 
             output.add(member);
+
+            team1TotalGoals =+ tempMember.getGoals();
         }
 
+        int team2TotalGoals = 0;
         currentGameStatsTeam2 =
                 ((FootballMembersStatsSelectorRVAdapter) step2Team2RV.getAdapter()).getCurrentGameStats();
         for (FootballMember member : currentGameStatsTeam2.keySet()) {
@@ -201,6 +216,16 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
             member.setFouls(member.getFouls() + tempMember.getFouls());
 
             output.add(member);
+
+            team2TotalGoals =+ tempMember.getGoals();
+        }
+
+        if (team1TotalGoals > team2TotalGoals) {
+            this.victory = -1;
+        } else if (team2TotalGoals > team1TotalGoals) {
+            this.victory = 1;
+        } else {
+            victory = 0;
         }
 
         return output;

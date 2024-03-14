@@ -2,6 +2,7 @@ package com.example.sport_app_client.retrofit.api;
 
 import com.example.sport_app_client.model.group.FootballGroup;
 import com.example.sport_app_client.model.member.FootballMember;
+import com.example.sport_app_client.retrofit.request.AddNewFootballGameRequest;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public interface FootballGroupAPI {
     @POST("/group/football/add/member/{groupid}/{name}")
     Call<FootballMember> addFootballMember(@Path("groupid") Long groupID, @Path("name") String memberName);
 
-    @POST("/group/football/update/members/list")
-    Call<Void> updateFootballMembers(@Body List<FootballMember> member);
+    @POST("/group/football/add/game")
+    Call<Void> addNewFootballGame(@Body AddNewFootballGameRequest request);
 
 }
