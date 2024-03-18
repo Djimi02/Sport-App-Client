@@ -2,23 +2,22 @@ package com.example.sport_app_client.groupActivities;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.sport_app_client.HomepageActivity;
 import com.example.sport_app_client.R;
-import com.example.sport_app_client.SettingsActivity;
+import com.example.sport_app_client.adapter.football.FBMemberAllStatsViewRVAdapter;
+import com.example.sport_app_client.adapter.football.FootballMemberGameStatsViewRVAdapter;
 import com.example.sport_app_client.gameActivities.FootballGameActivity;
 import com.example.sport_app_client.helpers.LogOutHandler;
 import com.example.sport_app_client.helpers.MyGlobals;
-import com.example.sport_app_client.model.Sports;
 import com.example.sport_app_client.model.group.FootballGroup;
 import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.retrofit.RetrofitService;
@@ -34,6 +33,8 @@ public class FootballGroupActivity extends AppCompatActivity {
     /* Views */
     private Button addMemberBTN;
     private Button addGameBTN;
+    private RecyclerView gamesRV;
+    private RecyclerView membersRV;
 
     /* Dialog */
     private AlertDialog.Builder dialogBuilder;
@@ -84,6 +85,7 @@ public class FootballGroupActivity extends AppCompatActivity {
             public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
                 if (response.code() == 200) { // OK
                     group = response.body();
+                    initRecyclers(); // they depend on group info
                     Toast.makeText(FootballGroupActivity.this, group.getName(), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(FootballGroupActivity.this, "This action cannot be done now!", Toast.LENGTH_SHORT).show();
@@ -112,6 +114,7 @@ public class FootballGroupActivity extends AppCompatActivity {
             public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
                 if (response.code() == 200) { // ok
                     group = response.body();
+                    initRecyclers(); // they depend on group info
                     Toast.makeText(FootballGroupActivity.this, group.getName(), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(FootballGroupActivity.this, "This action cannot be done now!", Toast.LENGTH_SHORT).show();
@@ -152,6 +155,16 @@ public class FootballGroupActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    private void initRecyclers() {
+        this.gamesRV = findViewById(R.id.footballpageGamesRV);
+
+
+        this.membersRV = findViewById(R.id.footballpageMembersRV);
+        FBMemberAllStatsViewRVAdapter membersAdapter = new FBMemberAllStatsViewRVAdapter(this.group.getMembers());
+        membersRV.setAdapter(membersAdapter);
+        membersRV.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void openAddMemberDialog() {

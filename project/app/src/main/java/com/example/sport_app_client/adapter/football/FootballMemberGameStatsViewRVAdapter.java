@@ -14,11 +14,11 @@ import com.example.sport_app_client.model.member.FootballMember;
 
 import java.util.List;
 
-public class FootballMemberStatsViewRVAdapter extends RecyclerView.Adapter<FootballMemberStatsViewRVAdapter.ViewHolder> {
+public class FootballMemberGameStatsViewRVAdapter extends RecyclerView.Adapter<FootballMemberGameStatsViewRVAdapter.ViewHolder> {
 
     private List<FootballMember> members;
 
-    public FootballMemberStatsViewRVAdapter(List<FootballMember> members) {
+    public FootballMemberGameStatsViewRVAdapter(List<FootballMember> members) {
         this.members = members;
     }
 
@@ -29,9 +29,9 @@ public class FootballMemberStatsViewRVAdapter extends RecyclerView.Adapter<Footb
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        View spotView = inflater.inflate(R.layout.football_member_stats_rv_item, parent, false);
+        View spotView = inflater.inflate(R.layout.fb_member_stats_view_rv_item, parent, false);
 
-        FootballMemberStatsViewRVAdapter.ViewHolder viewHolder = new FootballMemberStatsViewRVAdapter.ViewHolder(spotView);
+        FootballMemberGameStatsViewRVAdapter.ViewHolder viewHolder = new FootballMemberGameStatsViewRVAdapter.ViewHolder(spotView);
         return viewHolder;
     }
 

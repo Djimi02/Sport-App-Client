@@ -27,6 +27,26 @@
             android:text="Add game"
             android:id="@+id/footballpageAddGameBTN"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Games"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_100sdp"
+            android:id="@+id/footballpageGamesRV"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Members"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_100sdp"
+            android:id="@+id/footballpageMembersRV"/>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
