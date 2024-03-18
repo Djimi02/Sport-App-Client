@@ -14,14 +14,13 @@ import android.widget.Toast;
 
 import com.example.sport_app_client.R;
 import com.example.sport_app_client.adapter.football.FBMemberAllStatsViewRVAdapter;
-import com.example.sport_app_client.adapter.football.FootballMemberGameStatsViewRVAdapter;
 import com.example.sport_app_client.gameActivities.FootballGameActivity;
 import com.example.sport_app_client.helpers.LogOutHandler;
 import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.model.group.FootballGroup;
 import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.retrofit.RetrofitService;
-import com.example.sport_app_client.retrofit.api.FootballGroupAPI;
+import com.example.sport_app_client.retrofit.api.FBGroupAPI;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -43,7 +42,7 @@ public class FootballGroupActivity extends AppCompatActivity {
     /* Vars */
     private FootballGroup group;
     private Retrofit retrofit;
-    private FootballGroupAPI groupAPI;
+    private FBGroupAPI groupAPI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,7 +131,7 @@ public class FootballGroupActivity extends AppCompatActivity {
 
     private void initVars() {
         this.retrofit = new RetrofitService().getRetrofit();
-        this.groupAPI = retrofit.create(FootballGroupAPI.class);
+        this.groupAPI = retrofit.create(FBGroupAPI.class);
     }
 
     private void initViews() {

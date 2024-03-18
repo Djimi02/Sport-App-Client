@@ -12,17 +12,17 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.example.sport_app_client.R;
-import com.example.sport_app_client.adapter.football.FootballMembersGameStatsSelectorRVAdapter;
+import com.example.sport_app_client.adapter.football.FBMembersGameStatsSelectorRVAdapter;
 import com.example.sport_app_client.adapter.GameMembersRVAdapter;
 import com.example.sport_app_client.adapter.GameTeamsRVAdapter;
-import com.example.sport_app_client.adapter.football.FootballMemberGameStatsViewRVAdapter;
+import com.example.sport_app_client.adapter.football.FBMemberGameStatsViewRVAdapter;
 import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.interfaces.OnGameMemberDragListener;
 import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.model.member.Member;
 import com.example.sport_app_client.retrofit.RetrofitService;
-import com.example.sport_app_client.retrofit.api.FootballGroupAPI;
-import com.example.sport_app_client.retrofit.request.AddNewFootballGameRequest;
+import com.example.sport_app_client.retrofit.api.FBGroupAPI;
+import com.example.sport_app_client.retrofit.request.AddNewFBGameRequest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,7 +63,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
 
     /** Retrofit */
     private Retrofit retrofit;
-    private FootballGroupAPI footballGroupAPI;
+    private FBGroupAPI footballGroupAPI;
 
 
     @Override
@@ -86,7 +86,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
         this.allTemporaryMembers = new ArrayList<>();
 
         this.retrofit = new RetrofitService().getRetrofit();
-        this.footballGroupAPI = retrofit.create(FootballGroupAPI.class);
+        this.footballGroupAPI = retrofit.create(FBGroupAPI.class);
     }
 
     private void initViews() {
@@ -130,7 +130,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
             collectGameStats(); // Collect game stats
 
             // Create request
-            AddNewFootballGameRequest request = new AddNewFootballGameRequest();
+            AddNewFBGameRequest request = new AddNewFBGameRequest();
             request.setUpdatedMembers(allMembersWithUpdatedStats);
             request.setGroupID(MyGlobals.footballGroup.getId());
             request.setVictory(victory);
@@ -180,10 +180,10 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
 
             // update step 3 based on step 2
             step3Team1.clear();
-            step3Team1.addAll(((FootballMembersGameStatsSelectorRVAdapter)step2Team1RV.getAdapter()).getCurrentGameStats().values());
+            step3Team1.addAll(((FBMembersGameStatsSelectorRVAdapter)step2Team1RV.getAdapter()).getCurrentGameStats().values());
             step3Team1RV.getAdapter().notifyDataSetChanged();
             step3Team2.clear();
-            step3Team2.addAll(((FootballMembersGameStatsSelectorRVAdapter)step2Team2RV.getAdapter()).getCurrentGameStats().values());
+            step3Team2.addAll(((FBMembersGameStatsSelectorRVAdapter)step2Team2RV.getAdapter()).getCurrentGameStats().values());
             step3Team2RV.getAdapter().notifyDataSetChanged();
         }
     }
@@ -198,7 +198,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
         // Collect and update team1 members with stats from the game
         int team1TotalGoals = 0;
         currentGameStatsTeam1 =
-                ((FootballMembersGameStatsSelectorRVAdapter) step2Team1RV.getAdapter()).getCurrentGameStats();
+                ((FBMembersGameStatsSelectorRVAdapter) step2Team1RV.getAdapter()).getCurrentGameStats();
         for (FootballMember member : currentGameStatsTeam1.keySet()) {
             FootballMember tempMember = currentGameStatsTeam1.get(member);
             tempMember.setPartOfTeam1(true);
@@ -217,7 +217,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
         // Collect and update team2 members with stats from the game
         int team2TotalGoals = 0;
         currentGameStatsTeam2 =
-                ((FootballMembersGameStatsSelectorRVAdapter) step2Team2RV.getAdapter()).getCurrentGameStats();
+                ((FBMembersGameStatsSelectorRVAdapter) step2Team2RV.getAdapter()).getCurrentGameStats();
         for (FootballMember member : currentGameStatsTeam2.keySet()) {
             FootballMember tempMember = currentGameStatsTeam2.get(member);
             tempMember.setPartOfTeam1(false);
@@ -256,7 +256,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
      */
     private void undoCollectGameStats() {
         currentGameStatsTeam1 =
-                ((FootballMembersGameStatsSelectorRVAdapter) step2Team1RV.getAdapter()).getCurrentGameStats();
+                ((FBMembersGameStatsSelectorRVAdapter) step2Team1RV.getAdapter()).getCurrentGameStats();
         for (FootballMember member : currentGameStatsTeam1.keySet()) {
             FootballMember tempMember = currentGameStatsTeam1.get(member);
 
@@ -267,7 +267,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
         }
 
         currentGameStatsTeam2 =
-                ((FootballMembersGameStatsSelectorRVAdapter) step2Team2RV.getAdapter()).getCurrentGameStats();
+                ((FBMembersGameStatsSelectorRVAdapter) step2Team2RV.getAdapter()).getCurrentGameStats();
         for (FootballMember member : currentGameStatsTeam2.keySet()) {
             FootballMember tempMember = currentGameStatsTeam2.get(member);
 
@@ -348,23 +348,23 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
 
         // Step 2
         this.step2Team1RV = findViewById(R.id.footballgameStep2Team1RV);
-        FootballMembersGameStatsSelectorRVAdapter step2Team1Adapter = new FootballMembersGameStatsSelectorRVAdapter(team1);
+        FBMembersGameStatsSelectorRVAdapter step2Team1Adapter = new FBMembersGameStatsSelectorRVAdapter(team1);
         step2Team1RV.setAdapter(step2Team1Adapter);
         step2Team1RV.setLayoutManager(new LinearLayoutManager(this));
 
         this.step2Team2RV = findViewById(R.id.footballgameStep2Team2RV);
-        FootballMembersGameStatsSelectorRVAdapter step2Team2Adapter = new FootballMembersGameStatsSelectorRVAdapter(team2);
+        FBMembersGameStatsSelectorRVAdapter step2Team2Adapter = new FBMembersGameStatsSelectorRVAdapter(team2);
         step2Team2RV.setAdapter(step2Team2Adapter);
         step2Team2RV.setLayoutManager(new LinearLayoutManager(this));
 
         // Step 3
         this.step3Team1RV = findViewById(R.id.footballgameStep3Team1RV);
-        FootballMemberGameStatsViewRVAdapter step3Team1Adapter = new FootballMemberGameStatsViewRVAdapter(step3Team1);
+        FBMemberGameStatsViewRVAdapter step3Team1Adapter = new FBMemberGameStatsViewRVAdapter(step3Team1);
         step3Team1RV.setAdapter(step3Team1Adapter);
         step3Team1RV.setLayoutManager(new LinearLayoutManager(this));
 
         this.step3Team2RV = findViewById(R.id.footballgameStep3Team2RV);
-        FootballMemberGameStatsViewRVAdapter step3Team2Adapter = new FootballMemberGameStatsViewRVAdapter(step3Team2);
+        FBMemberGameStatsViewRVAdapter step3Team2Adapter = new FBMemberGameStatsViewRVAdapter(step3Team2);
         step3Team2RV.setAdapter(step3Team2Adapter);
         step3Team2RV.setLayoutManager(new LinearLayoutManager(this));
     }

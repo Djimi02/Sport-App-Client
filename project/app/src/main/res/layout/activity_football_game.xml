@@ -18,11 +18,11 @@
         android:layout_height="wrap_content"
         android:id="@+id/footballgameactivityVF">
 
-        <include layout="@layout/football_game_step_1" />
+        <include layout="@layout/fb_game_step_1" />
 
-        <include layout="@layout/football_game_step_2"/>
+        <include layout="@layout/fb_game_step_2"/>
 
-        <include layout="@layout/football_game_step_3"/>
+        <include layout="@layout/fb_game_step_3"/>
 
     </ViewFlipper>
 

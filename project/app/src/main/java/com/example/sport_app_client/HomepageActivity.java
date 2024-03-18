@@ -20,20 +20,9 @@ import com.example.sport_app_client.adapter.UserGroupsRVAdapter;
 import com.example.sport_app_client.groupActivities.FootballGroupActivity;
 import com.example.sport_app_client.interfaces.UserGroupClickListener;
 import com.example.sport_app_client.model.Sports;
-import com.example.sport_app_client.model.User;
-import com.example.sport_app_client.model.group.FootballGroup;
-import com.example.sport_app_client.model.member.FootballMember;
-import com.example.sport_app_client.model.member.Member;
 import com.example.sport_app_client.retrofit.MyAuthManager;
 import com.example.sport_app_client.retrofit.RetrofitService;
-import com.example.sport_app_client.retrofit.api.FootballGroupAPI;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class HomepageActivity extends AppCompatActivity implements UserGroupClickListener {
