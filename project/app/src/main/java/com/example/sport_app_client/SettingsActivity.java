@@ -47,21 +47,15 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void initViews() {
         this.logoutBTN = findViewById(R.id.settingspageLogoutBTN);
-        logoutBTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LogOutHandler.logout(SettingsActivity.this, "Logged out Successfully!");
-            }
+        logoutBTN.setOnClickListener(view -> {
+            LogOutHandler.logout(SettingsActivity.this, "Logged out Successfully!");
         });
 
         this.backBTN = findViewById(R.id.settingspageBackBTN);
-        backBTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(SettingsActivity.this, HomepageActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-            }
+        backBTN.setOnClickListener(view -> {
+            Intent intent = new Intent(SettingsActivity.this, HomepageActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent);
         });
     }
 

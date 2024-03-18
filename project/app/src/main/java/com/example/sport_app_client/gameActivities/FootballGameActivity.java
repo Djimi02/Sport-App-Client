@@ -93,22 +93,16 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
         this.viewFlipper = findViewById(R.id.footballgameactivityVF);
 
         this.backBTN = findViewById(R.id.footballgameactivityBackBTN);
-        backBTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                backBtnPressed();
-            }
-        });
+        backBTN.setOnClickListener((view -> {
+            backBtnPressed();
+        }));
         backBTN.setEnabled(false);
 
         this.nextBTN = findViewById(R.id.footballgameactivityNextBTN);
         this.nextBTN.setText("Confirm Teams");
-        nextBTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                nextBtnPressed();
-            }
-        });
+        nextBTN.setOnClickListener((view -> {
+            nextBtnPressed();
+        }));
 
         initRecyclerViews();
     }

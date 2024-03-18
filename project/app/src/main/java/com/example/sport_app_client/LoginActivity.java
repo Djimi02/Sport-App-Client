@@ -71,38 +71,29 @@ public class LoginActivity extends AppCompatActivity {
         this.passwordET = findViewById(R.id.LogInPagePasswordET);
 
         this.logInBTN = findViewById(R.id.LogInPageLogInBTN);
-        logInBTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - lastClickTime < 1000){
-                    return;
-                }
-                lastClickTime = SystemClock.elapsedRealtime();
-                logIn();
-                hideSoftKeyboard(LoginActivity.this);
+        logInBTN.setOnClickListener(view -> {
+            if (SystemClock.elapsedRealtime() - lastClickTime < 1000){
+                return;
             }
+            lastClickTime = SystemClock.elapsedRealtime();
+            logIn();
+            hideSoftKeyboard(LoginActivity.this);
         });
 
         this.goToRegisterBTN = findViewById(R.id.LogInPageRegisterBTN);
-        goToRegisterBTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-            }
+        goToRegisterBTN.setOnClickListener(view -> {
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent);
         });
 
         this.progressBar = findViewById(R.id.logInPagePB);
         progressBar.setVisibility(View.GONE);
 
         this.forgotPasswordTV = findViewById(R.id.logInPageForgotPasswordTV);
-        forgotPasswordTV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(LoginActivity.this, "reset email dialog xD", Toast.LENGTH_SHORT).show();
+        forgotPasswordTV.setOnClickListener(view -> {
+            Toast.makeText(LoginActivity.this, "reset email dialog xD", Toast.LENGTH_SHORT).show();
 //                openResetEmailDialog();
-            }
         });
     }
 

@@ -137,23 +137,17 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
 
     private void initViews() {
         this.addMemberBTN = findViewById(R.id.footballpageAddMemberBTN);
-        addMemberBTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openAddMemberDialog();
-            }
-        });
+        addMemberBTN.setOnClickListener((view -> {
+            openAddMemberDialog();
+        }));
 
         this.addGameBTN = findViewById(R.id.footballpageAddGameBTN);
-        addGameBTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MyGlobals.footballGroup = group;
-                MyGlobals.gameCreatedListener = FootballGroupActivity.this;
-                Intent intent = new Intent(FootballGroupActivity.this, FootballGameActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-            }
+        addGameBTN.setOnClickListener((view) -> {
+            MyGlobals.footballGroup = group;
+            MyGlobals.gameCreatedListener = this;
+            Intent intent = new Intent(FootballGroupActivity.this, FootballGameActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent);
         });
     }
 
@@ -174,38 +168,35 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
 
         final EditText memberNameET = popupView.findViewById(R.id.addFootballMemberDialogET);
         final Button addBTN = popupView.findViewById(R.id.addFootballMemberDialogBTN);
-        addBTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String memberName = memberNameET.getText().toString().trim();
-                if (memberName.isEmpty()) {
-                    memberNameET.setError("Input member name!");
-                    return;
-                } else if (memberName.length() > 12) {
-                    memberNameET.setError("Name can be 12 characters max!");
-                    return;
-                }
-                groupAPI.addFootballMember(group.getId(), memberName).enqueue(new Callback<FootballMember>() {
-                    @Override
-                    public void onResponse(Call<FootballMember> call, Response<FootballMember> response) {
-                        if (response.code() == 200) { // OK
-                            group.addMember(response.body());
-                            Toast.makeText(FootballGroupActivity.this, "Member added successfully!", Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
-                        } else {
-                            Toast.makeText(FootballGroupActivity.this, "This action cannot be done now!", Toast.LENGTH_SHORT).show();
-                            Toast.makeText(FootballGroupActivity.this, "Try again later!", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<FootballMember> call, Throwable t) {
-                        Toast.makeText(FootballGroupActivity.this, "group request failed", Toast.LENGTH_SHORT).show();
-                        LogOutHandler.logout(FootballGroupActivity.this, "Try again later!");
-                    }
-                });
+        addBTN.setOnClickListener((view -> {
+            String memberName = memberNameET.getText().toString().trim();
+            if (memberName.isEmpty()) {
+                memberNameET.setError("Input member name!");
+                return;
+            } else if (memberName.length() > 12) {
+                memberNameET.setError("Name can be 12 characters max!");
+                return;
             }
-        });
+            groupAPI.addFootballMember(group.getId(), memberName).enqueue(new Callback<FootballMember>() {
+                @Override
+                public void onResponse(Call<FootballMember> call, Response<FootballMember> response) {
+                    if (response.code() == 200) { // OK
+                        group.addMember(response.body());
+                        Toast.makeText(FootballGroupActivity.this, "Member added successfully!", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    } else {
+                        Toast.makeText(FootballGroupActivity.this, "This action cannot be done now!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(FootballGroupActivity.this, "Try again later!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<FootballMember> call, Throwable t) {
+                    Toast.makeText(FootballGroupActivity.this, "group request failed", Toast.LENGTH_SHORT).show();
+                    LogOutHandler.logout(FootballGroupActivity.this, "Try again later!");
+                }
+            });
+        }));
 
         // Show dialog
         dialogBuilder.setView(popupView);

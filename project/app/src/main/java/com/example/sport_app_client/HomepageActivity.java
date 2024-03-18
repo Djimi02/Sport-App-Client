@@ -82,21 +82,15 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         userGroupsRV.setLayoutManager(new LinearLayoutManager(this));
 
         this.settingsBTN = findViewById(R.id.homepageSettingsBTN);
-        settingsBTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-            }
-        });
+        settingsBTN.setOnClickListener((view -> {
+            Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent);
+        }));
 
         this.createGroupBTN = findViewById(R.id.homepageCreateGroupBTN);
-        createGroupBTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openCreateGroupDialog();
-            }
+        createGroupBTN.setOnClickListener(view -> {
+            openCreateGroupDialog();
         });
     }
 
@@ -123,27 +117,24 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         final Spinner spinner = popupView.findViewById(R.id.createGroupDialogSpinner);
         spinner.setAdapter(new ArrayAdapter<Sports>(this, android.R.layout.simple_spinner_item, Sports.values()));
         final Button createBTN = popupView.findViewById(R.id.createGroupDialogBTN);
-        createBTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String groupName = groupNameET.getText().toString().trim();
-                if (groupName.isEmpty()) {
-                    groupNameET.setError("Add group name!");
-                    return;
-                } else if (spinner.getSelectedItemPosition() == 0) {
-                    Toast.makeText(HomepageActivity.this, "Select a sport!", Toast.LENGTH_SHORT).show();
-                }
+        createBTN.setOnClickListener(view -> {
+            String groupName = groupNameET.getText().toString().trim();
+            if (groupName.isEmpty()) {
+                groupNameET.setError("Add group name!");
+                return;
+            } else if (spinner.getSelectedItemPosition() == 0) {
+                Toast.makeText(HomepageActivity.this, "Select a sport!", Toast.LENGTH_SHORT).show();
+            }
 
-                switch (spinner.getSelectedItem().toString()) {
-                    case "Football":
-                        Intent intent = new Intent(HomepageActivity.this, FootballGroupActivity.class);
-                        intent.putExtra("new_group", 1); // 1 means true
-                        intent.putExtra("group_name", groupName);
-                        intent.putExtra("user_id", authManager.getUser().getId());
-                        startActivity(intent);
-                        dialog.dismiss();
-                        return;
-                }
+            switch (spinner.getSelectedItem().toString()) {
+                case "Football":
+                    Intent intent = new Intent(HomepageActivity.this, FootballGroupActivity.class);
+                    intent.putExtra("new_group", 1); // 1 means true
+                    intent.putExtra("group_name", groupName);
+                    intent.putExtra("user_id", authManager.getUser().getId());
+                    startActivity(intent);
+                    dialog.dismiss();
+                    return;
             }
         });
 

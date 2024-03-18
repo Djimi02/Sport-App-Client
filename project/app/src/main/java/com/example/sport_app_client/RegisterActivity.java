@@ -63,12 +63,9 @@ public class RegisterActivity extends AppCompatActivity {
         this.repeatPasswordET = findViewById(R.id.RegistrationPageRepPassET);
         this.userNameET = findViewById(R.id.RegistrationPageUsernameET);
         this.registerBTN = findViewById(R.id.RegistrationPageRegisterBTN);
-        registerBTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                register();
-                hideSoftKeyboard(RegisterActivity.this);
-            }
+        registerBTN.setOnClickListener(view -> {
+            register();
+            hideSoftKeyboard(RegisterActivity.this);
         });
     }
 
