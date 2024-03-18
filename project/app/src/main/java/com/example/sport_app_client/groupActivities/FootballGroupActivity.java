@@ -17,6 +17,7 @@ import com.example.sport_app_client.adapter.football.FBMemberAllStatsViewRVAdapt
 import com.example.sport_app_client.gameActivities.FootballGameActivity;
 import com.example.sport_app_client.helpers.LogOutHandler;
 import com.example.sport_app_client.helpers.MyGlobals;
+import com.example.sport_app_client.interfaces.GameCreatedListener;
 import com.example.sport_app_client.model.group.FootballGroup;
 import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.retrofit.RetrofitService;
@@ -27,7 +28,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class FootballGroupActivity extends AppCompatActivity {
+public class FootballGroupActivity extends AppCompatActivity implements GameCreatedListener {
 
     /* Views */
     private Button addMemberBTN;
@@ -147,8 +148,8 @@ public class FootballGroupActivity extends AppCompatActivity {
         addGameBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MyGlobals.footballMembers = group.getMembers();
                 MyGlobals.footballGroup = group;
+                MyGlobals.gameCreatedListener = FootballGroupActivity.this;
                 Intent intent = new Intent(FootballGroupActivity.this, FootballGameActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
@@ -210,5 +211,13 @@ public class FootballGroupActivity extends AppCompatActivity {
         dialogBuilder.setView(popupView);
         dialog = dialogBuilder.create();
         dialog.show();
+    }
+
+    @Override
+    public void onGameCreated() {
+        // Update members rv with new stats after game
+        this.membersRV.getAdapter().notifyDataSetChanged();
+
+        // TODO: update games rv
     }
 }

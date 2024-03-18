@@ -77,7 +77,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
     }
 
     private void initVars() {
-        this.members = MyGlobals.footballMembers;
+        this.members = MyGlobals.footballGroup.getMembers();
         this.team1 = new ArrayList<>();
         this.team2 = new ArrayList<>();
         this.step3Team1 = new ArrayList<>();
@@ -142,6 +142,10 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.code() == 200) {
                         Toast.makeText(FootballGameActivity.this, "Game created successfully!", Toast.LENGTH_SHORT).show();
+                        if (!(MyGlobals.gameCreatedListener == null)) {
+                            MyGlobals.gameCreatedListener.onGameCreated(); // Update group
+                            MyGlobals.gameCreatedListener = null;
+                        }
                         finish();
                     } else {
                         Toast.makeText(FootballGameActivity.this, "Game creation failed!", Toast.LENGTH_SHORT).show();
