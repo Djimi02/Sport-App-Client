@@ -17,12 +17,12 @@ import com.example.sport_app_client.model.member.Member;
 
 import java.util.List;
 
-public class GameMembersRVAdapter extends RecyclerView.Adapter<GameMembersRVAdapter.ViewHolder> {
+public class GroupMembersRVAdapter extends RecyclerView.Adapter<GroupMembersRVAdapter.ViewHolder> {
 
     private List<? extends Member> members;
     private OnGameMemberDragListener listener;
 
-    public GameMembersRVAdapter(List<? extends Member> members, OnGameMemberDragListener listener) {
+    public GroupMembersRVAdapter(List<? extends Member> members, OnGameMemberDragListener listener) {
         this.members = members;
         this.listener = listener;
     }
@@ -35,7 +35,7 @@ public class GameMembersRVAdapter extends RecyclerView.Adapter<GameMembersRVAdap
 
         View spotView = inflater.inflate(R.layout.game_member_item_rv, parent, false);
 
-        GameMembersRVAdapter.ViewHolder viewHolder = new GameMembersRVAdapter.ViewHolder(spotView);
+        GroupMembersRVAdapter.ViewHolder viewHolder = new GroupMembersRVAdapter.ViewHolder(spotView);
         return viewHolder;
     }
 

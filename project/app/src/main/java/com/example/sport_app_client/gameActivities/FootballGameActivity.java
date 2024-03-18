@@ -13,7 +13,7 @@ import android.widget.ViewFlipper;
 
 import com.example.sport_app_client.R;
 import com.example.sport_app_client.adapter.football.FBMembersGameStatsSelectorRVAdapter;
-import com.example.sport_app_client.adapter.GameMembersRVAdapter;
+import com.example.sport_app_client.adapter.GroupMembersRVAdapter;
 import com.example.sport_app_client.adapter.GameTeamsRVAdapter;
 import com.example.sport_app_client.adapter.football.FBMemberGameStatsViewRVAdapter;
 import com.example.sport_app_client.helpers.MyGlobals;
@@ -304,7 +304,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
 
         // Step 1
         this.membersRV = findViewById(R.id.footballgameStep1MembersRV);
-        GameMembersRVAdapter membersAdapter = new GameMembersRVAdapter(members, this);
+        GroupMembersRVAdapter membersAdapter = new GroupMembersRVAdapter(members, this);
         membersRV.setAdapter(membersAdapter);
         membersRV.setLayoutManager(new LinearLayoutManager(this));
 
