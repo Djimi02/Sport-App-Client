@@ -18,6 +18,7 @@ import com.example.sport_app_client.adapter.GameTeamsRVAdapter;
 import com.example.sport_app_client.adapter.football.FBMemberGameStatsViewRVAdapter;
 import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.interfaces.OnGameMemberDragListener;
+import com.example.sport_app_client.model.game.FootballGame;
 import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.model.member.Member;
 import com.example.sport_app_client.retrofit.RetrofitService;
@@ -131,11 +132,12 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
             request.setMembersGameStats(allTemporaryMembers);
 
             // Send request
-            footballGroupAPI.addNewFootballGame(request).enqueue(new Callback<Void>() {
+            footballGroupAPI.addNewFootballGame(request).enqueue(new Callback<FootballGame>() {
                 @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
+                public void onResponse(Call<FootballGame> call, Response<FootballGame> response) {
                     if (response.code() == 200) {
                         Toast.makeText(FootballGameActivity.this, "Game created successfully!", Toast.LENGTH_SHORT).show();
+                        MyGlobals.footballGroup.addGame(response.body());
                         if (!(MyGlobals.gameCreatedListener == null)) {
                             MyGlobals.gameCreatedListener.onGameCreated(); // Update group
                             MyGlobals.gameCreatedListener = null;
@@ -151,7 +153,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
                 }
 
                 @Override
-                public void onFailure(Call<Void> call, Throwable t) {
+                public void onFailure(Call<FootballGame> call, Throwable t) {
                     Toast.makeText(FootballGameActivity.this, "Game creation failed!", Toast.LENGTH_SHORT).show();
                     Toast.makeText(FootballGameActivity.this, "Try again later!", Toast.LENGTH_SHORT).show();
                     undoCollectGameStats();

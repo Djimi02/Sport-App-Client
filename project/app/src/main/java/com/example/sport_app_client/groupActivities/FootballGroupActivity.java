@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.sport_app_client.R;
+import com.example.sport_app_client.RegisterActivity;
 import com.example.sport_app_client.adapter.football.FBMemberAllStatsViewRVAdapter;
 import com.example.sport_app_client.gameActivities.FootballGameActivity;
 import com.example.sport_app_client.helpers.LogOutHandler;
@@ -184,6 +185,12 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
                         group.addMember(response.body());
                         Toast.makeText(FootballGroupActivity.this, "Member added successfully!", Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
+                    } else if (response.code() == 400) {
+                        try {
+                            Toast.makeText(FootballGroupActivity.this, response.errorBody().string(), Toast.LENGTH_LONG).show();
+                        } catch (Exception e) {
+                            Toast.makeText(FootballGroupActivity.this, "Something went wrong!", Toast.LENGTH_LONG).show();
+                        }
                     } else {
                         Toast.makeText(FootballGroupActivity.this, "This action cannot be done now!", Toast.LENGTH_SHORT).show();
                         Toast.makeText(FootballGroupActivity.this, "Try again later!", Toast.LENGTH_SHORT).show();

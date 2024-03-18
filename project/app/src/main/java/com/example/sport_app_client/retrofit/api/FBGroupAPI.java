@@ -1,5 +1,6 @@
 package com.example.sport_app_client.retrofit.api;
 
+import com.example.sport_app_client.model.game.FootballGame;
 import com.example.sport_app_client.model.group.FootballGroup;
 import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.retrofit.request.AddNewFBGameRequest;
@@ -22,6 +23,6 @@ public interface FBGroupAPI {
     Call<FootballMember> addFootballMember(@Path("groupid") Long groupID, @Path("name") String memberName);
 
     @POST("/group/football/add/game")
-    Call<Void> addNewFootballGame(@Body AddNewFBGameRequest request);
+    Call<FootballGame> addNewFootballGame(@Body AddNewFBGameRequest request);
 
 }
