@@ -15,9 +15,11 @@ import android.widget.Toast;
 import com.example.sport_app_client.R;
 import com.example.sport_app_client.adapter.GamesRVAdapter;
 import com.example.sport_app_client.adapter.football.FBMemberAllStatsViewRVAdapter;
+import com.example.sport_app_client.adapter.football.FBMemberGameStatsViewRVAdapter;
 import com.example.sport_app_client.gameActivities.FootballGameActivity;
 import com.example.sport_app_client.helpers.LogOutHandler;
 import com.example.sport_app_client.helpers.MyGlobals;
+import com.example.sport_app_client.interfaces.GameClickListener;
 import com.example.sport_app_client.interfaces.GameCreatedListener;
 import com.example.sport_app_client.model.game.Game;
 import com.example.sport_app_client.model.group.FootballGroup;
@@ -25,7 +27,9 @@ import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.retrofit.RetrofitService;
 import com.example.sport_app_client.retrofit.api.FBGroupAPI;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
@@ -33,7 +37,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class FootballGroupActivity extends AppCompatActivity implements GameCreatedListener {
+public class FootballGroupActivity extends AppCompatActivity implements GameCreatedListener, GameClickListener {
 
     /* Views */
     private Button addMemberBTN;
@@ -165,7 +169,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
                         .sorted(Comparator.comparing(Game::getDate).reversed()) // Sort by releaseDate in descending order
                         .collect(Collectors.toList())
         );
-        GamesRVAdapter gamesAdapter = new GamesRVAdapter(this.group.getGames());
+        GamesRVAdapter gamesAdapter = new GamesRVAdapter(this.group.getGames(), this);
         gamesRV.setAdapter(gamesAdapter);
         gamesRV.setLayoutManager(new LinearLayoutManager(this));
 
@@ -231,5 +235,65 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
 
         // Update games rv with new game
         this.gamesRV.getAdapter().notifyDataSetChanged();
+    }
+
+    @Override
+    public void openGameDialog(Long gameID) {
+        // Build dialog
+        dialogBuilder = new AlertDialog.Builder(this);
+        final View popupView = getLayoutInflater().inflate(R.layout.fb_game_stats_dialog, null);
+
+        // Init vars
+        List<FootballMember> team1 = new ArrayList<>();
+        List<FootballMember> team2 = new ArrayList<>();
+
+        // Init recyclers
+        RecyclerView team1RV = popupView.findViewById(R.id.fbGameDialogTeam1RV);
+        FBMemberGameStatsViewRVAdapter team1Adapter = new FBMemberGameStatsViewRVAdapter(team1);
+        team1RV.setAdapter(team1Adapter);
+        team1RV.setLayoutManager(new LinearLayoutManager(this));
+
+        RecyclerView team2RV = popupView.findViewById(R.id.fbGameDialogTeam2RV);
+        FBMemberGameStatsViewRVAdapter team2Adapter = new FBMemberGameStatsViewRVAdapter(team2);
+        team2RV.setAdapter(team2Adapter);
+        team2RV.setLayoutManager(new LinearLayoutManager(this));
+
+        // Request game stats
+        groupAPI.getGameStats(gameID).enqueue(new Callback<List<FootballMember>>() {
+            @Override
+            public void onResponse(Call<List<FootballMember>> call, Response<List<FootballMember>> response) {
+                if (response.code() == 200) { // OK
+
+                    // Split game members into teams
+                    for ( FootballMember member : response.body()) {
+                        if (member.getPartOfTeam1()) {
+                            team1.add(member);
+                        } else {
+                            team2.add(member);
+                        }
+                    }
+
+                    // Update recyclers
+                    team1Adapter.notifyDataSetChanged();
+                    team2Adapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(FootballGroupActivity.this, "Data fetching failed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FootballGroupActivity.this, "Try again later!", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<FootballMember>> call, Throwable t) {
+                Toast.makeText(FootballGroupActivity.this, "Data fetching failed!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(FootballGroupActivity.this, "Try again later!", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+
+        // Show dialog
+        dialogBuilder.setView(popupView);
+        dialog = dialogBuilder.create();
+        dialog.show();
     }
 }

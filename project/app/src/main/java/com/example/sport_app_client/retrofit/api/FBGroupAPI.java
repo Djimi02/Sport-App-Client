@@ -5,6 +5,8 @@ import com.example.sport_app_client.model.group.FootballGroup;
 import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.retrofit.request.AddNewFBGameRequest;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -24,5 +26,8 @@ public interface FBGroupAPI {
 
     @POST("/group/football/add/game")
     Call<FootballGame> addNewFootballGame(@Body AddNewFBGameRequest request);
+
+    @GET("/group/football/get/gamestats/{id}")
+    Call<List<FootballMember>> getGameStats(@Path("id") Long gameID);
 
 }
