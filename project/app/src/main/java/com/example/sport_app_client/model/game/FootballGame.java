@@ -4,6 +4,7 @@ import com.example.sport_app_client.model.Sports;
 import com.example.sport_app_client.model.group.FootballGroup;
 import com.example.sport_app_client.model.member.FootballMember;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,7 +16,7 @@ public class FootballGame extends Game {
 
     private Integer victory; // -1 -> team 1 won, 0 -> draw, 1 -> team 2 won
 
-    public FootballGame(Date date, FootballGroup group) {
+    public FootballGame(LocalDate date, FootballGroup group) {
         super(date, Sports.FOOTBALL);
         this.group = group;
 

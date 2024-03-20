@@ -2,8 +2,11 @@ package com.example.sport_app_client.retrofit;
 
 import com.example.sport_app_client.model.group.Group;
 import com.example.sport_app_client.model.member.Member;
+import com.example.sport_app_client.retrofit.deserializers.LocalDateDeserializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import java.time.LocalDate;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -23,6 +26,7 @@ public class RetrofitService {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Member.class, new MemberDeserializer())
                 .registerTypeAdapter(Group.class, new GroupDeserializer())
+                .registerTypeAdapter(LocalDate.class, new LocalDateDeserializer())
                 .create();
 
         retrofit = new Retrofit.Builder()

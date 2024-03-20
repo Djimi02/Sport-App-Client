@@ -13,16 +13,20 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.sport_app_client.R;
-import com.example.sport_app_client.RegisterActivity;
+import com.example.sport_app_client.adapter.GamesRVAdapter;
 import com.example.sport_app_client.adapter.football.FBMemberAllStatsViewRVAdapter;
 import com.example.sport_app_client.gameActivities.FootballGameActivity;
 import com.example.sport_app_client.helpers.LogOutHandler;
 import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.interfaces.GameCreatedListener;
+import com.example.sport_app_client.model.game.Game;
 import com.example.sport_app_client.model.group.FootballGroup;
 import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.retrofit.RetrofitService;
 import com.example.sport_app_client.retrofit.api.FBGroupAPI;
+
+import java.util.Comparator;
+import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -98,6 +102,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
             public void onFailure(Call<FootballGroup> call, Throwable t) {
                 Toast.makeText(FootballGroupActivity.this, "group request failed", Toast.LENGTH_SHORT).show();
                 LogOutHandler.logout(FootballGroupActivity.this, "Try again later!");
+                System.out.println(t.toString());
             }
         });
     }
@@ -154,7 +159,15 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
 
     private void initRecyclers() {
         this.gamesRV = findViewById(R.id.footballpageGamesRV);
-
+        // Sorting the array
+        group.setGames(
+                group.getGames().stream()
+                        .sorted(Comparator.comparing(Game::getDate).reversed()) // Sort by releaseDate in descending order
+                        .collect(Collectors.toList())
+        );
+        GamesRVAdapter gamesAdapter = new GamesRVAdapter(this.group.getGames());
+        gamesRV.setAdapter(gamesAdapter);
+        gamesRV.setLayoutManager(new LinearLayoutManager(this));
 
         this.membersRV = findViewById(R.id.footballpageMembersRV);
         FBMemberAllStatsViewRVAdapter membersAdapter = new FBMemberAllStatsViewRVAdapter(this.group.getMembers());
@@ -216,6 +229,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
         // Update members rv with new stats after game
         this.membersRV.getAdapter().notifyDataSetChanged();
 
-        // TODO: update games rv
+        // Update games rv with new game
+        this.gamesRV.getAdapter().notifyDataSetChanged();
     }
 }

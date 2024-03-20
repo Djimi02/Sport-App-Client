@@ -58,7 +58,8 @@ public class FootballGroup extends  Group {
     }
 
     public void addGame(FootballGame game) {
-        this.games.add(game);
+        // Adding the new game to the first position
+        this.games.add(0, game);
     }
 
     public void removeGame(FootballGame game) {
