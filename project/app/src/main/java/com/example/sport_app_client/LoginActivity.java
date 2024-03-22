@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.model.User;
 import com.example.sport_app_client.retrofit.MyAuthManager;
 import com.example.sport_app_client.retrofit.RetrofitService;
@@ -113,6 +114,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.code() == 200) {
                     authManager.setToken(response.body().getToken());
                     authManager.setUser(response.body().getUser());
+                    MyGlobals.currentUser = response.body().getUser();
                     Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
 
                     Intent intent = new Intent(LoginActivity.this, HomepageActivity.class);

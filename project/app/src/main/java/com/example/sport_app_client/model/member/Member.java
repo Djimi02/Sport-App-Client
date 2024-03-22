@@ -11,12 +11,14 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.io.Serializable;
 
 public abstract class Member {
-    protected Long id;
+    protected long id;
     protected String nickname;
     protected User user;
     protected Sports sport;
 
     protected Group group;
+
+    protected Boolean isAdmin;
 
     protected Integer wins;
     protected Integer draws;
@@ -38,11 +40,11 @@ public abstract class Member {
         this.loses = 0;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -100,5 +102,13 @@ public abstract class Member {
 
     public void setLoses(Integer loses) {
         this.loses = loses;
+    }
+
+    public Boolean getIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(Boolean admin) {
+        isAdmin = admin;
     }
 }

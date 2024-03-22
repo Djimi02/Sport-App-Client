@@ -248,7 +248,8 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
         final View popupView = getLayoutInflater().inflate(R.layout.group_settings_dialog, null);
 
         settingsMembersRV = popupView.findViewById(R.id.groupSettingsMembersRV);
-        GroupSettingsMembersRVAdapter membersAdapter = new GroupSettingsMembersRVAdapter(group.getMembers(), true, this);
+        GroupSettingsMembersRVAdapter membersAdapter =
+                new GroupSettingsMembersRVAdapter(group.getMembers(), getAssociatedMember().getIsAdmin(), this);
         settingsMembersRV.setAdapter(membersAdapter);
         settingsMembersRV.setLayoutManager(new LinearLayoutManager(this));
 
@@ -256,6 +257,21 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
         dialogBuilder.setView(popupView);
         dialog = dialogBuilder.create();
         dialog.show();
+    }
+
+    /**
+     * This method returns the member that is associated with the currently
+     * logged in user.
+     */
+    private FootballMember getAssociatedMember() {
+        FootballMember output = null;
+        for (FootballMember fbMember : group.getMembers()) {
+            if (fbMember.getUser().getId() == MyGlobals.currentUser.getId()) {
+                output = fbMember;
+                break;
+            }
+        }
+        return output;
     }
 
     @Override

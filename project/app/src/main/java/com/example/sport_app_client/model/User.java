@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class User {
-    private Long id;
+    private long id;
     private String userName;
     private String email;
     private Roles role;
@@ -24,11 +24,20 @@ public class User {
         this.role = Roles.USER;
     }
 
-    public Long getId() {
+    public boolean doesMemberExists(long memberID) {
+        for (Member member : members) {
+            if (member.getId() == memberID) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

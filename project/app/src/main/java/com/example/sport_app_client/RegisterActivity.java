@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.model.User;
 import com.example.sport_app_client.retrofit.MyAuthManager;
 import com.example.sport_app_client.retrofit.RetrofitService;
@@ -87,6 +88,7 @@ public class RegisterActivity extends AppCompatActivity {
                 if (response.code() == 200) {
                     authManager.setToken(response.body().getToken());
                     authManager.setUser(response.body().getUser());
+                    MyGlobals.currentUser = response.body().getUser();
                     Toast.makeText(RegisterActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
 
                     Intent intent = new Intent(RegisterActivity.this, HomepageActivity.class);
