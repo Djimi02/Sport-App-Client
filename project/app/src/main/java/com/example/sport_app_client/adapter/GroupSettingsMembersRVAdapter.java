@@ -6,13 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sport_app_client.R;
-import com.example.sport_app_client.interfaces.OnGameMemberDragListener;
+import com.example.sport_app_client.interfaces.GroupMemberDeletedListener;
 import com.example.sport_app_client.model.member.Member;
 
 import java.util.List;
@@ -21,10 +20,12 @@ public class GroupSettingsMembersRVAdapter extends RecyclerView.Adapter<GroupSet
 
     private List<? extends Member> members;
     private boolean isAdmin;
+    private GroupMemberDeletedListener listener;
 
-    public GroupSettingsMembersRVAdapter(List<? extends Member> members, boolean isAdmin) {
+    public GroupSettingsMembersRVAdapter(List<? extends Member> members, boolean isAdmin, GroupMemberDeletedListener listener) {
         this.members = members;
         this.isAdmin = isAdmin;
+        this.listener = listener;
     }
 
     @NonNull
@@ -48,9 +49,10 @@ public class GroupSettingsMembersRVAdapter extends RecyclerView.Adapter<GroupSet
         } else {
             holder.memberUserNameTV.setText("None");
         }
+        Member member = members.get(position);
         if (isAdmin) { // add func if the user is admin
             holder.btn.setOnClickListener(view -> {
-                // TODO: implement delete member from group
+                listener.deleteMember(member);
             });
         }
     }

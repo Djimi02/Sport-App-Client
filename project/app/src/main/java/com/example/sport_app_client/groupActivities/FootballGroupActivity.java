@@ -23,9 +23,11 @@ import com.example.sport_app_client.helpers.LogOutHandler;
 import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.interfaces.GameClickListener;
 import com.example.sport_app_client.interfaces.GameCreatedListener;
+import com.example.sport_app_client.interfaces.GroupMemberDeletedListener;
 import com.example.sport_app_client.model.game.Game;
 import com.example.sport_app_client.model.group.FootballGroup;
 import com.example.sport_app_client.model.member.FootballMember;
+import com.example.sport_app_client.model.member.Member;
 import com.example.sport_app_client.retrofit.RetrofitService;
 import com.example.sport_app_client.retrofit.api.FBGroupAPI;
 
@@ -39,7 +41,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class FootballGroupActivity extends AppCompatActivity implements GameCreatedListener, GameClickListener {
+public class FootballGroupActivity extends AppCompatActivity implements GameCreatedListener, GameClickListener, GroupMemberDeletedListener {
 
     /* Views */
     private Button addMemberBTN;
@@ -47,6 +49,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
     private Button settingsBTN;
     private RecyclerView gamesRV;
     private RecyclerView membersRV;
+    private RecyclerView settingsMembersRV;
 
     /* Dialog */
     private AlertDialog.Builder dialogBuilder;
@@ -102,6 +105,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
                 } else {
                     Toast.makeText(FootballGroupActivity.this, "This action cannot be done now!", Toast.LENGTH_SHORT).show();
                     Toast.makeText(FootballGroupActivity.this, "Try again later!", Toast.LENGTH_SHORT).show();
+                    LogOutHandler.logout(FootballGroupActivity.this);
                 }
             }
 
@@ -110,6 +114,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
                 Toast.makeText(FootballGroupActivity.this, "group request failed", Toast.LENGTH_SHORT).show();
                 LogOutHandler.logout(FootballGroupActivity.this, "Try again later!");
                 System.out.println(t.toString());
+                LogOutHandler.logout(FootballGroupActivity.this);
             }
         });
     }
@@ -132,6 +137,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
                 } else {
                     Toast.makeText(FootballGroupActivity.this, "This action cannot be done now!", Toast.LENGTH_SHORT).show();
                     Toast.makeText(FootballGroupActivity.this, "Try again later!", Toast.LENGTH_SHORT).show();
+                    LogOutHandler.logout(FootballGroupActivity.this);
                 }
             }
 
@@ -241,10 +247,10 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
         dialogBuilder = new AlertDialog.Builder(this);
         final View popupView = getLayoutInflater().inflate(R.layout.group_settings_dialog, null);
 
-        RecyclerView membersRV = popupView.findViewById(R.id.groupSettingsMembersRV);
-        GroupSettingsMembersRVAdapter membersAdapter = new GroupSettingsMembersRVAdapter(group.getMembers(), true);
-        membersRV.setAdapter(membersAdapter);
-        membersRV.setLayoutManager(new LinearLayoutManager(this));
+        settingsMembersRV = popupView.findViewById(R.id.groupSettingsMembersRV);
+        GroupSettingsMembersRVAdapter membersAdapter = new GroupSettingsMembersRVAdapter(group.getMembers(), true, this);
+        settingsMembersRV.setAdapter(membersAdapter);
+        settingsMembersRV.setLayoutManager(new LinearLayoutManager(this));
 
         // Show dialog
         dialogBuilder.setView(popupView);
@@ -325,5 +331,30 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
         dialogBuilder.setView(popupView);
         dialog = dialogBuilder.create();
         dialog.show();
+    }
+
+    @Override
+    public void deleteMember(Member member) {
+        Toast.makeText(this, ""+member.getId(), Toast.LENGTH_SHORT).show();
+        groupAPI.removeMemberFromGroup(group.getId(), member.getId()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.code() == 200) { // OK
+                    group.removeMember(member.getId());
+
+                    // Update recyclers
+                    membersRV.getAdapter().notifyDataSetChanged();
+                    settingsMembersRV.getAdapter().notifyDataSetChanged();
+
+                } else {
+                    Toast.makeText(FootballGroupActivity.this, "Unable execute this action now!", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(FootballGroupActivity.this, "Unable execute this action now!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
