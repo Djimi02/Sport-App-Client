@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.view.DragEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
@@ -28,6 +30,7 @@ import com.example.sport_app_client.retrofit.request.AddNewFBGameRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -41,6 +44,10 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
     private Button backBTN;
     private Button nextBTN;
     private RecyclerView membersRV;
+    private RecyclerView randomMembersRV;
+    private RadioButton step1ManualSelectionRB; // I am using only this btn to get info
+    private LinearLayout step1RandomMembersLayout;
+    private Button step1RandomBTN;
     private RecyclerView step1Team1RV;
     private RecyclerView step1Team2RV;
     private RecyclerView step2Team1RV;
@@ -53,6 +60,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
     private List<FootballMember> members; // links to the real members so modification is propagated
     private List<FootballMember> team1;
     private List<FootballMember> team2;
+    private List<FootballMember> step1RandomMembers;
     private FootballMember draggedMember;
     private List<FootballMember> step3Team1;
     private List<FootballMember> step3Team2;
@@ -81,6 +89,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
         this.members = MyGlobals.footballGroup.getMembers();
         this.team1 = new ArrayList<>();
         this.team2 = new ArrayList<>();
+        this.step1RandomMembers = new ArrayList<>();
         this.step3Team1 = new ArrayList<>();
         this.step3Team2 = new ArrayList<>();
         this.allMembersWithUpdatedStats = new ArrayList<>();
@@ -105,7 +114,62 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
             nextBtnPressed();
         }));
 
+        this.step1RandomMembersLayout = findViewById(R.id.footballgameStep1RandomLayout);
+        step1RandomMembersLayout.setVisibility(View.GONE);
+
+        // I am using only this btn to get info
+        this.step1ManualSelectionRB = findViewById(R.id.footballgameStep1RB1);
+        step1ManualSelectionRB.setChecked(true);
+        step1ManualSelectionRB.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (b) {
+                step1RandomMembersLayout.setVisibility(View.GONE);
+            } else {
+                step1RandomMembersLayout.setVisibility(View.VISIBLE);
+            }
+        });
+
+        this.step1RandomBTN = findViewById(R.id.footballgameStep1RandomBTN);
+        step1RandomBTN.setOnClickListener(view -> {
+            generateRandomTeams();
+        });
+
         initRecyclerViews();
+    }
+
+    /**
+     * This method spreads randomly the members from this.step1RandomMembers to
+     * this.team1 and this.team2.
+     */
+    private void generateRandomTeams() {
+        int membersCount = step1RandomMembers.size();
+        boolean[] usedMemberIndexes = new boolean[membersCount];
+        boolean nextMemberToBeInTeam1 = true;
+        Random random = new Random();
+
+        // Clear the teams initially
+        this.team1.clear();
+        this.team2.clear();
+
+        // Spread members randomly
+        for (int i = 0; i < membersCount; i++) {
+            int randomMemberIndex = random.nextInt(membersCount);
+            while (usedMemberIndexes[randomMemberIndex]) { // select unselected member
+                randomMemberIndex = random.nextInt(membersCount);
+            }
+            usedMemberIndexes[randomMemberIndex] = true; // mark this member as selected
+
+            if (nextMemberToBeInTeam1) {
+                team1.add(step1RandomMembers.get(randomMemberIndex));
+                nextMemberToBeInTeam1 = false;
+            } else {
+                team2.add(step1RandomMembers.get(randomMemberIndex));
+                nextMemberToBeInTeam1 = true;
+            }
+        }
+
+        // Update recyclers
+        step1Team1RV.getAdapter().notifyDataSetChanged();
+        step1Team2RV.getAdapter().notifyDataSetChanged();
     }
 
     /**
@@ -317,10 +381,10 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
             public boolean onDrag(View view, DragEvent dragEvent) {
                 switch (dragEvent.getAction()) {
                     case DragEvent.ACTION_DROP:
-                        if (!(team2.contains(draggedMember) || team1.contains(draggedMember))) {
+                        if (!(team2.contains(draggedMember) || team1.contains(draggedMember) || !(step1ManualSelectionRB.isChecked()))) {
                             team1.add(draggedMember);
+                            step1Team1Adapter.notifyDataSetChanged();
                         }
-                        step1Team1Adapter.notifyDataSetChanged();
                         break;
                 }
                 return true;
@@ -336,14 +400,30 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
             public boolean onDrag(View view, DragEvent dragEvent) {
                 switch (dragEvent.getAction()) {
                     case DragEvent.ACTION_DROP:
-                        if (!(team2.contains(draggedMember) || team1.contains(draggedMember))) {
+                        if (!(team2.contains(draggedMember) || team1.contains(draggedMember) || !(step1ManualSelectionRB.isChecked()))) {
                             team2.add(draggedMember);
+                            step1Team2Adapter.notifyDataSetChanged();
                         }
-                        step1Team2Adapter.notifyDataSetChanged();
                         break;
                 }
                 return true;
             }
+        });
+
+        this.randomMembersRV = findViewById(R.id.footballgameStep1RandomMembersRV);
+        GameTeamsRVAdapter randomMembersAdapter = new GameTeamsRVAdapter(step1RandomMembers);
+        randomMembersRV.setAdapter(randomMembersAdapter);
+        randomMembersRV.setLayoutManager(new LinearLayoutManager(this));
+        randomMembersRV.setOnDragListener((view, dragEvent) -> {
+            switch (dragEvent.getAction()) {
+                case DragEvent.ACTION_DROP:
+                    if (!(step1RandomMembers.contains(draggedMember))) {
+                        step1RandomMembers.add(draggedMember);
+                    }
+                    randomMembersAdapter.notifyDataSetChanged();
+                    break;
+            }
+            return true;
         });
 
         // Step 2

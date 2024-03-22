@@ -24,6 +24,50 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center">
+
+            <RadioButton
+                android:id="@+id/footballgameStep1RB1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Manual Selection"/>
+
+            <RadioButton
+                android:id="@+id/footballgameStep1RB2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Random Selection"/>
+
+        </RadioGroup>
+
+        <LinearLayout
+            android:id="@+id/footballgameStep1RandomLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Random"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/footballgameStep1RandomMembersRV"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_100sdp"/>
+            <Button
+                android:id="@+id/footballgameStep1RandomBTN"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Generate"/>
+
+        </LinearLayout>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
