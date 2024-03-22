@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sport_app_client.R;
@@ -191,7 +192,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
             if (memberName.isEmpty()) {
                 memberNameET.setError("Input member name!");
                 return;
-            } else if (memberName.length() > 12) {
+            } else if (memberName.length() > 10) {
                 memberNameET.setError("Name can be 12 characters max!");
                 return;
             }
@@ -238,7 +239,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
     }
 
     @Override
-    public void openGameDialog(Long gameID) {
+    public void openGameDialog(Game game) {
         // Build dialog
         dialogBuilder = new AlertDialog.Builder(this);
         final View popupView = getLayoutInflater().inflate(R.layout.fb_game_stats_dialog, null);
@@ -246,6 +247,12 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
         // Init vars
         List<FootballMember> team1 = new ArrayList<>();
         List<FootballMember> team2 = new ArrayList<>();
+
+        // Init views
+        TextView date = popupView.findViewById(R.id.fbGameDialogDate);
+        date.setText(game.getDate().toString());
+        TextView result = popupView.findViewById(R.id.fbGameDialogResult);
+        result.setText(game.getResults().toString());
 
         // Init recyclers
         RecyclerView team1RV = popupView.findViewById(R.id.fbGameDialogTeam1RV);
@@ -259,7 +266,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
         team2RV.setLayoutManager(new LinearLayoutManager(this));
 
         // Request game stats
-        groupAPI.getGameStats(gameID).enqueue(new Callback<List<FootballMember>>() {
+        groupAPI.getGameStats(game.getId()).enqueue(new Callback<List<FootballMember>>() {
             @Override
             public void onResponse(Call<List<FootballMember>> call, Response<List<FootballMember>> response) {
                 if (response.code() == 200) { // OK

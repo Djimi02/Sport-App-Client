@@ -42,9 +42,9 @@ public class GamesRVAdapter extends RecyclerView.Adapter<GamesRVAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.gameDate.setText(games.get(position).getDate().toString());
         holder.gameResults.setText(games.get(position).getResults().toString());
-        Long gameID = games.get(position).getId();
+        Game game = games.get(position);
         holder.btn.setOnClickListener(view -> {
-            listener.openGameDialog(gameID);
+            listener.openGameDialog(game);
         });
     }
 
