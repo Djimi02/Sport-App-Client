@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.sport_app_client.R;
 import com.example.sport_app_client.adapter.GamesRVAdapter;
+import com.example.sport_app_client.adapter.GroupSettingsMembersRVAdapter;
 import com.example.sport_app_client.adapter.football.FBMemberAllStatsViewRVAdapter;
 import com.example.sport_app_client.adapter.football.FBMemberGameStatsViewRVAdapter;
 import com.example.sport_app_client.gameActivities.FootballGameActivity;
@@ -43,6 +44,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
     /* Views */
     private Button addMemberBTN;
     private Button addGameBTN;
+    private Button settingsBTN;
     private RecyclerView gamesRV;
     private RecyclerView membersRV;
 
@@ -160,6 +162,11 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
         });
+
+        this.settingsBTN = findViewById(R.id.footballpageSettingsBTN);
+        settingsBTN.setOnClickListener(view -> {
+            openSettingsDialog();
+        });
     }
 
     private void initRecyclers() {
@@ -222,6 +229,22 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
                 }
             });
         }));
+
+        // Show dialog
+        dialogBuilder.setView(popupView);
+        dialog = dialogBuilder.create();
+        dialog.show();
+    }
+
+    private void openSettingsDialog() {
+        // Build dialog
+        dialogBuilder = new AlertDialog.Builder(this);
+        final View popupView = getLayoutInflater().inflate(R.layout.group_settings_dialog, null);
+
+        RecyclerView membersRV = popupView.findViewById(R.id.groupSettingsMembersRV);
+        GroupSettingsMembersRVAdapter membersAdapter = new GroupSettingsMembersRVAdapter(group.getMembers(), true);
+        membersRV.setAdapter(membersAdapter);
+        membersRV.setLayoutManager(new LinearLayoutManager(this));
 
         // Show dialog
         dialogBuilder.setView(popupView);

@@ -71,7 +71,7 @@ public class GroupMembersRVAdapter extends RecyclerView.Adapter<GroupMembersRVAd
 
             this.memberNameTV = view.findViewById(R.id.gameMemberNameTV);
             this.removeMemberBTN = view.findViewById(R.id.memberItemRemoveMemberBTN);
-            removeMemberBTN.setVisibility(View.GONE);
+            removeMemberBTN.setVisibility(View.GONE); // I use the same item layout but don't use the btn here
 
         }
     }
