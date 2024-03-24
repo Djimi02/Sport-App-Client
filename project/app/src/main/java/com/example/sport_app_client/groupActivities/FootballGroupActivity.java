@@ -20,8 +20,10 @@ import com.example.sport_app_client.adapter.GroupSettingsMembersRVAdapter;
 import com.example.sport_app_client.adapter.football.FBMemberAllStatsViewRVAdapter;
 import com.example.sport_app_client.adapter.football.FBMemberGameStatsViewRVAdapter;
 import com.example.sport_app_client.gameActivities.FootballGameActivity;
+import com.example.sport_app_client.helpers.ConfirmActionDialog;
 import com.example.sport_app_client.helpers.LogOutHandler;
 import com.example.sport_app_client.helpers.MyGlobals;
+import com.example.sport_app_client.interfaces.ActionDoer;
 import com.example.sport_app_client.interfaces.GameClickListener;
 import com.example.sport_app_client.interfaces.GameCreatedListener;
 import com.example.sport_app_client.interfaces.GroupMemberDeletedListener;
@@ -259,19 +261,6 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
         dialog.show();
     }
 
-    private void confirmActionDialog() {
-        // Build dialog
-        dialogBuilder = new AlertDialog.Builder(this);
-        final View popupView = getLayoutInflater().inflate(R.layout.group_settings_layout, null);
-
-
-
-        // Show dialog
-        dialogBuilder.setView(popupView);
-        dialog = dialogBuilder.create();
-        dialog.show();
-    }
-
     /**
      * This method returns the member that is associated with the currently
      * logged in user.
@@ -364,26 +353,28 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
 
     @Override
     public void deleteMember(Member member) {
-        Toast.makeText(this, ""+member.getId(), Toast.LENGTH_SHORT).show();
-        groupAPI.removeMemberFromGroup(group.getId(), member.getId()).enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.code() == 200) { // OK
-                    group.removeMember(member.getId());
+        ConfirmActionDialog.showDialog(this, "Are you sure you want to delete the member?", () -> {
+            groupAPI.removeMemberFromGroup(group.getId(), member.getId()).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.code() == 200) { // OK
+                        group.removeMember(member.getId());
 
-                    // Update recyclers
-                    membersRV.getAdapter().notifyDataSetChanged();
-                    settingsMembersRV.getAdapter().notifyDataSetChanged();
+                        // Update recyclers
+                        membersRV.getAdapter().notifyDataSetChanged();
+                        settingsMembersRV.getAdapter().notifyDataSetChanged();
 
-                } else {
+                        Toast.makeText(FootballGroupActivity.this, "Member deleted successfully!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(FootballGroupActivity.this, "Unable execute this action now!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
                     Toast.makeText(FootballGroupActivity.this, "Unable execute this action now!", Toast.LENGTH_SHORT).show();
                 }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(FootballGroupActivity.this, "Unable execute this action now!", Toast.LENGTH_SHORT).show();
-            }
+            });
         });
     }
 }
