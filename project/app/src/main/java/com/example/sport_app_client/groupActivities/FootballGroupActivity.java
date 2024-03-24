@@ -2,6 +2,7 @@ package com.example.sport_app_client.groupActivities;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -44,6 +45,7 @@ import retrofit2.Retrofit;
 public class FootballGroupActivity extends AppCompatActivity implements GameCreatedListener, GameClickListener, GroupMemberDeletedListener {
 
     /* Views */
+    private DrawerLayout drawerLayout;
     private Button addMemberBTN;
     private Button addGameBTN;
     private Button settingsBTN;
@@ -169,9 +171,11 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
             startActivity(intent);
         });
 
+        this.drawerLayout = findViewById(R.id.fb_drawer_layout);
+
         this.settingsBTN = findViewById(R.id.footballpageSettingsBTN);
         settingsBTN.setOnClickListener(view -> {
-            openSettingsDialog();
+            openSettings();
         });
     }
 
@@ -191,6 +195,19 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
         FBMemberAllStatsViewRVAdapter membersAdapter = new FBMemberAllStatsViewRVAdapter(this.group.getMembers());
         membersRV.setAdapter(membersAdapter);
         membersRV.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    /**
+     * This method loads the needed data for the side drawer and opens it.
+     */
+    private void openSettings() {
+        settingsMembersRV = findViewById(R.id.groupSettingsMembersRV);
+        GroupSettingsMembersRVAdapter settingsMembersAdapter =
+                new GroupSettingsMembersRVAdapter(group.getMembers(), getAssociatedMember().getIsAdmin(), this, getAssociatedMember());
+        settingsMembersRV.setAdapter(settingsMembersAdapter);
+        settingsMembersRV.setLayoutManager(new LinearLayoutManager(this));
+
+        drawerLayout.open();
     }
 
     private void openAddMemberDialog() {
@@ -242,16 +259,12 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
         dialog.show();
     }
 
-    private void openSettingsDialog() {
+    private void confirmActionDialog() {
         // Build dialog
         dialogBuilder = new AlertDialog.Builder(this);
-        final View popupView = getLayoutInflater().inflate(R.layout.group_settings_dialog, null);
+        final View popupView = getLayoutInflater().inflate(R.layout.group_settings_layout, null);
 
-        settingsMembersRV = popupView.findViewById(R.id.groupSettingsMembersRV);
-        GroupSettingsMembersRVAdapter membersAdapter =
-                new GroupSettingsMembersRVAdapter(group.getMembers(), getAssociatedMember().getIsAdmin(), this, getAssociatedMember());
-        settingsMembersRV.setAdapter(membersAdapter);
-        settingsMembersRV.setLayoutManager(new LinearLayoutManager(this));
+
 
         // Show dialog
         dialogBuilder.setView(popupView);
