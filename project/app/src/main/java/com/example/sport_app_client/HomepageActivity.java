@@ -18,14 +18,17 @@ import android.widget.Toast;
 
 import com.example.sport_app_client.adapter.UserGroupsRVAdapter;
 import com.example.sport_app_client.groupActivities.FootballGroupActivity;
+import com.example.sport_app_client.helpers.MyGlobals;
+import com.example.sport_app_client.interfaces.LeaveGroupListener;
 import com.example.sport_app_client.interfaces.UserGroupClickListener;
 import com.example.sport_app_client.model.Sports;
+import com.example.sport_app_client.model.member.Member;
 import com.example.sport_app_client.retrofit.MyAuthManager;
 import com.example.sport_app_client.retrofit.RetrofitService;
 
 import retrofit2.Retrofit;
 
-public class HomepageActivity extends AppCompatActivity implements UserGroupClickListener {
+public class HomepageActivity extends AppCompatActivity implements UserGroupClickListener, LeaveGroupListener {
 
     /* Views */
     private TextView totalGamesTV;
@@ -49,7 +52,6 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homepage);
         this.getSupportActionBar().hide();
-        Toast.makeText(this, "On create!", Toast.LENGTH_SHORT).show();
 
         // Empty back button implementation
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
@@ -58,6 +60,8 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
 
             }
         });
+
+        MyGlobals.leaveGroupListener = this;
 
         initVars();
         initViews();
@@ -156,6 +160,17 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
                 break;
             default:
                 break;
+        }
+    }
+
+    @Override
+    public void onGroupLeft(long memberID) {
+        for (int i = 0; i < authManager.getUser().getMembers().size(); i++) {
+            if (authManager.getUser().getMembers().get(i).getId() == memberID) {
+                authManager.getUser().getMembers().remove(i);
+                userGroupsRV.getAdapter().notifyItemChanged(i); // update the rv
+                return;
+            }
         }
     }
 }

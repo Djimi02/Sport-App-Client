@@ -23,4 +23,11 @@
         android:layout_height="@dimen/_100sdp"
         android:id="@+id/groupSettingsMembersRV"/>
 
+    <Button
+        android:id="@+id/groupSettingsLeaveBTN"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Leave Group"/>
+
 </LinearLayout>

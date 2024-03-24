@@ -46,14 +46,17 @@ import retrofit2.Retrofit;
 
 public class FootballGroupActivity extends AppCompatActivity implements GameCreatedListener, GameClickListener, GroupMemberDeletedListener {
 
-    /* Views */
+    /* Main Activity Views */
     private DrawerLayout drawerLayout;
     private Button addMemberBTN;
     private Button addGameBTN;
     private Button settingsBTN;
     private RecyclerView gamesRV;
     private RecyclerView membersRV;
+
+    /* Settings Views */
     private RecyclerView settingsMembersRV;
+    private Button leaveGroupBTN;
 
     /* Dialog */
     private AlertDialog.Builder dialogBuilder;
@@ -104,7 +107,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
             public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
                 if (response.code() == 200) { // OK
                     group = response.body();
-                    initRecyclers(); // they depend on group info
+                    initDataDependentViews(); // they depend on group info
                     Toast.makeText(FootballGroupActivity.this, group.getName(), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(FootballGroupActivity.this, "This action cannot be done now!", Toast.LENGTH_SHORT).show();
@@ -136,7 +139,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
             public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
                 if (response.code() == 200) { // ok
                     group = response.body();
-                    initRecyclers(); // they depend on group info
+                    initDataDependentViews(); // they depend on group info
                     Toast.makeText(FootballGroupActivity.this, group.getName(), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(FootballGroupActivity.this, "This action cannot be done now!", Toast.LENGTH_SHORT).show();
@@ -179,6 +182,46 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
         settingsBTN.setOnClickListener(view -> {
             openSettings();
         });
+
+        initSettingsViews();
+    }
+
+    private void initSettingsViews() {
+        this.leaveGroupBTN = findViewById(R.id.groupSettingsLeaveBTN);
+        leaveGroupBTN.setOnClickListener(view -> {
+            ConfirmActionDialog.showDialog(this, "Are you sure you want to leave the group?", () -> {
+                Member associatedMember = getAssociatedMember();
+                if (associatedMember == null) {
+                    Toast.makeText(FootballGroupActivity.this, "Unable execute this action now!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                // Send request to delete from the db
+                groupAPI.removeMemberFromGroup(group.getId(), associatedMember.getId()).enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.code() == 200) { // OK
+                            MyGlobals.leaveGroupListener.onGroupLeft(associatedMember.getId()); // remove from homepage
+
+                            // Exit activity
+                            finish();
+
+                            Toast.makeText(FootballGroupActivity.this, "Group left successfully!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(FootballGroupActivity.this, "Unable execute this action now!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Toast.makeText(FootballGroupActivity.this, "Unable execute this action now!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            });
+        });
+    }
+
+    private void initDataDependentViews() {
+        initRecyclers();
     }
 
     private void initRecyclers() {
