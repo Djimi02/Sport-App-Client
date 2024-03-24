@@ -249,7 +249,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
 
         settingsMembersRV = popupView.findViewById(R.id.groupSettingsMembersRV);
         GroupSettingsMembersRVAdapter membersAdapter =
-                new GroupSettingsMembersRVAdapter(group.getMembers(), getAssociatedMember().getIsAdmin(), this);
+                new GroupSettingsMembersRVAdapter(group.getMembers(), getAssociatedMember().getIsAdmin(), this, getAssociatedMember());
         settingsMembersRV.setAdapter(membersAdapter);
         settingsMembersRV.setLayoutManager(new LinearLayoutManager(this));
 
