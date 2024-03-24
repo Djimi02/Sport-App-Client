@@ -8,6 +8,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:textSize="@dimen/_25sdp"
+        android:layout_marginBottom="@dimen/_15sdp"
+        android:text="SETTINGS"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:text="Members"/>
 
     <androidx.recyclerview.widget.RecyclerView
