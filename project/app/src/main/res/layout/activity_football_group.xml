@@ -62,6 +62,12 @@
             android:layout_height="@dimen/_100sdp"
             android:id="@+id/footballpageMembersRV"/>
 
+        <ProgressBar
+            android:id="@+id/fbGroupProgressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
     </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView

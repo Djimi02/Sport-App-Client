@@ -37,4 +37,11 @@
         android:layout_gravity="center"
         android:text="Delete Group"/>
 
+    <ProgressBar
+        android:id="@+id/fbGroupSettingsProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
 </LinearLayout>
