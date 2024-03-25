@@ -57,6 +57,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
     /* Settings Views */
     private RecyclerView settingsMembersRV;
     private Button leaveGroupBTN;
+    private Button deleteGroupBTN;
 
     /* Dialog */
     private AlertDialog.Builder dialogBuilder;
@@ -218,6 +219,37 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
                 });
             });
         });
+        
+        this.deleteGroupBTN = findViewById(R.id.groupSettingsDeleteBTN);
+        deleteGroupBTN.setOnClickListener(view -> {
+            ConfirmActionDialog.showDialog(this, "Are you sure you want to delete the group?", () -> {
+                if (group == null) {
+                    Toast.makeText(this, "Unable execute this action now!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                // Send request
+                groupAPI.deleteGroup(group.getId()).enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.code() == 200) { // OK
+                            FootballMember associatedMember = getAssociatedMember();
+                            if (associatedMember != null) {
+                                MyGlobals.leaveGroupListener.onGroupLeft(associatedMember.getId());
+                            }
+                            Toast.makeText(FootballGroupActivity.this, "Group deleted successfully!", Toast.LENGTH_SHORT).show();
+                            finish();
+                        } else {
+                            Toast.makeText(FootballGroupActivity.this, "Unable execute this action now!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Toast.makeText(FootballGroupActivity.this, "Unable execute this action now!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            });
+        });
     }
 
     private void initDataDependentViews() {
@@ -247,8 +279,13 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
      */
     private void openSettings() {
         settingsMembersRV = findViewById(R.id.groupSettingsMembersRV);
+        FootballMember associatedMember = getAssociatedMember();
+        if (associatedMember == null) {
+            Toast.makeText(this, "Unable execute this action now!", Toast.LENGTH_SHORT).show();
+            return;
+        }
         GroupSettingsMembersRVAdapter settingsMembersAdapter =
-                new GroupSettingsMembersRVAdapter(group.getMembers(), getAssociatedMember().getIsAdmin(), this, getAssociatedMember());
+                new GroupSettingsMembersRVAdapter(group.getMembers(), associatedMember.getIsAdmin(), this, getAssociatedMember());
         settingsMembersRV.setAdapter(settingsMembersAdapter);
         settingsMembersRV.setLayoutManager(new LinearLayoutManager(this));
 
