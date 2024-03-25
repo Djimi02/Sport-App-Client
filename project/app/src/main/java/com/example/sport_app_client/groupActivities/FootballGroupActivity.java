@@ -363,7 +363,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
         this.membersRV.getAdapter().notifyDataSetChanged();
 
         // Update games rv with new game
-        this.gamesRV.getAdapter().notifyDataSetChanged();
+        this.gamesRV.getAdapter().notifyItemInserted(0);
     }
 
     @Override

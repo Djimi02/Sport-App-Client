@@ -39,6 +39,8 @@ import retrofit2.Retrofit;
 
 public class FootballGameActivity extends AppCompatActivity implements OnGameMemberDragListener {
 
+    private final int MAX_TEAM_SIZE = 11;
+
     /** Views */
     private ViewFlipper viewFlipper;
     private Button backBTN;
@@ -178,10 +180,13 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
     private void nextBtnPressed() {
         if (viewFlipper.getDisplayedChild() == 0) { // Confirm teams pressed
             if (Math.abs(team1.size() - team2.size()) > 1) {
-                Toast.makeText(FootballGameActivity.this, "Team size difference of not allowed!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(FootballGameActivity.this, "Team size difference of more than 1 not allowed!", Toast.LENGTH_LONG).show();
                 return;
             } else if (team1.size() == 0 || team2.size() == 0) {
                 Toast.makeText(FootballGameActivity.this, "Empty teams are not allowed!", Toast.LENGTH_SHORT).show();
+                return;
+            } else if (team1.size() > MAX_TEAM_SIZE || team2.size() > MAX_TEAM_SIZE) {
+                Toast.makeText(this, "Teams bigger than " + MAX_TEAM_SIZE + "are not allowed!", Toast.LENGTH_SHORT).show();
                 return;
             }
         }
