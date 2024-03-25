@@ -46,6 +46,7 @@ import retrofit2.Retrofit;
 public class FootballGroupActivity extends AppCompatActivity implements GameCreatedListener, GameClickListener, GroupMemberDeletedListener {
 
     /* Main Activity Views */
+    private TextView groupNameTV;
     private DrawerLayout drawerLayout;
     private Button addMemberBTN;
     private Button addGameBTN;
@@ -254,6 +255,9 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
     }
 
     private void initDataDependentViews() {
+        this.groupNameTV = findViewById(R.id.footballpageGroupNameTV);
+        groupNameTV.setText(group.getName().toString());
+
         initRecyclers();
     }
 
