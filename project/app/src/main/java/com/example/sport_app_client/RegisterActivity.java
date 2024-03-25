@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.sport_app_client.helpers.KeyboardHidder;
 import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.model.User;
 import com.example.sport_app_client.retrofit.MyAuthManager;
@@ -66,7 +67,7 @@ public class RegisterActivity extends AppCompatActivity {
         this.registerBTN = findViewById(R.id.RegistrationPageRegisterBTN);
         registerBTN.setOnClickListener(view -> {
             register();
-            hideSoftKeyboard(RegisterActivity.this);
+            KeyboardHidder.hideSoftKeyboard(RegisterActivity.this);
         });
     }
 
@@ -148,14 +149,5 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         return output;
-    }
-
-    private void hideSoftKeyboard(Activity activity) {
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        View view = activity.getCurrentFocus();
-        if (view == null) {
-            view = new View(activity);
-        }
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

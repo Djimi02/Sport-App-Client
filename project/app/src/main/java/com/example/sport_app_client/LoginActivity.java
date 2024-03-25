@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.sport_app_client.helpers.KeyboardHidder;
 import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.model.User;
 import com.example.sport_app_client.retrofit.MyAuthManager;
@@ -78,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
             }
             lastClickTime = SystemClock.elapsedRealtime();
             logIn();
-            hideSoftKeyboard(LoginActivity.this);
+            KeyboardHidder.hideSoftKeyboard(LoginActivity.this);
         });
 
         this.goToRegisterBTN = findViewById(R.id.LogInPageRegisterBTN);
@@ -176,19 +177,5 @@ public class LoginActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return false;
-    }
-
-    private void hideSoftKeyboard(View view){
-        InputMethodManager imm =(InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
-    private void hideSoftKeyboard(Activity activity) {
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        View view = activity.getCurrentFocus();
-        if (view == null) {
-            view = new View(activity);
-        }
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

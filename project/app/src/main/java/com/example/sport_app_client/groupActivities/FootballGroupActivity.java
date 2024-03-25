@@ -26,6 +26,7 @@ import com.example.sport_app_client.adapter.football.FBMemberAllStatsViewRVAdapt
 import com.example.sport_app_client.adapter.football.FBMemberGameStatsViewRVAdapter;
 import com.example.sport_app_client.gameActivities.FootballGameActivity;
 import com.example.sport_app_client.helpers.ConfirmActionDialog;
+import com.example.sport_app_client.helpers.KeyboardHidder;
 import com.example.sport_app_client.helpers.LogOutHandler;
 import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.interfaces.GameClickListener;
@@ -365,7 +366,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
         final EditText memberNameET = popupView.findViewById(R.id.addFootballMemberDialogET);
         final Button addBTN = popupView.findViewById(R.id.addFootballMemberDialogBTN);
         addBTN.setOnClickListener((view -> {
-            hideSoftKeyboard(popupView);
+            KeyboardHidder.hideSoftKeyboard(popupView, this);
             addBTN.setEnabled(false);
 
             String memberName = memberNameET.getText().toString().trim();
@@ -562,8 +563,4 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
         });
     }
 
-    private void hideSoftKeyboard(View view){
-        InputMethodManager imm =(InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
 }
