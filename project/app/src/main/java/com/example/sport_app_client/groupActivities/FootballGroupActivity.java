@@ -23,7 +23,6 @@ import com.example.sport_app_client.gameActivities.FootballGameActivity;
 import com.example.sport_app_client.helpers.ConfirmActionDialog;
 import com.example.sport_app_client.helpers.LogOutHandler;
 import com.example.sport_app_client.helpers.MyGlobals;
-import com.example.sport_app_client.interfaces.ActionDoer;
 import com.example.sport_app_client.interfaces.GameClickListener;
 import com.example.sport_app_client.interfaces.GameCreatedListener;
 import com.example.sport_app_client.interfaces.GroupMemberDeletedListener;
@@ -141,6 +140,8 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
                 if (response.code() == 200) { // ok
                     group = response.body();
                     initDataDependentViews(); // they depend on group info
+                    group.getMembers().get(0).setGroup(group);
+                    MyGlobals.createOrJoinOrLeaveGroupListener.onGroupCreated(group.getMembers().get(0));
                     Toast.makeText(FootballGroupActivity.this, group.getName(), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(FootballGroupActivity.this, "This action cannot be done now!", Toast.LENGTH_SHORT).show();
@@ -201,7 +202,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         if (response.code() == 200) { // OK
-                            MyGlobals.leaveGroupListener.onGroupLeft(associatedMember.getId()); // remove from homepage
+                            MyGlobals.createOrJoinOrLeaveGroupListener.onGroupLeft(associatedMember.getId()); // remove from homepage
 
                             // Exit activity
                             finish();
@@ -234,7 +235,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
                         if (response.code() == 200) { // OK
                             FootballMember associatedMember = getAssociatedMember();
                             if (associatedMember != null) {
-                                MyGlobals.leaveGroupListener.onGroupLeft(associatedMember.getId());
+                                MyGlobals.createOrJoinOrLeaveGroupListener.onGroupLeft(associatedMember.getId());
                             }
                             Toast.makeText(FootballGroupActivity.this, "Group deleted successfully!", Toast.LENGTH_SHORT).show();
                             finish();
