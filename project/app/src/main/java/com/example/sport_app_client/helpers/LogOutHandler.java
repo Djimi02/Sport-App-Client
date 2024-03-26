@@ -11,7 +11,7 @@ import com.example.sport_app_client.retrofit.MyAuthManager;
 public class LogOutHandler {
 
     public static void logout(Activity context) {
-        MyAuthManager.deleteInstance();
+        MyAuthManager.resetData();
         Intent intent = new Intent(context.getApplicationContext(), LoginActivity.class);
         // Flags to clear the back stack of activities
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -20,7 +20,7 @@ public class LogOutHandler {
     }
 
     public static void logout(Activity context, String message) {
-        MyAuthManager.deleteInstance();
+        MyAuthManager.resetData();
         Intent intent = new Intent(context.getApplicationContext(), LoginActivity.class);
         // Flags to clear the back stack of activities
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

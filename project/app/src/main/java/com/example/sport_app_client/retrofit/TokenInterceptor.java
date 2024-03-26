@@ -8,17 +8,13 @@ import okhttp3.Response;
 
 public class TokenInterceptor implements Interceptor {
 
-    private MyAuthManager authManager;
-
-    public TokenInterceptor() {
-        authManager = MyAuthManager.getInstance();
-    }
+    public TokenInterceptor() { }
 
     @Override
     public Response intercept(Chain chain) throws IOException {
         //rewrite the request to add bearer token
         Request newRequest=chain.request().newBuilder()
-                .header("Authorization","Bearer " + authManager.getToken())
+                .header("Authorization","Bearer " + MyAuthManager.token)
                 .build();
 
         return chain.proceed(newRequest);

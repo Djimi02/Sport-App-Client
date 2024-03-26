@@ -19,7 +19,6 @@ public class SettingsActivity extends AppCompatActivity {
     private Button backBTN;
 
     /* Vars */
-    private MyAuthManager authManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +41,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void initVars() {
-        this.authManager = MyAuthManager.getInstance();
+
     }
 
     private void initViews() {

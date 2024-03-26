@@ -44,8 +44,9 @@ public class UserGroupsRVAdapter extends RecyclerView.Adapter<UserGroupsRVAdapte
     public void onBindViewHolder(@NonNull UserGroupsRVAdapter.ViewHolder holder, int position) {
         // set values for each holder given its position
         holder.groupName.setText("Group: " + members.get(position).getGroup().getName());
-        holder.totalGames.setText("totalGames");
-        holder.totalWins.setText("totalWins");
+        holder.totalWins.setText("Wins: " + members.get(position).getWins());
+        holder.totalDraws.setText("Draws: " + members.get(position).getDraws());
+        holder.totalLoses.setText("Loses: " + members.get(position).getLoses());
     }
 
     @Override
@@ -56,16 +57,20 @@ public class UserGroupsRVAdapter extends RecyclerView.Adapter<UserGroupsRVAdapte
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView groupName;
-        private final TextView totalGames;
         private final TextView totalWins;
+        private final TextView totalDraws;
+        private final TextView totalLoses;
+
+
         private final Button viewBTN;
 
         public ViewHolder(View view) {
             super(view);
 
             this.groupName = view.findViewById(R.id.groupNameRVItem);
-            this.totalGames = view.findViewById(R.id.totalGamesRVItem);
             this.totalWins = view.findViewById(R.id.totalWinsRVItem);
+            this.totalDraws = view.findViewById(R.id.totalDrawsRVItem);
+            this.totalLoses = view.findViewById(R.id.totalLosesRVItem);
             this.viewBTN = view.findViewById(R.id.viewBTNRVItem);
 
             viewBTN.setOnClickListener(new View.OnClickListener() {

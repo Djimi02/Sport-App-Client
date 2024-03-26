@@ -31,8 +31,9 @@ import retrofit2.Retrofit;
 public class HomepageActivity extends AppCompatActivity implements UserGroupClickListener, CreateOrJoinOrLeaveGroupListener {
 
     /* Views */
-    private TextView totalGamesTV;
-    private TextView totalGroupsTV;
+    private TextView totalGroups;
+    private TextView totalLosesTV;
+    private TextView totalDrawsTV;
     private TextView totalWinsTV;
     private RecyclerView userGroupsRV;
     private Button settingsBTN;
@@ -43,9 +44,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     private AlertDialog dialog;
 
     /* Vars */
-    private MyAuthManager authManager;
     private Retrofit retrofit;
-    private int totalGroups;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,19 +68,17 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     }
 
     private void initVars() {
-        this.authManager = MyAuthManager.getInstance();
         this.retrofit = new RetrofitService().getRetrofit();
-
-        this.totalGroups = 0;
     }
 
     private void initViews() {
-        this.totalGroupsTV = findViewById(R.id.homepageTotalGroupsTV);
+        this.totalGroups = findViewById(R.id.homepageTotalGroupsTV);
         this.totalWinsTV = findViewById(R.id.homepageTotalWinsTV);
-        this.totalGamesTV = findViewById(R.id.homepageTotalGamesTV);
+        this.totalDrawsTV = findViewById(R.id.homepageTotalDrawsTV);
+        this.totalLosesTV = findViewById(R.id.homepageTotalLosesTV);
 
         this.userGroupsRV = findViewById(R.id.homepageGroupsRV);
-        UserGroupsRVAdapter userGroupsRVAdapter = new UserGroupsRVAdapter(authManager.getUser().getMembers(), this);
+        UserGroupsRVAdapter userGroupsRVAdapter = new UserGroupsRVAdapter(MyAuthManager.user.getMembers(), this);
         userGroupsRV.setAdapter(userGroupsRVAdapter);
         userGroupsRV.setLayoutManager(new LinearLayoutManager(this));
 
@@ -99,17 +96,25 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     }
 
     private void computeGeneralStats() {
-        if (authManager.getUser() == null) {
+        if (MyAuthManager.user == null) {
             return;
         }
 
         // Compute total groups
-        this.totalGroups = authManager.getUser().getMembers().size();
-        this.totalGroupsTV.setText("Total groups = " + totalGroups);
+        this.totalGroups.setText("Total groups: " + MyAuthManager.user.getMembers().size());
 
-        // TODO: implement general user statics with separate request
-        this.totalWinsTV.setText("Total wins = to be implemented");
-        this.totalGamesTV.setText("Total wins = to be implemented");
+        // Compute stats
+        int wins = 0;
+        int draws = 0;
+        int loses = 0;
+        for (Member member : MyAuthManager.user.getMembers()) {
+            wins += member.getWins();
+            draws += member.getDraws();
+            loses += member.getLoses();
+        }
+        this.totalWinsTV.setText("Total wins: " + wins);
+        this.totalDrawsTV.setText("Total draws: " + draws);
+        this.totalLosesTV.setText("Total loses: " + loses);
     }
 
     private void openCreateGroupDialog() {
@@ -135,7 +140,6 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
                     Intent intent = new Intent(HomepageActivity.this, FootballGroupActivity.class);
                     intent.putExtra("new_group", 1); // 1 means true
                     intent.putExtra("group_name", groupName);
-                    intent.putExtra("user_id", authManager.getUser().getId());
                     startActivity(intent);
                     dialog.dismiss();
                     return;
@@ -165,9 +169,9 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
 
     @Override
     public void onGroupLeft(long memberID) {
-        for (int i = 0; i < authManager.getUser().getMembers().size(); i++) {
-            if (authManager.getUser().getMembers().get(i).getId() == memberID) {
-                authManager.getUser().getMembers().remove(i);
+        for (int i = 0; i < MyAuthManager.user.getMembers().size(); i++) {
+            if (MyAuthManager.user.getMembers().get(i).getId() == memberID) {
+                MyAuthManager.user.getMembers().remove(i);
                 userGroupsRV.getAdapter().notifyItemRemoved(i); // update the rv
                 return;
             }

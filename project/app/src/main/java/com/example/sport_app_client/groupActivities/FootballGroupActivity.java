@@ -32,6 +32,7 @@ import com.example.sport_app_client.model.game.Game;
 import com.example.sport_app_client.model.group.FootballGroup;
 import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.model.member.Member;
+import com.example.sport_app_client.retrofit.MyAuthManager;
 import com.example.sport_app_client.retrofit.RetrofitService;
 import com.example.sport_app_client.retrofit.api.FBGroupAPI;
 
@@ -142,8 +143,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
 
     private void requestGroupCreation(Intent intent) {
         String groupName = intent.getStringExtra("group_name");
-        Long userID = intent.getLongExtra("user_id",-1);
-        if (groupName == null || userID == -1) {
+        if (groupName == null) {
             Toast.makeText(this, "Something went wrong with intent data", Toast.LENGTH_SHORT).show(); // delete later
             finish();
             return;
@@ -155,7 +155,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
         // Send request
-        groupAPI.createFootballGroup(groupName, userID).enqueue(new Callback<FootballGroup>() {
+        groupAPI.createFootballGroup(groupName, MyAuthManager.user.getId()).enqueue(new Callback<FootballGroup>() {
             @Override
             public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
                 if (response.code() == 200) { // ok

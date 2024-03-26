@@ -3,38 +3,14 @@ package com.example.sport_app_client.retrofit;
 import com.example.sport_app_client.model.User;
 
 public class MyAuthManager {
-    private User user;
-    private String token;
-    private static MyAuthManager instance;
+    public static User user = null;
+    public static String token = "";
+
+    public static void resetData() {
+        user = null;
+        token = "";
+    }
 
     private MyAuthManager(){
-        this.token = "";
-    }
-
-    public static MyAuthManager getInstance() {
-        if (instance == null) {
-            instance = new MyAuthManager();
-        }
-        return instance;
-    }
-
-    public static void deleteInstance() {
-        instance = null;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
     }
 }

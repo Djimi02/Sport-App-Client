@@ -47,7 +47,6 @@ public class LoginActivity extends AppCompatActivity {
     private long lastClickTime;
     private Retrofit retrofit;
     private AuthAPI authAPI;
-    private MyAuthManager authManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +63,6 @@ public class LoginActivity extends AppCompatActivity {
 
         this.retrofit = new RetrofitService().getRetrofit();
         this.authAPI = retrofit.create(AuthAPI.class);
-        this.authManager = MyAuthManager.getInstance();
     }
 
     private void initViews() {
@@ -117,8 +115,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<JwtAuthenticationResponse> call, Response<JwtAuthenticationResponse> response) {
                 if (response.code() == 200) {
-                    authManager.setToken(response.body().getToken());
-                    authManager.setUser(response.body().getUser());
+                    MyAuthManager.token = response.body().getToken();
+                    MyAuthManager.user = response.body().getUser();
                     MyGlobals.currentUser = response.body().getUser();
                     Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
 
