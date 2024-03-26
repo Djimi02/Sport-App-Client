@@ -47,8 +47,6 @@ import retrofit2.Retrofit;
 
 public class FootballGroupActivity extends AppCompatActivity implements GameCreatedListener, GameClickListener, GroupMemberDeletedListener {
 
-    private final String ERROR_MESSAGE_1 = "Unable to execute this action now!";
-    private final String ERROR_MESSAGE_2 = "Check your internet or try again later!";
 
     /* Main Activity Views */
     private TextView groupNameTV;
@@ -126,16 +124,16 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
                     mainProgressBar.setVisibility(View.GONE);
                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 } else {
-                    Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                    Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                     finish();
                 }
             }
 
             @Override
             public void onFailure(Call<FootballGroup> call, Throwable t) {
-                Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                 finish();
                 System.out.println(t.toString());
             }
@@ -170,15 +168,15 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
                     mainProgressBar.setVisibility(View.GONE);
                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 } else {
-                    Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                    Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                     finish();
                 }
             }
 
             @Override
             public void onFailure(Call<FootballGroup> call, Throwable t) {
-                Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                 finish();
             }
         });
@@ -222,8 +220,8 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
             ConfirmActionDialog.showDialog(this, "Are you sure you want to leave the group?", () -> {
                 Member associatedMember = getAssociatedMember();
                 if (associatedMember == null) {
-                    Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                    Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -246,8 +244,8 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
                             // Hide progress bar and allow UI interactions
                             settingsProgressBar.setVisibility(View.GONE);
                             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                            Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                            Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                            Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                         }
                     }
 
@@ -256,8 +254,8 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
                         // Hide progress bar and allow UI interactions
                         settingsProgressBar.setVisibility(View.GONE);
                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                        Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                        Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                        Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                     }
                 });
             });
@@ -267,8 +265,8 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
         deleteGroupBTN.setOnClickListener(view -> {
             ConfirmActionDialog.showDialog(this, "Are you sure you want to delete the group?", () -> {
                 if (group == null) {
-                    Toast.makeText(this, ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(this, ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -292,8 +290,8 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
                             // Hide progress bar and allow UI interactions
                             settingsProgressBar.setVisibility(View.GONE);
                             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                            Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                            Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                            Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                         }
                     }
 
@@ -302,8 +300,8 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
                         // Hide progress bar and allow UI interactions
                         settingsProgressBar.setVisibility(View.GONE);
                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                        Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                        Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                        Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                     }
                 });
             });
@@ -342,8 +340,8 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
         settingsMembersRV = findViewById(R.id.groupSettingsMembersRV);
         FootballMember associatedMember = getAssociatedMember();
         if (associatedMember == null) {
-            Toast.makeText(this, ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-            Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+            Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
             return;
         }
         GroupSettingsMembersRVAdapter settingsMembersAdapter =
@@ -393,8 +391,8 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
                             Toast.makeText(FootballGroupActivity.this, "Something went wrong!", Toast.LENGTH_LONG).show();
                         }
                     } else {
-                        Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                        Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                        Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                     }
                     dialog.dismiss();
                     // Hide progress bar and allow UI interactions
@@ -404,8 +402,8 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
 
                 @Override
                 public void onFailure(Call<FootballMember> call, Throwable t) {
-                    Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                    Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                     // Hide progress bar and allow UI interactions
                     mainProgressBar.setVisibility(View.GONE);
                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
@@ -496,8 +494,8 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
                     team2Adapter.notifyDataSetChanged();
                     dialog.show();
                 } else {
-                    Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                    Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                     dialog.dismiss();
                 }
                 // Hide progress bar and allow UI interactions
@@ -507,8 +505,8 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
 
             @Override
             public void onFailure(Call<List<FootballMember>> call, Throwable t) {
-                Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                 dialog.dismiss();
                 // Hide progress bar and allow UI interactions
                 mainProgressBar.setVisibility(View.GONE);
@@ -540,8 +538,8 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
 
                         Toast.makeText(FootballGroupActivity.this, "Member deleted successfully!", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                        Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                        Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                     }
                     // Hide progress bar and allow UI interactions
                     settingsProgressBar.setVisibility(View.GONE);
@@ -553,8 +551,8 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
                     // Hide progress bar and allow UI interactions
                     settingsProgressBar.setVisibility(View.GONE);
                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                    Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(FootballGroupActivity.this, ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                    Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                 }
             });
         });
