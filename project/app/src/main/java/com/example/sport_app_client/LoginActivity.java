@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Patterns;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -53,7 +54,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         this.getSupportActionBar().hide();
-        Toast.makeText(this, "On create!", Toast.LENGTH_SHORT).show();
 
         initVars();
         initViews();
@@ -90,7 +90,6 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         this.progressBar = findViewById(R.id.logInPagePB);
-        progressBar.setVisibility(View.GONE);
 
         this.forgotPasswordTV = findViewById(R.id.logInPageForgotPasswordTV);
         forgotPasswordTV.setOnClickListener(view -> {
@@ -107,6 +106,11 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
         // Data is valid
+
+        // Show progress bar and disable UI interactions
+        progressBar.setVisibility(View.VISIBLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
         SignInRequest newSignInRequest = new SignInRequest(email, pass);
         authAPI.signIn(newSignInRequest).enqueue(new Callback<JwtAuthenticationResponse>() {
@@ -127,19 +131,26 @@ public class LoginActivity extends AppCompatActivity {
                     try {
                         Toast.makeText(LoginActivity.this, response.errorBody().string(), Toast.LENGTH_LONG).show();
                     } catch (Exception e) {
-                        Toast.makeText(LoginActivity.this, "Something went wrong!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoginActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_LONG).show();
                     }
                 }
                 else {
-                    Toast.makeText(LoginActivity.this, "Something went wrong!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                 }
+                // Hide progress bar and allow UI interactions
+                progressBar.setVisibility(View.GONE);
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             }
 
             @Override
             public void onFailure(Call<JwtAuthenticationResponse> call, Throwable t) {
-                Toast.makeText(LoginActivity.this, "Something went wrong!", Toast.LENGTH_LONG).show();
-                Toast.makeText(LoginActivity.this, "Please try again later!", Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                 System.out.println(t.toString());
+                // Hide progress bar and allow UI interactions
+                progressBar.setVisibility(View.GONE);
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             }
         });
 
