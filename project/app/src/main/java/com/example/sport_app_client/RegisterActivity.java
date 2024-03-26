@@ -2,26 +2,23 @@ package com.example.sport_app_client;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.sport_app_client.helpers.KeyboardHidder;
 import com.example.sport_app_client.helpers.MyGlobals;
-import com.example.sport_app_client.model.User;
 import com.example.sport_app_client.retrofit.MyAuthManager;
 import com.example.sport_app_client.retrofit.RetrofitService;
 import com.example.sport_app_client.retrofit.api.AuthAPI;
 import com.example.sport_app_client.retrofit.request.SignUpRequest;
 import com.example.sport_app_client.retrofit.response.JwtAuthenticationResponse;
-
-import org.json.JSONObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -31,6 +28,7 @@ import retrofit2.Retrofit;
 public class RegisterActivity extends AppCompatActivity {
 
     /* Views */
+    private ProgressBar progressBar;
     private EditText emailET;
     private EditText passwordET;
     private EditText repeatPasswordET;
@@ -60,6 +58,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void initViews() {
+        this.progressBar = findViewById(R.id.registerPagePB);
         this.emailET = findViewById(R.id.RegistrationPageEmailET);
         this.passwordET = findViewById(R.id.RegistrationPagePasswordET);
         this.repeatPasswordET = findViewById(R.id.RegistrationPageRepPassET);
@@ -82,6 +81,11 @@ public class RegisterActivity extends AppCompatActivity {
         }
         // Data is valid
 
+        // Show progress bar and disable UI interactions
+        progressBar.setVisibility(View.VISIBLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
         SignUpRequest newSignUpRequest = new SignUpRequest(userName, email, pass1);
         this.authAPI.signUp(newSignUpRequest).enqueue(new Callback<JwtAuthenticationResponse>() {
             @Override
@@ -102,13 +106,19 @@ public class RegisterActivity extends AppCompatActivity {
                         Toast.makeText(RegisterActivity.this, "Something went wrong!", Toast.LENGTH_LONG).show();
                     }
                 }
+                // Hide progress bar and allow UI interactions
+                progressBar.setVisibility(View.GONE);
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             }
 
             @Override
             public void onFailure(Call<JwtAuthenticationResponse> call, Throwable t) {
-                Toast.makeText(RegisterActivity.this, "Something went wrong!", Toast.LENGTH_LONG).show();
-                Toast.makeText(RegisterActivity.this, "Please try again later!", Toast.LENGTH_LONG).show();
+                Toast.makeText(RegisterActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                 System.out.println(t.toString());
+                // Hide progress bar and allow UI interactions
+                progressBar.setVisibility(View.GONE);
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             }
         });
     }
@@ -145,6 +155,9 @@ public class RegisterActivity extends AppCompatActivity {
             output = false;
         } else if (nickName.length() < 4) {
             userNameET.setError("Nickname should be at least 4 characters long!");
+            output = false;
+        } else if (nickName.length() > 12) {
+            userNameET.setError("Nickname should be at most 12 characters long!");
             output = false;
         }
 
