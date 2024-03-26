@@ -7,8 +7,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.view.DragEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -42,6 +44,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
     private final int MAX_TEAM_SIZE = 11;
 
     /** Views */
+    private ProgressBar progressBar;
     private ViewFlipper viewFlipper;
     private Button backBTN;
     private Button nextBTN;
@@ -104,6 +107,8 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
     private void initViews() {
         this.viewFlipper = findViewById(R.id.footballgameactivityVF);
 
+        this.progressBar = findViewById(R.id.fbGameProgressBar);
+
         this.backBTN = findViewById(R.id.footballgameactivityBackBTN);
         backBTN.setOnClickListener((view -> {
             backBtnPressed();
@@ -132,7 +137,16 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
 
         this.step1RandomBTN = findViewById(R.id.footballgameStep1RandomBTN);
         step1RandomBTN.setOnClickListener(view -> {
+            // Show progress bar and disable UI interactions
+            progressBar.setVisibility(View.VISIBLE);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
             generateRandomTeams();
+
+            // Hide progress bar and allow UI interactions
+            progressBar.setVisibility(View.GONE);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         });
 
         initRecyclerViews();
@@ -191,7 +205,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
             }
         }
         else if (viewFlipper.getDisplayedChild() == 2) { // Confirm game pressed
-            collectGameStats(); // Collect game stats
+            collectAndUpdateGameStats(); // Collect game stats
 
             // Create request
             AddNewFBGameRequest request = new AddNewFBGameRequest();
@@ -199,6 +213,11 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
             request.setGroupID(MyGlobals.footballGroup.getId());
             request.setVictory(victory);
             request.setMembersGameStats(allTemporaryMembers);
+
+            // Show progress bar and disable UI interactions
+            progressBar.setVisibility(View.VISIBLE);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
             // Send request
             footballGroupAPI.addNewFootballGame(request).enqueue(new Callback<FootballGame>() {
@@ -211,20 +230,19 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
                             MyGlobals.gameCreatedListener.onGameCreated(); // Update group
                             MyGlobals.gameCreatedListener = null;
                         }
-                        finish();
                     } else {
                         Toast.makeText(FootballGameActivity.this, "Game creation failed!", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(FootballGameActivity.this, "Try again later!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(FootballGameActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_SHORT).show();
                         undoCollectGameStats();
                         System.out.println("CODE = " + response.code());
-                        finish();
                     }
+                    finish();
                 }
 
                 @Override
                 public void onFailure(Call<FootballGame> call, Throwable t) {
                     Toast.makeText(FootballGameActivity.this, "Game creation failed!", Toast.LENGTH_SHORT).show();
-                    Toast.makeText(FootballGameActivity.this, "Try again later!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FootballGameActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_SHORT).show();
                     undoCollectGameStats();
                     System.out.println(t.toString());
                     finish();
@@ -233,6 +251,11 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
 
             return;
         }
+
+        // Show progress bar and disable UI interactions
+        progressBar.setVisibility(View.VISIBLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
         viewFlipper.showNext();
         backBTN.setEnabled(true);
@@ -255,6 +278,10 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
             step3Team2.addAll(((FBMembersGameStatsSelectorRVAdapter)step2Team2RV.getAdapter()).getCurrentGameStats().values());
             step3Team2RV.getAdapter().notifyDataSetChanged();
         }
+
+        // Hide progress bar and allow UI interactions
+        progressBar.setVisibility(View.GONE);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
     /**
@@ -262,7 +289,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
      * and adds them in this.allMembersWithUpdatedStats and adds all game stats
      * in this.allTemporaryMembers.
      */
-    private void collectGameStats() {
+    private void collectAndUpdateGameStats() {
 
         // Collect and update team1 members with stats from the game
         int team1TotalGoals = 0;

@@ -15,7 +15,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_150sdp"
+        android:layout_height="@dimen/_200sdp"
         android:id="@+id/footballgameStep3Team1RV"/>
 
     <TextView
@@ -26,8 +26,8 @@
         android:layout_gravity="center"/>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/footballgameStep3Team2RV"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_150sdp"
-        android:id="@+id/footballgameStep3Team2RV"/>
+        android:layout_height="@dimen/_200sdp" />
 
 </LinearLayout>

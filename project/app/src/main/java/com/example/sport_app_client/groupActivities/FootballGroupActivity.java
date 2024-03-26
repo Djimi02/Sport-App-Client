@@ -6,13 +6,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -27,7 +24,6 @@ import com.example.sport_app_client.adapter.football.FBMemberGameStatsViewRVAdap
 import com.example.sport_app_client.gameActivities.FootballGameActivity;
 import com.example.sport_app_client.helpers.ConfirmActionDialog;
 import com.example.sport_app_client.helpers.KeyboardHidder;
-import com.example.sport_app_client.helpers.LogOutHandler;
 import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.interfaces.GameClickListener;
 import com.example.sport_app_client.interfaces.GameCreatedListener;
@@ -388,6 +384,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
                 public void onResponse(Call<FootballMember> call, Response<FootballMember> response) {
                     if (response.code() == 200) { // OK
                         group.addMember(response.body());
+                        membersRV.getAdapter().notifyItemInserted(group.getMembers().size());
                         Toast.makeText(FootballGroupActivity.this, "Member added successfully!", Toast.LENGTH_SHORT).show();
                     } else if (response.code() == 400) {
                         try {

@@ -1,47 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:context=".gameActivities.FootballGameActivity"
-    android:orientation="vertical">
+    >
 
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="progres bar"
-        android:textSize="@dimen/_30sdp"/>
+        android:layout_height="match_parent">
 
-    <ViewFlipper
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/footballgameactivityVF">
-
-        <include layout="@layout/fb_game_step_1" />
-
-        <include layout="@layout/fb_game_step_2"/>
-
-        <include layout="@layout/fb_game_step_3"/>
-
-    </ViewFlipper>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Button
+        <ProgressBar
+            android:id="@+id/fbGameProgressBar"
+            style="?android:attr/progressBarStyle"
+            android:elevation="2dp"
+            android:visibility="gone"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="back"
-            android:id="@+id/footballgameactivityBackBTN"/>
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="next"
-            android:id="@+id/footballgameactivityNextBTN"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="progres bar"
+                android:textSize="@dimen/_30sdp" />
 
-</LinearLayout>
+            <ViewFlipper
+                android:id="@+id/footballgameactivityVF"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <include layout="@layout/fb_game_step_1" />
+
+                <include layout="@layout/fb_game_step_2" />
+
+                <include layout="@layout/fb_game_step_3" />
+
+            </ViewFlipper>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/footballgameactivityBackBTN"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="back" />
+
+                <Button
+                    android:id="@+id/footballgameactivityNextBTN"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="next" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

@@ -182,7 +182,9 @@ public class FBMembersGameStatsSelectorRVAdapter extends RecyclerView.Adapter<FB
     }
 
     /**
-    The method returns the stats that are currently viewable in step 2 layout.
+    The method returns the stats that are currently viewable in step 2 layout,
+     * where the key is a member of the group and the value is
+     * their stat in the game
      */
     public HashMap<FootballMember, FootballMember> getCurrentGameStats() {
         HashMap<FootballMember, FootballMember> output = new HashMap<>();

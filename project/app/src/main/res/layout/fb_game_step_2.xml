@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <TextView
@@ -14,9 +14,9 @@
         android:layout_gravity="center"/>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/footballgameStep2Team1RV"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_150sdp"
-        android:id="@+id/footballgameStep2Team1RV"/>
+        android:layout_height="@dimen/_200sdp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -26,8 +26,8 @@
         android:layout_gravity="center"/>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/footballgameStep2Team2RV"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_150sdp"
-        android:id="@+id/footballgameStep2Team2RV"/>
+        android:layout_height="@dimen/_200sdp" />
 
 </LinearLayout>
