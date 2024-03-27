@@ -26,7 +26,7 @@ import com.example.sport_app_client.model.game.FootballGame;
 import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.model.member.Member;
 import com.example.sport_app_client.retrofit.RetrofitService;
-import com.example.sport_app_client.retrofit.api.FBGroupAPI;
+import com.example.sport_app_client.retrofit.api.FbAPI;
 import com.example.sport_app_client.retrofit.request.AddNewFBGameRequest;
 
 import java.util.ArrayList;
@@ -77,7 +77,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
 
     /** Retrofit */
     private Retrofit retrofit;
-    private FBGroupAPI footballGroupAPI;
+    private FbAPI footballGroupAPI;
 
 
     @Override
@@ -101,7 +101,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
         this.allTemporaryMembers = new ArrayList<>();
 
         this.retrofit = new RetrofitService().getRetrofit();
-        this.footballGroupAPI = retrofit.create(FBGroupAPI.class);
+        this.footballGroupAPI = retrofit.create(FbAPI.class);
     }
 
     private void initViews() {

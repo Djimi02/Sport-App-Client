@@ -34,7 +34,7 @@ import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.model.member.Member;
 import com.example.sport_app_client.retrofit.MyAuthManager;
 import com.example.sport_app_client.retrofit.RetrofitService;
-import com.example.sport_app_client.retrofit.api.FBGroupAPI;
+import com.example.sport_app_client.retrofit.api.FbAPI;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -72,7 +72,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
     /* Vars */
     private FootballGroup group;
     private Retrofit retrofit;
-    private FBGroupAPI groupAPI;
+    private FbAPI groupAPI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,7 +184,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
 
     private void initVars() {
         this.retrofit = new RetrofitService().getRetrofit();
-        this.groupAPI = retrofit.create(FBGroupAPI.class);
+        this.groupAPI = retrofit.create(FbAPI.class);
     }
 
     private void initViews() {
@@ -230,7 +230,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
                 getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                         WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
-                groupAPI.removeMemberFromGroup(group.getId(), associatedMember.getId()).enqueue(new Callback<Void>() {
+                groupAPI.removeMemberFromGroup(associatedMember.getId()).enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         if (response.code() == 200) { // OK
@@ -616,7 +616,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
             settingsProgressBar.setVisibility(View.VISIBLE);
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            groupAPI.removeMemberFromGroup(group.getId(), member.getId()).enqueue(new Callback<Void>() {
+            groupAPI.removeMemberFromGroup(member.getId()).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.code() == 200) { // OK
