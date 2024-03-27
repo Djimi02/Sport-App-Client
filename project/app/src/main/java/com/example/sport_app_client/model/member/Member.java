@@ -10,13 +10,13 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
 
-public abstract class Member {
+    public abstract class Member<GroupT extends Group<?,?>> {
     protected long id;
     protected String nickname;
     protected User user;
     protected Sports sport;
 
-    protected Group group;
+    protected GroupT group;
 
     protected Boolean isAdmin;
 
@@ -28,7 +28,7 @@ public abstract class Member {
 
     public Member() {initVars();}
 
-    public Member(String nickname, Sports sport, Group group) {
+    public Member(String nickname, Sports sport, GroupT group) {
         this.nickname = nickname;
         this.sport = sport;
         this.group = group;
@@ -74,11 +74,11 @@ public abstract class Member {
         this.sport = sport;
     }
 
-    public Group getGroup() {
+    public GroupT getGroup() {
         return group;
     }
 
-    public void setGroup(Group group) {
+    public void setGroup(GroupT group) {
         this.group = group;
     }
 

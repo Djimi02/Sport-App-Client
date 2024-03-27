@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import java.util.List;
 
 
-public class FootballMember extends Member {
+public class FootballMember extends Member<FootballGroup> {
 
     /* Stats */
     private int goals;

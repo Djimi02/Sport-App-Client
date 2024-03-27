@@ -1,8 +1,13 @@
 package com.example.sport_app_client.model.group;
 
 import com.example.sport_app_client.model.Sports;
+import com.example.sport_app_client.model.game.Game;
+import com.example.sport_app_client.model.member.Member;
 
-public abstract class Group {
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class Group<MemberT extends Member<?>, GameT extends Game<?,?>> {
 
     protected Long id;
 
@@ -10,9 +15,43 @@ public abstract class Group {
 
     protected Sports sport;
 
+    protected List<MemberT> members;
+
+    protected List<GameT> games;
+
+    public Group() {initVars();}
+
     public Group(String name, Sports sport) {
         this.name = name;
         this.sport = sport;
+        initVars();
+    }
+
+    private void initVars() {
+        this.members = new ArrayList<>();
+        this.games = new ArrayList<>();
+    }
+
+    public void addMember(MemberT member) {
+        this.members.add(member);
+    }
+
+    public void removeMember(Long memberID) {
+        int memberToBeRemoved = -1;
+        for (int i = 0; i < this.members.size(); i++) {
+            if (this.members.get(i).getId() == memberID) {
+                memberToBeRemoved = i;
+                break;
+            }
+        }
+        if (memberToBeRemoved != -1) {
+            this.members.remove(memberToBeRemoved);
+        }
+    }
+
+    public void addGame(GameT game) {
+        // Adding the new game to the first position
+        this.games.add(0, game);
     }
 
     public Long getId() {
@@ -38,4 +77,21 @@ public abstract class Group {
     public void setSport(Sports sport) {
         this.sport = sport;
     }
+
+    public List<GameT> getGames() {
+        return games;
+    }
+
+    public void setGames(List<GameT> games) {
+        this.games = games;
+    }
+
+    public List<MemberT> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<MemberT> members) {
+        this.members = members;
+    }
+
 }

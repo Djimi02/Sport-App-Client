@@ -32,6 +32,7 @@ import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.interfaces.GameClickListener;
 import com.example.sport_app_client.interfaces.GameCreatedListener;
 import com.example.sport_app_client.interfaces.GroupMemberDeletedListener;
+import com.example.sport_app_client.model.game.FootballGame;
 import com.example.sport_app_client.model.game.Game;
 import com.example.sport_app_client.model.group.FootballGroup;
 import com.example.sport_app_client.model.member.FootballMember;
@@ -355,7 +356,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         // Sorting the array
         group.setGames(
                 group.getGames().stream()
-                        .sorted(Comparator.comparing(Game::getDate).reversed()) // Sort by releaseDate in descending order
+                        .sorted(Comparator.comparing(FootballGame::getDate).reversed()) // Sort by releaseDate in descending order
                         .collect(Collectors.toList())
         );
         GamesRVAdapter gamesAdapter = new GamesRVAdapter(this.group.getGames(), this);
