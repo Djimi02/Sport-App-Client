@@ -91,7 +91,6 @@ public class RegisterActivity extends AppCompatActivity {
                 if (response.code() == 200) {
                     MyAuthManager.token = response.body().getToken();
                     MyAuthManager.user = response.body().getUser();
-                    MyGlobals.currentUser = response.body().getUser();
                     Toast.makeText(RegisterActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
 
                     Intent intent = new Intent(RegisterActivity.this, HomepageActivity.class);

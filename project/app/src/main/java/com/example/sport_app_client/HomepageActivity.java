@@ -180,8 +180,8 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
 
     @Override
     public void onGroupCreated(Member member) {
-        MyGlobals.currentUser.getMembers().add(member);
-        userGroupsRV.getAdapter().notifyItemInserted(MyGlobals.currentUser.getMembers().size()-1); // update the rv
+        MyAuthManager.user.getMembers().add(member);
+        userGroupsRV.getAdapter().notifyItemInserted(MyAuthManager.user.getMembers().size()-1); // update the rv
     }
 
     @Override

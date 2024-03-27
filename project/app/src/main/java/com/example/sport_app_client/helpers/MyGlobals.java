@@ -12,7 +12,6 @@ public final class MyGlobals {
     public final static String ERROR_MESSAGE_2 = "Check your internet or try again later!";
 
     /* Pointers to objects */
-    public static User currentUser = null;
 
     public static CreateOrJoinOrLeaveGroupListener createOrJoinOrLeaveGroupListener = null;
 

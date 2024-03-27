@@ -117,7 +117,6 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.code() == 200) {
                     MyAuthManager.token = response.body().getToken();
                     MyAuthManager.user = response.body().getUser();
-                    MyGlobals.currentUser = response.body().getUser();
                     Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
 
                     Intent intent = new Intent(LoginActivity.this, HomepageActivity.class);
