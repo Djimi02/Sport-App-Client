@@ -11,10 +11,13 @@ import java.util.List;
 
 public class FootballMember extends Member {
 
+    /* Stats */
     private int goals;
     private int assists;
     private int saves;
     private int fouls;
+
+
     private Boolean isPartOfTeam1; // used for games
 
     public FootballMember() {

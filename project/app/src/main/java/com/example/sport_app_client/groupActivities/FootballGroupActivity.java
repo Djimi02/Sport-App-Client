@@ -450,6 +450,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
         final View popupView = getLayoutInflater().inflate(R.layout.fb_game_stats_dialog, null);
 
         // Init vars
+        List<FootballMember> allMembers = new ArrayList<>();
         List<FootballMember> team1 = new ArrayList<>();
         List<FootballMember> team2 = new ArrayList<>();
 
@@ -463,9 +464,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
         if (associatedMember != null) {
             if (associatedMember.getIsAdmin()) {
                 deleteBTN.setVisibility(View.VISIBLE);
-                deleteBTN.setOnClickListener(view -> {
-                    // TODO: implement delete game
-                });
+                deleteBTN.setOnClickListener(view -> removeGame(game, allMembers));
             }
         }
 
@@ -490,7 +489,7 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
             @Override
             public void onResponse(Call<List<FootballMember>> call, Response<List<FootballMember>> response) {
                 if (response.code() == 200) { // OK
-
+                    allMembers.addAll(response.body());
                     // Split game members into teams
                     for ( FootballMember member : response.body()) {
                         if (member.getPartOfTeam1()) {
@@ -528,6 +527,86 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
         // Show dialog
         dialogBuilder.setView(popupView);
         dialog = dialogBuilder.create();
+    }
+
+    /**
+     * This method removes the game and updates the group members stats accordingly.
+     * @param game - game to be removed
+     * @param members - game stats
+     */
+    private void removeGame(Game game, List<FootballMember> members) {
+        // Show progress bar and disable UI interactions
+        mainProgressBar.setVisibility(View.VISIBLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+        groupAPI.deleteGame(game.getId()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.code() == 200) { // OK
+                    // Update current data
+                    decreaseMemberStatsAfterGameDeleted(game, members);
+                    group.getGames().remove(game);
+
+                    // Update recyclers
+                    membersRV.getAdapter().notifyDataSetChanged();
+                    gamesRV.getAdapter().notifyDataSetChanged();
+                } else {
+                    Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                }
+                // Hide progress bar and allow UI interactions
+                mainProgressBar.setVisibility(View.GONE);
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                dialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                Toast.makeText(FootballGroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                dialog.dismiss();
+                // Hide progress bar and allow UI interactions
+                mainProgressBar.setVisibility(View.GONE);
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            }
+        });
+    }
+
+    /**
+     * This method takes as input the game stats and find each associated member in
+     * this.group.getMembers and decreases their stats;
+     * @param members - the list of game stats
+     */
+    private void decreaseMemberStatsAfterGameDeleted(Game game, List<FootballMember> members) {
+        for (int i = 0; i < members.size(); i++) {
+            FootballMember associatedGMember = getGroupMemberByNickname(members.get(i).getNickname());
+            if (associatedGMember == null) {
+                return;
+            }
+            associatedGMember.setGoals(associatedGMember.getGoals() - members.get(i).getGoals());
+            associatedGMember.setAssists(associatedGMember.getAssists() - members.get(i).getAssists());
+            associatedGMember.setSaves(associatedGMember.getSaves() - members.get(i).getSaves());
+            associatedGMember.setFouls(associatedGMember.getFouls() - members.get(i).getFouls());
+            if (game.getVictory() == 0) { // draw
+                associatedGMember.setDraws(associatedGMember.getDraws()-1);
+            } else if ((game.getVictory() == -1 && members.get(i).getPartOfTeam1() ||
+                    (game.getVictory() == 1 && !members.get(i).getPartOfTeam1()))) { // player had won
+                associatedGMember.setWins(associatedGMember.getWins()-1);
+            } else if ((game.getVictory() == 1 && members.get(i).getPartOfTeam1() ||
+                    (game.getVictory() == -1 && !members.get(i).getPartOfTeam1()))) { // player had lost
+                associatedGMember.setLoses(associatedGMember.getLoses()-1);
+            }
+        }
+    }
+
+    private FootballMember getGroupMemberByNickname(String nickname) {
+        for (FootballMember member : group.getMembers()) {
+            if (member.getNickname().equals(nickname)) {
+                return member;
+            }
+        }
+        return null;
     }
 
     @Override

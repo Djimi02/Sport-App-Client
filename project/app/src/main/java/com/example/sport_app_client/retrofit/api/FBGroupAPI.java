@@ -37,4 +37,7 @@ public interface FBGroupAPI {
     @DELETE("/group/football/delete/{groupid}")
     Call<Void> deleteGroup(@Path("groupid") Long groupID);
 
+    @DELETE("/group/football/delete/game/{id}")
+    Call<Void> deleteGame(@Path("id") Long gameID);
+
 }

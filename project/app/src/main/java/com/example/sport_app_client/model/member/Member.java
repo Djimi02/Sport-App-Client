@@ -20,6 +20,8 @@ public abstract class Member {
 
     protected Boolean isAdmin;
 
+    /* Stats */
+
     protected Integer wins;
     protected Integer draws;
     protected Integer loses;

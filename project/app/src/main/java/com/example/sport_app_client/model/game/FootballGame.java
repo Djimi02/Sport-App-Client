@@ -14,7 +14,6 @@ public class FootballGame extends Game {
 
     private List<FootballMember> members;
 
-    private Integer victory; // -1 -> team 1 won, 0 -> draw, 1 -> team 2 won
 
     public FootballGame(LocalDate date, FootballGroup group) {
         super(date, Sports.FOOTBALL);
@@ -25,7 +24,6 @@ public class FootballGame extends Game {
 
     private void initVars() {
         this.members = new ArrayList<>();
-        this.victory = null;
     }
 
     public void addMember(FootballMember member) {
@@ -60,13 +58,5 @@ public class FootballGame extends Game {
 
     public void setMembers(List<FootballMember> members) {
         this.members = members;
-    }
-
-    public Integer getVictory() {
-        return victory;
-    }
-
-    public void setVictory(Integer victory) {
-        this.victory = victory;
     }
 }

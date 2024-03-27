@@ -11,10 +11,12 @@ public abstract class Game {
     protected LocalDate date;
     protected Sports sport;
     protected String results;
+    private Integer victory; // -1 -> team 1 won, 0 -> draw, 1 -> team 2 won
 
     public Game(LocalDate date, Sports sport) {
         this.date = date;
         this.sport = sport;
+        this.victory = null;
     }
 
     public Long getId() {
@@ -47,5 +49,13 @@ public abstract class Game {
 
     public void setResults(String results) {
         this.results = results;
+    }
+
+    public Integer getVictory() {
+        return victory;
+    }
+
+    public void setVictory(Integer victory) {
+        this.victory = victory;
     }
 }
