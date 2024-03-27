@@ -28,4 +28,12 @@
         android:layout_height="@dimen/_200sdp"
         android:id="@+id/fbGameDialogTeam2RV"/>
 
+    <Button
+        android:id="@+id/fbGameDialogDeleteBTN"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="delete game"
+        android:visibility="gone"
+        android:layout_gravity="center"/>
+
 </LinearLayout>

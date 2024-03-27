@@ -425,7 +425,8 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
     private FootballMember getAssociatedMember() {
         FootballMember output = null;
         for (FootballMember fbMember : group.getMembers()) {
-            if (fbMember.getUser().getId() == MyGlobals.currentUser.getId()) {
+            if (fbMember.getUser() == null) { } // skip
+            else if (fbMember.getUser().getId() == MyAuthManager.user.getId()) {
                 output = fbMember;
                 break;
             }
@@ -457,6 +458,16 @@ public class FootballGroupActivity extends AppCompatActivity implements GameCrea
         date.setText(game.getDate().toString());
         TextView result = popupView.findViewById(R.id.fbGameDialogResult);
         result.setText(game.getResults().toString());
+        Button deleteBTN = popupView.findViewById(R.id.fbGameDialogDeleteBTN);
+        FootballMember associatedMember = getAssociatedMember();
+        if (associatedMember != null) {
+            if (associatedMember.getIsAdmin()) {
+                deleteBTN.setVisibility(View.VISIBLE);
+                deleteBTN.setOnClickListener(view -> {
+                    // TODO: implement delete game
+                });
+            }
+        }
 
         // Init recyclers
         RecyclerView team1RV = popupView.findViewById(R.id.fbGameDialogTeam1RV);
