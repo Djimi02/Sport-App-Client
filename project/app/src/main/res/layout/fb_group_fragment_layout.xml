@@ -5,7 +5,7 @@
     android:id="@+id/fb_drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".groupActivities.FootballGroupActivity">
+    tools:context=".groupActivities.GroupActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

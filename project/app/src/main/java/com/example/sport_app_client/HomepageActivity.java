@@ -17,7 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sport_app_client.adapter.UserGroupsRVAdapter;
-import com.example.sport_app_client.groupActivities.FootballGroupActivity;
+import com.example.sport_app_client.groupActivities.GroupActivity;
 import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.interfaces.CreateOrJoinOrLeaveGroupListener;
 import com.example.sport_app_client.interfaces.UserGroupClickListener;
@@ -137,9 +137,10 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
 
             switch (spinner.getSelectedItem().toString()) {
                 case "Football":
-                    Intent intent = new Intent(HomepageActivity.this, FootballGroupActivity.class);
+                    Intent intent = new Intent(HomepageActivity.this, GroupActivity.class);
                     intent.putExtra("new_group", 1); // 1 means true
                     intent.putExtra("group_name", groupName);
+                    intent.putExtra("fragment", "FOOTBALL");
                     startActivity(intent);
                     dialog.dismiss();
                     return;
@@ -157,9 +158,10 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
 
         switch (sport) {
             case FOOTBALL:
-                Intent intent = new Intent(HomepageActivity.this, FootballGroupActivity.class);
+                Intent intent = new Intent(HomepageActivity.this, GroupActivity.class);
                 intent.putExtra("new_group", 0); // 0 means false
                 intent.putExtra("group_id", groupID);
+                intent.putExtra("fragment", "FOOTBALL");
                 startActivity(intent);
                 break;
             default:

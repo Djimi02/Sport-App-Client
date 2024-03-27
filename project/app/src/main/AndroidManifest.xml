@@ -22,7 +22,7 @@
             android:name=".SettingsActivity"
             android:exported="false" />
         <activity
-            android:name=".groupActivities.FootballGroupActivity"
+            android:name=".groupActivities.GroupActivity"
             android:exported="false" />
         <activity
             android:name=".HomepageActivity"
