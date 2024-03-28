@@ -226,10 +226,9 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
                     if (response.code() == 200) {
                         Toast.makeText(FootballGameActivity.this, "Game created successfully!", Toast.LENGTH_SHORT).show();
                         MyGlobals.footballGroup.addGame(response.body());
-                        if (!(MyGlobals.gameCreatedListener == null)) {
-                            MyGlobals.gameCreatedListener.onGameCreated(); // Update group
-                            MyGlobals.gameCreatedListener = null;
-                        }
+                        // Update group and homepage
+                        MyGlobals.gameCreatedListenerGroup.onGameCreatedGroupIMPL();
+                        MyGlobals.gameCreatedListenerHomepage.onGameCreatedOrDeletedHomepageIMPL(MyGlobals.associatedFBMember);
                     } else {
                         Toast.makeText(FootballGameActivity.this, "Game creation failed!", Toast.LENGTH_SHORT).show();
                         Toast.makeText(FootballGameActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_SHORT).show();

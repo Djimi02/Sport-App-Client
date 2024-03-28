@@ -2,8 +2,8 @@ package com.example.sport_app_client.helpers;
 
 import com.example.sport_app_client.interfaces.GameCreatedListener;
 import com.example.sport_app_client.interfaces.CreateOrJoinOrLeaveGroupListener;
-import com.example.sport_app_client.model.User;
 import com.example.sport_app_client.model.group.FootballGroup;
+import com.example.sport_app_client.model.member.FootballMember;
 
 public final class MyGlobals {
 
@@ -13,11 +13,15 @@ public final class MyGlobals {
 
     /* Pointers to objects */
 
+    public static GameCreatedListener gameCreatedListenerGroup = null;
+
+    public static GameCreatedListener gameCreatedListenerHomepage = null;
+
     public static CreateOrJoinOrLeaveGroupListener createOrJoinOrLeaveGroupListener = null;
 
+    /* FOOTBALL */
     public static FootballGroup footballGroup = null;
-
-    public static GameCreatedListener gameCreatedListener = null;
+    public static FootballMember associatedFBMember = null;
 
     private MyGlobals() {}
 }

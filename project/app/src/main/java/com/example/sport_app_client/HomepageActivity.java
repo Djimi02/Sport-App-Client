@@ -20,6 +20,7 @@ import com.example.sport_app_client.adapter.UserGroupsRVAdapter;
 import com.example.sport_app_client.groupActivities.GroupActivity;
 import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.interfaces.CreateOrJoinOrLeaveGroupListener;
+import com.example.sport_app_client.interfaces.GameCreatedListener;
 import com.example.sport_app_client.interfaces.UserGroupClickListener;
 import com.example.sport_app_client.model.Sports;
 import com.example.sport_app_client.model.member.Member;
@@ -28,7 +29,7 @@ import com.example.sport_app_client.retrofit.RetrofitService;
 
 import retrofit2.Retrofit;
 
-public class HomepageActivity extends AppCompatActivity implements UserGroupClickListener, CreateOrJoinOrLeaveGroupListener {
+public class HomepageActivity extends AppCompatActivity implements UserGroupClickListener, CreateOrJoinOrLeaveGroupListener, GameCreatedListener {
 
     /* Views */
     private TextView totalGroups;
@@ -51,6 +52,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homepage);
         this.getSupportActionBar().hide();
+        MyGlobals.gameCreatedListenerHomepage = this;
 
         // Empty back button implementation
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
@@ -189,5 +191,17 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     @Override
     public void onGroupJoined(Member<?> member) {
 
+    }
+
+    @Override
+    public void onGameCreatedOrDeletedHomepageIMPL(Member<?> member) {
+        for (int i = 0; i < MyAuthManager.user.getMembers().size(); i++) {
+            if (MyAuthManager.user.getMembers().get(i).getId() == member.getId()) {
+                MyAuthManager.user.getMembers().get(i).setWins(member.getWins());
+                MyAuthManager.user.getMembers().get(i).setDraws(member.getDraws());
+                MyAuthManager.user.getMembers().get(i).setLoses(member.getLoses());
+                userGroupsRV.getAdapter().notifyItemChanged(i);
+            }
+        }
     }
 }

@@ -155,7 +155,8 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
             public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
                 if (response.code() == 200) { // OK
                     group = response.body();
-                    initDataDependentViews(); // they depend on group info\
+                    initDataDependentViews(); // they depend on group info
+                    MyGlobals.associatedFBMember = getAssociatedMember();
                     // Hide progress bar and allow UI interactions
                     mainProgressBar.setVisibility(View.GONE);
                     activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
@@ -197,6 +198,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
                 if (response.code() == 200) { // ok
                     group = response.body();
                     initDataDependentViews(); // they depend on group info
+                    MyGlobals.associatedFBMember = getAssociatedMember();
 
                     FootballMember initialMember = group.getMembers().get(0);
                     // Set temporary group so that they don't have cyclic references to each
@@ -238,7 +240,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         this.addGameBTN = view.findViewById(R.id.footballpageAddGameBTN);
         addGameBTN.setOnClickListener((view) -> {
             MyGlobals.footballGroup = group;
-            MyGlobals.gameCreatedListener = this;
+            MyGlobals.gameCreatedListenerGroup = this;
             Intent intent = new Intent(activity, FootballGameActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
@@ -477,7 +479,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
     }
 
     @Override
-    public void onGameCreated() {
+    public void onGameCreatedGroupIMPL() {
         // Update members rv with new stats after game
         this.membersRV.getAdapter().notifyDataSetChanged();
 
@@ -579,7 +581,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
      * @param game - game to be removed
      * @param members - game stats
      */
-    private void removeGame(Game game, List<FootballMember> members) {
+    private void removeGame(Game<?,?> game, List<FootballMember> members) {
         ConfirmActionDialog.showDialog(activity, "Are you sure you want to delete this game!", () -> {
             // Show progress bar and disable UI interactions
             mainProgressBar.setVisibility(View.VISIBLE);
@@ -593,6 +595,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
                         // Update current data
                         decreaseMemberStatsAfterGameDeleted(game, members);
                         group.getGames().remove(game);
+                        MyGlobals.gameCreatedListenerHomepage.onGameCreatedOrDeletedHomepageIMPL(MyGlobals.associatedFBMember);
 
                         // Update recyclers
                         membersRV.getAdapter().notifyDataSetChanged();
@@ -626,7 +629,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
      * this.group.getMembers and decreases their stats;
      * @param members - the list of game stats
      */
-    private void decreaseMemberStatsAfterGameDeleted(Game game, List<FootballMember> members) {
+    private void decreaseMemberStatsAfterGameDeleted(Game<?,?> game, List<FootballMember> members) {
         for (int i = 0; i < members.size(); i++) {
             FootballMember associatedGMember = getGroupMemberByNickname(members.get(i).getNickname());
             if (associatedGMember == null) {
