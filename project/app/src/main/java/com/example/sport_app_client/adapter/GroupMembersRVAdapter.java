@@ -43,7 +43,7 @@ public class GroupMembersRVAdapter extends RecyclerView.Adapter<GroupMembersRVAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.memberNameTV.setText("" + members.get(position).getNickname());
-        Member draggedMember = members.get(position);
+        Member<?> draggedMember = members.get(position);
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {

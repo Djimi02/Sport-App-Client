@@ -197,9 +197,15 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
                 if (response.code() == 200) { // ok
                     group = response.body();
                     initDataDependentViews(); // they depend on group info
-                    group.getMembers().get(0).setGroup(group);
-                    MyGlobals.createOrJoinOrLeaveGroupListener.onGroupCreated(group.getMembers().get(0));
-                    Toast.makeText(activity, group.getName(), Toast.LENGTH_SHORT).show();
+
+                    FootballMember initialMember = group.getMembers().get(0);
+                    // Set temporary group so that they don't have cyclic references to each
+                    // other which will throw exception during request sending
+                    FootballGroup tempGroup = new FootballGroup(group.getName());
+                    tempGroup.setId(group.getId());
+                    initialMember.setGroup(tempGroup);
+                    MyGlobals.createOrJoinOrLeaveGroupListener.onGroupCreated(initialMember);
+
                     // Hide progress bar and allow UI interactions
                     mainProgressBar.setVisibility(View.GONE);
                     activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);

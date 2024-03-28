@@ -21,7 +21,7 @@ public class GroupSettingsMembersRVAdapter extends RecyclerView.Adapter<GroupSet
     private List<? extends Member<?>> members;
     private boolean isAdmin;
     private GroupMemberDeletedListener listener;
-    private Member userAssociatedMember;
+    private Member<?> userAssociatedMember;
 
     public GroupSettingsMembersRVAdapter(List<? extends Member<?>> members, boolean isAdmin,
                                          GroupMemberDeletedListener listener, Member<?> userAssociatedMember) {
@@ -52,7 +52,7 @@ public class GroupSettingsMembersRVAdapter extends RecyclerView.Adapter<GroupSet
         } else {
             holder.memberUserNameTV.setText("None");
         }
-        Member member = members.get(position);
+        Member<?> member = members.get(position);
         if (member.getId() != userAssociatedMember.getId()) { // add func if the user is admin
             holder.btn.setOnClickListener(view -> {
                 listener.deleteMember(member);
