@@ -500,7 +500,10 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         if (associatedMember != null) {
             if (associatedMember.getIsAdmin()) {
                 deleteBTN.setVisibility(View.VISIBLE);
-                deleteBTN.setOnClickListener(view -> removeGame(game, allMembers));
+                deleteBTN.setOnClickListener(view -> {
+                    deleteBTN.setEnabled(false);
+                    removeGame(game, allMembers);
+                });
             }
         }
 
@@ -571,41 +574,44 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
      * @param members - game stats
      */
     private void removeGame(Game game, List<FootballMember> members) {
-        // Show progress bar and disable UI interactions
-        mainProgressBar.setVisibility(View.VISIBLE);
-        activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        ConfirmActionDialog.showDialog(activity, "Are you sure you want to delete this game!", () -> {
+            // Show progress bar and disable UI interactions
+            mainProgressBar.setVisibility(View.VISIBLE);
+            activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
-        groupAPI.deleteGame(game.getId()).enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.code() == 200) { // OK
-                    // Update current data
-                    decreaseMemberStatsAfterGameDeleted(game, members);
-                    group.getGames().remove(game);
+            groupAPI.deleteGame(game.getId()).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.code() == 200) { // OK
+                        // Update current data
+                        decreaseMemberStatsAfterGameDeleted(game, members);
+                        group.getGames().remove(game);
 
-                    // Update recyclers
-                    membersRV.getAdapter().notifyDataSetChanged();
-                    gamesRV.getAdapter().notifyDataSetChanged();
-                } else {
+                        // Update recyclers
+                        membersRV.getAdapter().notifyDataSetChanged();
+                        gamesRV.getAdapter().notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                    }
+                    // Hide progress bar and allow UI interactions
+                    mainProgressBar.setVisibility(View.GONE);
+                    activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    dialog.dismiss();
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
                     Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
                     Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                    dialog.dismiss();
+                    // Hide progress bar and allow UI interactions
+                    mainProgressBar.setVisibility(View.GONE);
+                    activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 }
-                // Hide progress bar and allow UI interactions
-                mainProgressBar.setVisibility(View.GONE);
-                activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                dialog.dismiss();
-            }
+            });
 
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
-                dialog.dismiss();
-                // Hide progress bar and allow UI interactions
-                mainProgressBar.setVisibility(View.GONE);
-                activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            }
         });
     }
 
