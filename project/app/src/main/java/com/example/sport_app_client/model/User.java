@@ -10,7 +10,7 @@ public class User {
     private String userName;
     private String email;
     private Roles role;
-    private List<Member> members;
+    private List<Member<?>> members;
 
     public User(String userName, String email) {
         this.userName = userName;
@@ -65,11 +65,11 @@ public class User {
         this.role = role;
     }
 
-    public List<Member> getMembers() {
+    public List<Member<?>> getMembers() {
         return members;
     }
 
-    public void setMembers(List<Member> members) {
+    public void setMembers(List<Member<?>> members) {
         this.members = members;
     }
 }

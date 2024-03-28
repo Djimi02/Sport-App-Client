@@ -18,13 +18,13 @@ import java.util.List;
 
 public class GroupSettingsMembersRVAdapter extends RecyclerView.Adapter<GroupSettingsMembersRVAdapter.ViewHolder> {
 
-    private List<? extends Member> members;
+    private List<? extends Member<?>> members;
     private boolean isAdmin;
     private GroupMemberDeletedListener listener;
     private Member userAssociatedMember;
 
-    public GroupSettingsMembersRVAdapter(List<? extends Member> members, boolean isAdmin,
-                                         GroupMemberDeletedListener listener, Member userAssociatedMember) {
+    public GroupSettingsMembersRVAdapter(List<? extends Member<?>> members, boolean isAdmin,
+                                         GroupMemberDeletedListener listener, Member<?> userAssociatedMember) {
         this.members = members;
         this.isAdmin = isAdmin;
         this.listener = listener;

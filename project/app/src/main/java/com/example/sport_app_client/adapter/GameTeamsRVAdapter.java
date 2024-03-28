@@ -17,9 +17,9 @@ import java.util.List;
 
 public class GameTeamsRVAdapter extends RecyclerView.Adapter<GameTeamsRVAdapter.ViewHolder> {
 
-    private List<? extends Member> members;
+    private List<? extends Member<?>> members;
 
-    public GameTeamsRVAdapter(List<? extends Member> members) {
+    public GameTeamsRVAdapter(List<? extends Member<?>> members) {
         this.members = members;
     }
 

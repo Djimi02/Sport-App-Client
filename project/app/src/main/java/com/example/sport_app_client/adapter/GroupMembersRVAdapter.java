@@ -19,10 +19,10 @@ import java.util.List;
 
 public class GroupMembersRVAdapter extends RecyclerView.Adapter<GroupMembersRVAdapter.ViewHolder> {
 
-    private List<? extends Member> members;
+    private List<? extends Member<?>> members;
     private OnGameMemberDragListener listener;
 
-    public GroupMembersRVAdapter(List<? extends Member> members, OnGameMemberDragListener listener) {
+    public GroupMembersRVAdapter(List<? extends Member<?>> members, OnGameMemberDragListener listener) {
         this.members = members;
         this.listener = listener;
     }
