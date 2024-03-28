@@ -482,7 +482,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
     }
 
     @Override
-    public void draggedMember(Member member) {
+    public void draggedMember(Member<?> member) {
         this.draggedMember = (FootballMember) member;
     }
 }

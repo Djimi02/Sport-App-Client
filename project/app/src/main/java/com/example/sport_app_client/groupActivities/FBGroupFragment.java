@@ -486,7 +486,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
     }
 
     @Override
-    public void openGameDialog(Game game) {
+    public void openGameDialog(Game<?,?> game) {
         // Build dialog
         dialogBuilder = new AlertDialog.Builder(activity);
         final View popupView = getLayoutInflater().inflate(R.layout.fb_game_stats_dialog, null);
@@ -658,7 +658,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
     }
 
     @Override
-    public void deleteMember(Member member) {
+    public void deleteMember(Member<?> member) {
         ConfirmActionDialog.showDialog(activity, "Are you sure you want to delete the member?", () -> {
             // Show progress bar and disable UI interactions
             settingsProgressBar.setVisibility(View.VISIBLE);

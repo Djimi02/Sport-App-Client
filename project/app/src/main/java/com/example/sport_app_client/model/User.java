@@ -25,7 +25,7 @@ public class User {
     }
 
     public boolean doesMemberExists(long memberID) {
-        for (Member member : members) {
+        for (Member<?> member : members) {
             if (member.getId() == memberID) {
                 return true;
             }

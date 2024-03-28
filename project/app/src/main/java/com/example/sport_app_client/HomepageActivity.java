@@ -107,7 +107,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         int wins = 0;
         int draws = 0;
         int loses = 0;
-        for (Member member : MyAuthManager.user.getMembers()) {
+        for (Member<?> member : MyAuthManager.user.getMembers()) {
             wins += member.getWins();
             draws += member.getDraws();
             loses += member.getLoses();
@@ -181,13 +181,13 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     }
 
     @Override
-    public void onGroupCreated(Member member) {
+    public void onGroupCreated(Member<?> member) {
         MyAuthManager.user.getMembers().add(member);
         userGroupsRV.getAdapter().notifyItemInserted(MyAuthManager.user.getMembers().size()-1); // update the rv
     }
 
     @Override
-    public void onGroupJoined(Member member) {
+    public void onGroupJoined(Member<?> member) {
 
     }
 }
