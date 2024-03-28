@@ -537,7 +537,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
                     allMembers.addAll(response.body());
                     // Split game members into teams
                     for ( FootballMember member : response.body()) {
-                        if (member.getPartOfTeam1()) {
+                        if (member.getIsPartOfTeam1()) {
                             team1.add(member);
                         } else {
                             team2.add(member);
@@ -638,11 +638,11 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
             associatedGMember.setFouls(associatedGMember.getFouls() - members.get(i).getFouls());
             if (game.getVictory() == 0) { // draw
                 associatedGMember.setDraws(associatedGMember.getDraws()-1);
-            } else if ((game.getVictory() == -1 && members.get(i).getPartOfTeam1() ||
-                    (game.getVictory() == 1 && !members.get(i).getPartOfTeam1()))) { // player had won
+            } else if ((game.getVictory() == -1 && members.get(i).getIsPartOfTeam1() ||
+                    (game.getVictory() == 1 && !members.get(i).getIsPartOfTeam1()))) { // player had won
                 associatedGMember.setWins(associatedGMember.getWins()-1);
-            } else if ((game.getVictory() == 1 && members.get(i).getPartOfTeam1() ||
-                    (game.getVictory() == -1 && !members.get(i).getPartOfTeam1()))) { // player had lost
+            } else if ((game.getVictory() == 1 && members.get(i).getIsPartOfTeam1() ||
+                    (game.getVictory() == -1 && !members.get(i).getIsPartOfTeam1()))) { // player had lost
                 associatedGMember.setLoses(associatedGMember.getLoses()-1);
             }
         }

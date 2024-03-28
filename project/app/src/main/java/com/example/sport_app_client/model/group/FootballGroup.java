@@ -4,8 +4,6 @@ import com.example.sport_app_client.model.Sports;
 import com.example.sport_app_client.model.game.FootballGame;
 import com.example.sport_app_client.model.member.FootballMember;
 
-import java.util.ArrayList;
-
 public class FootballGroup extends Group<FootballMember, FootballGame> {
 
     public FootballGroup(String name) {

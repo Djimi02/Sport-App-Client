@@ -5,12 +5,19 @@ import com.example.sport_app_client.model.member.Member;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class User {
     private long id;
     private String userName;
     private String email;
     private Roles role;
     private List<Member<?>> members;
+
+    public User() { initVars(); }
 
     public User(String userName, String email) {
         this.userName = userName;
@@ -31,45 +38,5 @@ public class User {
             }
         }
         return false;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Roles getRole() {
-        return role;
-    }
-
-    public void setRole(Roles role) {
-        this.role = role;
-    }
-
-    public List<Member<?>> getMembers() {
-        return members;
-    }
-
-    public void setMembers(List<Member<?>> members) {
-        this.members = members;
     }
 }

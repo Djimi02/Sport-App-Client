@@ -7,6 +7,11 @@ import com.example.sport_app_client.model.member.Member;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public abstract class Group<MemberT extends Member<?>, GameT extends Game<?,?>> {
 
     protected Long id;
@@ -53,45 +58,4 @@ public abstract class Group<MemberT extends Member<?>, GameT extends Game<?,?>> 
         // Adding the new game to the first position
         this.games.add(0, game);
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Sports getSport() {
-        return sport;
-    }
-
-    public void setSport(Sports sport) {
-        this.sport = sport;
-    }
-
-    public List<GameT> getGames() {
-        return games;
-    }
-
-    public void setGames(List<GameT> games) {
-        this.games = games;
-    }
-
-    public List<MemberT> getMembers() {
-        return members;
-    }
-
-    public void setMembers(List<MemberT> members) {
-        this.members = members;
-    }
-
 }

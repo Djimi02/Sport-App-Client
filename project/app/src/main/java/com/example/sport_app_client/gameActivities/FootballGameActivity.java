@@ -297,7 +297,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
                 ((FBMembersGameStatsSelectorRVAdapter) step2Team1RV.getAdapter()).getCurrentGameStats();
         for (FootballMember member : currentGameStatsTeam1.keySet()) {
             FootballMember tempMember = currentGameStatsTeam1.get(member);
-            tempMember.setPartOfTeam1(true);
+            tempMember.setIsPartOfTeam1(true);
 
             member.setGoals(member.getGoals() + tempMember.getGoals());
             member.setAssists(member.getAssists() + tempMember.getAssists());
@@ -316,7 +316,7 @@ public class FootballGameActivity extends AppCompatActivity implements OnGameMem
                 ((FBMembersGameStatsSelectorRVAdapter) step2Team2RV.getAdapter()).getCurrentGameStats();
         for (FootballMember member : currentGameStatsTeam2.keySet()) {
             FootballMember tempMember = currentGameStatsTeam2.get(member);
-            tempMember.setPartOfTeam1(false);
+            tempMember.setIsPartOfTeam1(false);
 
             member.setGoals(member.getGoals() + tempMember.getGoals());
             member.setAssists(member.getAssists() + tempMember.getAssists());
