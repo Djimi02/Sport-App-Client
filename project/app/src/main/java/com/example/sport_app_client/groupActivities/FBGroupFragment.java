@@ -242,6 +242,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
             MyGlobals.footballGroup = group;
             MyGlobals.gameCreatedListenerGroup = this;
             Intent intent = new Intent(activity, FootballGameActivity.class);
+            intent.putExtra("fragment", "FOOTBALL");
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
         });

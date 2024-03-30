@@ -173,6 +173,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
 
     @Override
     public void onGroupLeft(long memberID) {
+        Toast.makeText(this, "on group left", Toast.LENGTH_SHORT).show();
         for (int i = 0; i < MyAuthManager.user.getMembers().size(); i++) {
             if (MyAuthManager.user.getMembers().get(i).getId() == memberID) {
                 MyAuthManager.user.getMembers().remove(i);
@@ -180,11 +181,14 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
                 return;
             }
         }
+        totalGroups.setText("Total groups: " + MyAuthManager.user.getMembers().size());
     }
 
     @Override
     public void onGroupCreated(Member<?> member) {
+        Toast.makeText(this, "on group created", Toast.LENGTH_SHORT).show();
         MyAuthManager.user.getMembers().add(member);
+        totalGroups.setText("Total groups: " + MyAuthManager.user.getMembers().size());
         userGroupsRV.getAdapter().notifyItemInserted(MyAuthManager.user.getMembers().size()-1); // update the rv
     }
 
