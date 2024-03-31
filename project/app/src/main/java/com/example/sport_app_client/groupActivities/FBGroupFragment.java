@@ -87,10 +87,8 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fb_group_fragment_layout, container, false);
 
-        this.mainProgressBar = view.findViewById(R.id.fbGroupProgressBar);
 
         initVars();
-        loadData();
         initViews();
 
         return view;
@@ -117,121 +115,19 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
     private AlertDialog dialog;
 
     /* Vars */
-    private FootballGroup group;
-    private Retrofit retrofit;
     private FbAPI groupAPI;
 
-    private void loadData() {
-        Intent intent = activity.getIntent();
-        int result = intent.getIntExtra("new_group",-1);
-        if (result == -1) {
-            Toast.makeText(activity, "Something went wrong with intent data", Toast.LENGTH_SHORT).show(); // delete later
-            activity.finish();
-            return;
-        } else if (result == 0) {
-            requestGroupData(intent);
-        } else if (result == 1) {
-            requestGroupCreation(intent);
-        }
-    }
-
-    private void requestGroupData(Intent intent) {
-        Long groupID = intent.getLongExtra("group_id", -1);
-        if (groupID == -1) { // Something went wrong with intent data
-            Toast.makeText(activity, "Something went wrong with intent data", Toast.LENGTH_SHORT).show(); // delete later
-            activity.finish();
-            return;
-        }
-
-        // Show progress bar and disable UI interactions
-        mainProgressBar.setVisibility(View.VISIBLE);
-        activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-
-        // Request group data
-        System.out.println("group id = " + groupID);
-        groupAPI.getFootballGroup(groupID).enqueue(new Callback<FootballGroup>() {
-            @Override
-            public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
-                if (response.code() == 200) { // OK
-                    group = response.body();
-                    initDataDependentViews(); // they depend on group info
-                    MyGlobals.associatedFBMember = getAssociatedMember();
-                    // Hide progress bar and allow UI interactions
-                    mainProgressBar.setVisibility(View.GONE);
-                    activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                } else {
-                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
-                    activity.finish();
-                }
-                System.out.println("response code = " + response.code());
-            }
-
-            @Override
-            public void onFailure(Call<FootballGroup> call, Throwable t) {
-                Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
-                activity.finish();
-                System.out.println(t.toString());
-            }
-        });
-    }
-
-    private void requestGroupCreation(Intent intent) {
-        String groupName = intent.getStringExtra("group_name");
-        if (groupName == null) {
-            Toast.makeText(activity, "Something went wrong with intent data", Toast.LENGTH_SHORT).show(); // delete later
-            activity.finish();
-            return;
-        }
-
-        // Show progress bar and disable UI interactions
-        mainProgressBar.setVisibility(View.VISIBLE);
-        activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-
-        // Send request
-        groupAPI.createFootballGroup(groupName, MyAuthManager.user.getId()).enqueue(new Callback<FootballGroup>() {
-            @Override
-            public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
-                if (response.code() == 200) { // ok
-                    group = response.body();
-                    initDataDependentViews(); // they depend on group info
-                    MyGlobals.associatedFBMember = getAssociatedMember();
-
-                    FootballMember initialMember = group.getMembers().get(0);
-                    // Set temporary group so that they don't have cyclic references to each
-                    // other which will throw exception during request sending
-                    FootballGroup tempGroup = new FootballGroup(group.getName());
-                    tempGroup.setId(group.getId());
-                    initialMember.setGroup(tempGroup);
-                    MyGlobals.createOrJoinOrLeaveGroupListener.onGroupCreated(initialMember);
-
-                    // Hide progress bar and allow UI interactions
-                    mainProgressBar.setVisibility(View.GONE);
-                    activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                } else {
-                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
-                    activity.finish();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<FootballGroup> call, Throwable t) {
-                Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
-                activity.finish();
-            }
-        });
-    }
-
     private void initVars() {
-        this.retrofit = new RetrofitService().getRetrofit();
-        this.groupAPI = retrofit.create(FbAPI.class);
+        this.groupAPI = new RetrofitService().getRetrofit().create(FbAPI.class);
+        MyGlobals.associatedFBMember = getAssociatedMember();
     }
 
     private void initViews() {
+        this.mainProgressBar = view.findViewById(R.id.fbGroupProgressBar);
+
+        this.groupNameTV = view.findViewById(R.id.footballpageGroupNameTV);
+        groupNameTV.setText(MyGlobals.footballGroup.getName().toString());
+
         this.addMemberBTN = view.findViewById(R.id.footballpageAddMemberBTN);
         addMemberBTN.setOnClickListener((view -> {
             openAddMemberDialog();
@@ -239,7 +135,6 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
 
         this.addGameBTN = view.findViewById(R.id.footballpageAddGameBTN);
         addGameBTN.setOnClickListener((view) -> {
-            MyGlobals.footballGroup = group;
             MyGlobals.gameCreatedListenerGroup = this;
             Intent intent = new Intent(activity, FootballGameActivity.class);
             intent.putExtra("fragment", "FOOTBALL");
@@ -253,6 +148,8 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         settingsBTN.setOnClickListener(view -> {
             openSettings();
         });
+
+        initRecyclers();
 
         initSettingsViews();
     }
@@ -309,19 +206,13 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         this.deleteGroupBTN = view.findViewById(R.id.groupSettingsDeleteBTN);
         deleteGroupBTN.setOnClickListener(view -> {
             ConfirmActionDialog.showDialog(activity, "Are you sure you want to delete the group?", () -> {
-                if (group == null) {
-                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
-                    return;
-                }
-
                 // Show progress bar and disable UI interactions
                 settingsProgressBar.setVisibility(View.VISIBLE);
                 activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                         WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
                 // Send request
-                groupAPI.deleteGroup(group.getId()).enqueue(new Callback<Void>() {
+                groupAPI.deleteGroup(MyGlobals.footballGroup.getId()).enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         if (response.code() == 200) { // OK
@@ -353,27 +244,20 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         });
     }
 
-    private void initDataDependentViews() {
-        this.groupNameTV = view.findViewById(R.id.footballpageGroupNameTV);
-        groupNameTV.setText(group.getName().toString());
-
-        initRecyclers();
-    }
-
     private void initRecyclers() {
         this.gamesRV = view.findViewById(R.id.footballpageGamesRV);
         // Sorting the array
-        group.setGames(
-                group.getGames().stream()
+        MyGlobals.footballGroup.setGames(
+                MyGlobals.footballGroup.getGames().stream()
                         .sorted(Comparator.comparing(FootballGame::getDate).reversed()) // Sort by releaseDate in descending order
                         .collect(Collectors.toList())
         );
-        GamesRVAdapter gamesAdapter = new GamesRVAdapter(this.group.getGames(), this);
+        GamesRVAdapter gamesAdapter = new GamesRVAdapter(MyGlobals.footballGroup.getGames(), this);
         gamesRV.setAdapter(gamesAdapter);
         gamesRV.setLayoutManager(new LinearLayoutManager(activity));
 
         this.membersRV = view.findViewById(R.id.footballpageMembersRV);
-        FBMemberAllStatsViewRVAdapter membersAdapter = new FBMemberAllStatsViewRVAdapter(this.group.getMembers());
+        FBMemberAllStatsViewRVAdapter membersAdapter = new FBMemberAllStatsViewRVAdapter(MyGlobals.footballGroup.getMembers());
         membersRV.setAdapter(membersAdapter);
         membersRV.setLayoutManager(new LinearLayoutManager(activity));
     }
@@ -390,7 +274,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
             return;
         }
         GroupSettingsMembersRVAdapter settingsMembersAdapter =
-                new GroupSettingsMembersRVAdapter(group.getMembers(), associatedMember.getIsAdmin(), this, getAssociatedMember());
+                new GroupSettingsMembersRVAdapter(MyGlobals.footballGroup.getMembers(), associatedMember.getIsAdmin(), this, getAssociatedMember());
         settingsMembersRV.setAdapter(settingsMembersAdapter);
         settingsMembersRV.setLayoutManager(new LinearLayoutManager(activity));
 
@@ -422,12 +306,12 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
             activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
-            groupAPI.addFootballMember(group.getId(), memberName).enqueue(new Callback<FootballMember>() {
+            groupAPI.addFootballMember(MyGlobals.footballGroup.getId(), memberName).enqueue(new Callback<FootballMember>() {
                 @Override
                 public void onResponse(Call<FootballMember> call, Response<FootballMember> response) {
                     if (response.code() == 200) { // OK
-                        group.addMember(response.body());
-                        membersRV.getAdapter().notifyItemInserted(group.getMembers().size());
+                        MyGlobals.footballGroup.addMember(response.body());
+                        membersRV.getAdapter().notifyItemInserted(MyGlobals.footballGroup.getMembers().size());
                         Toast.makeText(activity, "Member added successfully!", Toast.LENGTH_SHORT).show();
                     } else if (response.code() == 400) {
                         try {
@@ -469,7 +353,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
      */
     private FootballMember getAssociatedMember() {
         FootballMember output = null;
-        for (FootballMember fbMember : group.getMembers()) {
+        for (FootballMember fbMember : MyGlobals.footballGroup.getMembers()) {
             if (fbMember.getUser() == null) { } // skip
             else if (fbMember.getUser().getId() == MyAuthManager.user.getId()) {
                 output = fbMember;
@@ -595,7 +479,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
                     if (response.code() == 200) { // OK
                         // Update current data
                         decreaseMemberStatsAfterGameDeleted(game, members);
-                        group.getGames().remove(game);
+                        MyGlobals.footballGroup.getGames().remove(game);
                         MyGlobals.gameCreatedListenerHomepage.onGameCreatedOrDeletedHomepageIMPL(MyGlobals.associatedFBMember);
 
                         // Update recyclers
@@ -653,7 +537,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
     }
 
     private FootballMember getGroupMemberByNickname(String nickname) {
-        for (FootballMember member : group.getMembers()) {
+        for (FootballMember member : MyGlobals.footballGroup.getMembers()) {
             if (member.getNickname().equals(nickname)) {
                 return member;
             }
@@ -672,7 +556,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.code() == 200) { // OK
-                        group.removeMember(member.getId());
+                        MyGlobals.footballGroup.removeMember(member.getId());
 
                         // Update recyclers
                         membersRV.getAdapter().notifyDataSetChanged();

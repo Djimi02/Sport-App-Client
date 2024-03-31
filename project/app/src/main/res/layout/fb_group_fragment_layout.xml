@@ -66,6 +66,7 @@
             android:id="@+id/fbGroupProgressBar"
             style="?android:attr/progressBarStyle"
             android:elevation="5dp"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

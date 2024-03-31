@@ -76,7 +76,7 @@ public class UserGroupsRVAdapter extends RecyclerView.Adapter<UserGroupsRVAdapte
                 @Override
                 public void onClick(View view) {
                     int position = getAdapterPosition();
-                    listener.openGroupInActivity(members.get(position).getGroup().getId(), members.get(position).getSport());
+                    listener.openGroupInActivity(members.get(position));
                 }
             });
         }

@@ -9,9 +9,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,15 +25,22 @@ import com.example.sport_app_client.interfaces.CreateOrJoinOrLeaveGroupListener;
 import com.example.sport_app_client.interfaces.GameCreatedListener;
 import com.example.sport_app_client.interfaces.UserGroupClickListener;
 import com.example.sport_app_client.model.Sports;
+import com.example.sport_app_client.model.group.FootballGroup;
+import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.model.member.Member;
 import com.example.sport_app_client.retrofit.MyAuthManager;
 import com.example.sport_app_client.retrofit.RetrofitService;
+import com.example.sport_app_client.retrofit.api.FbAPI;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class HomepageActivity extends AppCompatActivity implements UserGroupClickListener, CreateOrJoinOrLeaveGroupListener, GameCreatedListener {
 
     /* Views */
+    private ProgressBar progressBar;
     private TextView totalGroups;
     private TextView totalLosesTV;
     private TextView totalDrawsTV;
@@ -46,6 +55,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
 
     /* Vars */
     private Retrofit retrofit;
+    private FbAPI groupAPI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,9 +83,12 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
 
     private void initVars() {
         this.retrofit = new RetrofitService().getRetrofit();
+        this.groupAPI = retrofit.create(FbAPI.class);
     }
 
     private void initViews() {
+        this.progressBar = findViewById(R.id.homepagePB);
+
         this.totalGroups = findViewById(R.id.homepageTotalGroupsTV);
         this.totalWinsTV = findViewById(R.id.homepageTotalWinsTV);
         this.totalDrawsTV = findViewById(R.id.homepageTotalDrawsTV);
@@ -119,6 +132,86 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
 
     /** ==================== END CODE INITIALIZATION ========================================= */
 
+    /** ======================== START REQUEST DATA ======================================== */
+
+    private void requestGroupData(Member<?> member) {
+        if (member == null) { // Something went wrong with intent data
+            Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show(); // delete later
+            return;
+        }
+
+        showPGAndBlockUI();
+
+        // Request group data
+        groupAPI.getFootballGroup(member.getGroup().getId()).enqueue(new Callback<FootballGroup>() {
+            @Override
+            public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
+                if (response.code() == 200) { // OK
+                    MyGlobals.footballGroup = response.body();
+
+                    // Start group activity
+                    Intent intent = new Intent(HomepageActivity.this, GroupActivity.class);
+                    intent.putExtra("fragment", "FOOTBALL");
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                }
+                hidePGAndEnableUi();
+            }
+
+            @Override
+            public void onFailure(Call<FootballGroup> call, Throwable t) {
+                Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                hidePGAndEnableUi();
+                System.out.println(t.toString());
+            }
+        });
+    }
+
+    private void requestGroupCreation(String groupName) {
+        showPGAndBlockUI();
+
+        // Send request
+        groupAPI.createFootballGroup(groupName, MyAuthManager.user.getId()).enqueue(new Callback<FootballGroup>() {
+            @Override
+            public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
+                if (response.code() == 200) { // ok
+                    MyGlobals.footballGroup = response.body();
+
+                    FootballMember initialMember = MyGlobals.footballGroup.getMembers().get(0);
+                    // Set temporary group so that they don't have cyclic references to each
+                    // other which will throw exception during request sending
+                    FootballGroup tempGroup = new FootballGroup(MyGlobals.footballGroup.getName());
+                    tempGroup.setId(MyGlobals.footballGroup.getId());
+                    initialMember.setGroup(tempGroup);
+                    onGroupCreated(initialMember);
+
+                    // Start group activity
+                    Intent intent = new Intent(HomepageActivity.this, GroupActivity.class);
+                    intent.putExtra("fragment", "FOOTBALL");
+                    startActivity(intent);
+                    dialog.dismiss();
+
+                    Toast.makeText(HomepageActivity.this, "Group created successfully!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                }
+                hidePGAndEnableUi();
+            }
+
+            @Override
+            public void onFailure(Call<FootballGroup> call, Throwable t) {
+                Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                hidePGAndEnableUi();
+            }
+        });
+    }
+
+    /** ======================== END REQUEST DATA ======================================== */
+
     /** ==================== START BTN IMPLEMENTATION ========================================== */
 
     private void onGoToSettingsBTNClick() {
@@ -138,25 +231,16 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
 
         switch (spinner.getSelectedItem().toString()) {
             case "Football":
-                Intent intent = new Intent(HomepageActivity.this, GroupActivity.class);
-                intent.putExtra("new_group", 1); // 1 means true
-                intent.putExtra("group_name", groupName);
-                intent.putExtra("fragment", "FOOTBALL");
-                startActivity(intent);
-                dialog.dismiss();
+                requestGroupCreation(groupName);
                 break;
         }
     }
 
     @Override
-    public void openGroupInActivity(Long groupID, Sports sport) {
-        switch (sport) {
+    public void openGroupInActivity(Member<?> member) {
+        switch (member.getSport()) {
             case FOOTBALL:
-                Intent intent = new Intent(HomepageActivity.this, GroupActivity.class);
-                intent.putExtra("new_group", 0); // 0 means false
-                intent.putExtra("group_id", groupID);
-                intent.putExtra("fragment", "FOOTBALL");
-                startActivity(intent);
+                requestGroupData(member);
                 break;
             default:
                 break;
@@ -228,4 +312,17 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     }
 
     /** ================= END LISTENER'S IMPLEMENTATION =================================== */
+
+    /** ================= START HELPER FUNCTIONS =================================== */
+
+    private void showPGAndBlockUI() {
+        progressBar.setVisibility(View.VISIBLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    }
+
+    private void hidePGAndEnableUi() {
+        progressBar.setVisibility(View.GONE);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    }
 }
