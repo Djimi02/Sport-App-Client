@@ -398,8 +398,9 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
                 Toast.makeText(activity, "Game creation failed!", Toast.LENGTH_SHORT).show();
                 Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_SHORT).show();
                 undoCollectGameStats();
-                System.out.println(t.toString());
                 GlobalMethods.hidePGAndEnableUi(progressBar, activity);
+
+                System.out.println(t.toString());
             }
         });
     }
@@ -410,7 +411,6 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
      * in this.allTemporaryMembers.
      */
     private void collectAndUpdateGameStats() {
-
         // Collect and update team1 members with stats from the game
         int team1TotalGoals = 0;
         currentGameStatsTeam1 =
@@ -427,7 +427,7 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
             allMembersWithUpdatedStats.add(member);
             allTemporaryMembers.add(tempMember);
 
-            team1TotalGoals =+ tempMember.getGoals();
+            team1TotalGoals += tempMember.getGoals();
         }
 
         // Collect and update team2 members with stats from the game
@@ -446,22 +446,22 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
             allMembersWithUpdatedStats.add(member);
             allTemporaryMembers.add(tempMember);
 
-            team2TotalGoals =+ tempMember.getGoals();
+            team2TotalGoals += tempMember.getGoals();
         }
 
         // Increment wins/draws/loses
         if (team1TotalGoals > team2TotalGoals) {
             this.victory = -1;
-            new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> {member.setWins(member.getWins()+1);});
-            new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> {member.setLoses(member.getLoses()+1);});
+            new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> member.setWins(member.getWins()+1));
+            new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> member.setLoses(member.getLoses()+1));
         } else if (team2TotalGoals > team1TotalGoals) {
             this.victory = 1;
-            new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> {member.setWins(member.getWins()+1);});
-            new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> {member.setLoses(member.getLoses()+1);});
+            new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> member.setWins(member.getWins()+1));
+            new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> member.setLoses(member.getLoses()+1));
         } else {
             this.victory = 0;
-            new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> {member.setDraws(member.getDraws()+1);});
-            new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> {member.setDraws(member.getDraws()+1);});
+            new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> member.setDraws(member.getDraws()+1));
+            new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> member.setDraws(member.getDraws()+1));
         }
 
     }
@@ -491,6 +491,17 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
             member.setAssists(member.getAssists() - tempMember.getAssists());
             member.setSaves(member.getSaves() - tempMember.getSaves());
             member.setFouls(member.getFouls() - tempMember.getFouls());
+        }
+
+        if (this.victory == -1) {
+            new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> member.setWins(member.getWins()-1));
+            new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> member.setLoses(member.getLoses()-1));
+        } else if (this.victory == 1) {
+            new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> member.setWins(member.getWins()-1));
+            new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> member.setLoses(member.getLoses()-1));
+        } else if (this.victory == 0) {
+            new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> member.setDraws(member.getDraws()-1));
+            new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> member.setDraws(member.getDraws()-1));
         }
 
         this.allMembersWithUpdatedStats.clear();
