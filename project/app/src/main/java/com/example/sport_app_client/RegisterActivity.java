@@ -12,7 +12,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.example.sport_app_client.helpers.KeyboardHidder;
+import com.example.sport_app_client.helpers.GlobalMethods;
 import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.retrofit.MyAuthManager;
 import com.example.sport_app_client.retrofit.RetrofitService;
@@ -64,7 +64,7 @@ public class RegisterActivity extends AppCompatActivity {
         this.registerBTN = findViewById(R.id.RegistrationPageRegisterBTN);
         registerBTN.setOnClickListener(view -> {
             register();
-            KeyboardHidder.hideSoftKeyboard(RegisterActivity.this);
+            GlobalMethods.hideSoftKeyboard(RegisterActivity.this);
         });
     }
 

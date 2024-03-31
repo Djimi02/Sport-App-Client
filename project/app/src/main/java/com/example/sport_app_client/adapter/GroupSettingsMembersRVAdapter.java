@@ -19,14 +19,12 @@ import java.util.List;
 public class GroupSettingsMembersRVAdapter extends RecyclerView.Adapter<GroupSettingsMembersRVAdapter.ViewHolder> {
 
     private List<? extends Member<?>> members;
-    private boolean isAdmin;
     private GroupMemberDeletedListener listener;
     private Member<?> userAssociatedMember;
 
-    public GroupSettingsMembersRVAdapter(List<? extends Member<?>> members, boolean isAdmin,
+    public GroupSettingsMembersRVAdapter(List<? extends Member<?>> members,
                                          GroupMemberDeletedListener listener, Member<?> userAssociatedMember) {
         this.members = members;
-        this.isAdmin = isAdmin;
         this.listener = listener;
         this.userAssociatedMember = userAssociatedMember;
     }
@@ -79,7 +77,7 @@ public class GroupSettingsMembersRVAdapter extends RecyclerView.Adapter<GroupSet
             this.memberNameTV = view.findViewById(R.id.groupSettingsRVItemName);
             this.memberUserNameTV = view.findViewById(R.id.groupSettingsRVItemUser);
             this.btn = view.findViewById(R.id.groupSettingsRVItemBTN);
-            if (!isAdmin) {
+            if (!userAssociatedMember.getIsAdmin()) {
                 btn.setVisibility(View.GONE);
             }
         }

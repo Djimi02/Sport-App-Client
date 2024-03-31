@@ -27,14 +27,13 @@ import com.example.sport_app_client.adapter.football.FBMemberAllStatsViewRVAdapt
 import com.example.sport_app_client.adapter.football.FBMemberGameStatsViewRVAdapter;
 import com.example.sport_app_client.gameActivities.FootballGameActivity;
 import com.example.sport_app_client.helpers.ConfirmActionDialog;
-import com.example.sport_app_client.helpers.KeyboardHidder;
+import com.example.sport_app_client.helpers.GlobalMethods;
 import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.interfaces.GameClickListener;
 import com.example.sport_app_client.interfaces.GameCreatedListener;
 import com.example.sport_app_client.interfaces.GroupMemberDeletedListener;
 import com.example.sport_app_client.model.game.FootballGame;
 import com.example.sport_app_client.model.game.Game;
-import com.example.sport_app_client.model.group.FootballGroup;
 import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.model.member.Member;
 import com.example.sport_app_client.retrofit.MyAuthManager;
@@ -49,7 +48,6 @@ import java.util.stream.Collectors;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -117,9 +115,18 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
     /* Vars */
     private FbAPI groupAPI;
 
+    /** ==================== START CODE INITIALIZATION ======================================= */
+
     private void initVars() {
         this.groupAPI = new RetrofitService().getRetrofit().create(FbAPI.class);
         MyGlobals.associatedFBMember = getAssociatedMember();
+        if (MyGlobals.associatedFBMember == null) { // should not happen
+            Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+            activity.finish();
+            return;
+        }
+        MyGlobals.gameCreatedListenerGroup = this;
     }
 
     private void initViews() {
@@ -135,11 +142,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
 
         this.addGameBTN = view.findViewById(R.id.footballpageAddGameBTN);
         addGameBTN.setOnClickListener((view) -> {
-            MyGlobals.gameCreatedListenerGroup = this;
-            Intent intent = new Intent(activity, FootballGameActivity.class);
-            intent.putExtra("fragment", "FOOTBALL");
-            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(intent);
+            onAddGameBTNClick();
         });
 
         this.drawerLayout = view.findViewById(R.id.fb_drawer_layout);
@@ -152,96 +155,6 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         initRecyclers();
 
         initSettingsViews();
-    }
-
-    private void initSettingsViews() {
-        this.settingsProgressBar = view.findViewById(R.id.fbGroupSettingsProgressBar);
-
-        this.leaveGroupBTN = view.findViewById(R.id.groupSettingsLeaveBTN);
-        leaveGroupBTN.setOnClickListener(view -> {
-            ConfirmActionDialog.showDialog(activity, "Are you sure you want to leave the group?", () -> {
-                Member associatedMember = getAssociatedMember();
-                if (associatedMember == null) {
-                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                // Show progress bar and disable UI interactions
-                settingsProgressBar.setVisibility(View.VISIBLE);
-                activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-
-                groupAPI.removeMemberFromGroup(associatedMember.getId()).enqueue(new Callback<Void>() {
-                    @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
-                        if (response.code() == 200) { // OK
-                            MyGlobals.createOrJoinOrLeaveGroupListener.onGroupLeft(associatedMember.getId()); // remove from homepage
-
-                            // Exit activity
-                            activity.finish();
-
-                            Toast.makeText(activity, "Group left successfully!", Toast.LENGTH_SHORT).show();
-                        } else {
-                            // Hide progress bar and allow UI interactions
-                            settingsProgressBar.setVisibility(View.GONE);
-                            activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                            Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                            Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
-                        // Hide progress bar and allow UI interactions
-                        settingsProgressBar.setVisibility(View.GONE);
-                        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                        Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                        Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
-                    }
-                });
-            });
-        });
-
-        this.deleteGroupBTN = view.findViewById(R.id.groupSettingsDeleteBTN);
-        deleteGroupBTN.setOnClickListener(view -> {
-            ConfirmActionDialog.showDialog(activity, "Are you sure you want to delete the group?", () -> {
-                // Show progress bar and disable UI interactions
-                settingsProgressBar.setVisibility(View.VISIBLE);
-                activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-
-                // Send request
-                groupAPI.deleteGroup(MyGlobals.footballGroup.getId()).enqueue(new Callback<Void>() {
-                    @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
-                        if (response.code() == 200) { // OK
-                            FootballMember associatedMember = getAssociatedMember();
-                            if (associatedMember != null) {
-                                MyGlobals.createOrJoinOrLeaveGroupListener.onGroupLeft(associatedMember.getId());
-                            }
-                            Toast.makeText(activity, "Group deleted successfully!", Toast.LENGTH_SHORT).show();
-                            activity.finish();
-                        } else {
-                            // Hide progress bar and allow UI interactions
-                            settingsProgressBar.setVisibility(View.GONE);
-                            activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                            Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                            Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
-                        // Hide progress bar and allow UI interactions
-                        settingsProgressBar.setVisibility(View.GONE);
-                        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                        Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                        Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
-                    }
-                });
-            });
-        });
     }
 
     private void initRecyclers() {
@@ -262,19 +175,23 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         membersRV.setLayoutManager(new LinearLayoutManager(activity));
     }
 
+    private void initSettingsViews() {
+        this.settingsProgressBar = view.findViewById(R.id.fbGroupSettingsProgressBar);
+
+        this.leaveGroupBTN = view.findViewById(R.id.groupSettingsLeaveBTN);
+        leaveGroupBTN.setOnClickListener(view -> onLeaveGroupBTNClick());
+
+        this.deleteGroupBTN = view.findViewById(R.id.groupSettingsDeleteBTN);
+        deleteGroupBTN.setOnClickListener(view -> onDeleteGroupBTNClick());
+    }
+
     /**
      * This method loads the needed data for the side drawer and opens it.
      */
     private void openSettings() {
         settingsMembersRV = view.findViewById(R.id.groupSettingsMembersRV);
-        FootballMember associatedMember = getAssociatedMember();
-        if (associatedMember == null) {
-            Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-            Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
-            return;
-        }
         GroupSettingsMembersRVAdapter settingsMembersAdapter =
-                new GroupSettingsMembersRVAdapter(MyGlobals.footballGroup.getMembers(), associatedMember.getIsAdmin(), this, getAssociatedMember());
+                new GroupSettingsMembersRVAdapter(MyGlobals.footballGroup.getMembers(),this, MyGlobals.associatedFBMember);
         settingsMembersRV.setAdapter(settingsMembersAdapter);
         settingsMembersRV.setLayoutManager(new LinearLayoutManager(activity));
 
@@ -286,60 +203,10 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         dialogBuilder = new AlertDialog.Builder(activity);
         final View popupView = getLayoutInflater().inflate(R.layout.add_member_dialog, null);
 
+        // Init views
         final EditText memberNameET = popupView.findViewById(R.id.addFootballMemberDialogET);
         final Button addBTN = popupView.findViewById(R.id.addFootballMemberDialogBTN);
-        addBTN.setOnClickListener((view -> {
-            KeyboardHidder.hideSoftKeyboard(popupView, activity);
-            addBTN.setEnabled(false);
-
-            String memberName = memberNameET.getText().toString().trim();
-            if (memberName.isEmpty()) {
-                memberNameET.setError("Input member name!");
-                return;
-            } else if (memberName.length() > 10) {
-                memberNameET.setError("Name can be 12 characters max!");
-                return;
-            }
-
-            // Show progress bar and disable UI interactions
-            mainProgressBar.setVisibility(View.VISIBLE);
-            activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-
-            groupAPI.addFootballMember(MyGlobals.footballGroup.getId(), memberName).enqueue(new Callback<FootballMember>() {
-                @Override
-                public void onResponse(Call<FootballMember> call, Response<FootballMember> response) {
-                    if (response.code() == 200) { // OK
-                        MyGlobals.footballGroup.addMember(response.body());
-                        membersRV.getAdapter().notifyItemInserted(MyGlobals.footballGroup.getMembers().size());
-                        Toast.makeText(activity, "Member added successfully!", Toast.LENGTH_SHORT).show();
-                    } else if (response.code() == 400) {
-                        try {
-                            Toast.makeText(activity, response.errorBody().string(), Toast.LENGTH_LONG).show();
-                        } catch (Exception e) {
-                            Toast.makeText(activity, "Something went wrong!", Toast.LENGTH_LONG).show();
-                        }
-                    } else {
-                        Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                        Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
-                    }
-                    dialog.dismiss();
-                    // Hide progress bar and allow UI interactions
-                    mainProgressBar.setVisibility(View.GONE);
-                    activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                }
-
-                @Override
-                public void onFailure(Call<FootballMember> call, Throwable t) {
-                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
-                    // Hide progress bar and allow UI interactions
-                    mainProgressBar.setVisibility(View.GONE);
-                    activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                    dialog.dismiss();
-                }
-            });
-        }));
+        addBTN.setOnClickListener(view -> onAddMemberBTNClick(popupView, addBTN, memberNameET));
 
         // Show dialog
         dialogBuilder.setView(popupView);
@@ -347,21 +214,126 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         dialog.show();
     }
 
-    /**
-     * This method returns the member that is associated with the currently
-     * logged in user.
-     */
-    private FootballMember getAssociatedMember() {
-        FootballMember output = null;
-        for (FootballMember fbMember : MyGlobals.footballGroup.getMembers()) {
-            if (fbMember.getUser() == null) { } // skip
-            else if (fbMember.getUser().getId() == MyAuthManager.user.getId()) {
-                output = fbMember;
-                break;
-            }
-        }
-        return output;
+    /** ==================== END CODE INITIALIZATION ========================================= */
+
+    /** ==================== START BTN IMPLEMENTATION ========================================== */
+
+    private void onAddGameBTNClick() {
+        Intent intent = new Intent(activity, FootballGameActivity.class);
+        intent.putExtra("fragment", "FOOTBALL");
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(intent);
     }
+
+    private void onLeaveGroupBTNClick() {
+        ConfirmActionDialog.showDialog(activity, "Are you sure you want to leave the group?", () -> {
+            GlobalMethods.showPGAndBlockUI(settingsProgressBar, activity);
+
+            groupAPI.removeMemberFromGroup(MyGlobals.associatedFBMember.getId()).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.code() == 200) { // OK
+                        MyGlobals.createOrJoinOrLeaveGroupListener.onGroupLeft(MyGlobals.associatedFBMember.getId()); // remove from homepage
+
+                        activity.finish(); // Exit activity
+
+                        Toast.makeText(activity, "Group left successfully!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                    }
+                    GlobalMethods.hidePGAndEnableUi(settingsProgressBar, activity);
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    GlobalMethods.hidePGAndEnableUi(settingsProgressBar, activity);
+                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                }
+            });
+        });
+    }
+
+    private void onDeleteGroupBTNClick() {
+        ConfirmActionDialog.showDialog(activity, "Are you sure you want to delete the group?", () -> {
+            GlobalMethods.showPGAndBlockUI(settingsProgressBar, activity);
+
+            // Send request
+            groupAPI.deleteGroup(MyGlobals.footballGroup.getId()).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.code() == 200) { // OK
+                        MyGlobals.createOrJoinOrLeaveGroupListener.onGroupLeft(MyGlobals.associatedFBMember.getId());
+                        Toast.makeText(activity, "Group deleted successfully!", Toast.LENGTH_SHORT).show();
+                        activity.finish();
+                    } else {
+                        Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                    }
+                    GlobalMethods.hidePGAndEnableUi(settingsProgressBar, activity);
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    GlobalMethods.hidePGAndEnableUi(settingsProgressBar, activity);
+                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                }
+            });
+        });
+    }
+
+    private void onAddMemberBTNClick(View popupView, Button addBTN, EditText memberNameET) {
+        GlobalMethods.hideSoftKeyboard(popupView, activity);
+        addBTN.setEnabled(false);
+
+        String memberName = memberNameET.getText().toString().trim();
+        if (memberName.isEmpty()) {
+            memberNameET.setError("Input member name!");
+            return;
+        } else if (memberName.length() > 10) {
+            memberNameET.setError("Name can be 12 characters max!");
+            return;
+        }
+
+        GlobalMethods.showPGAndBlockUI(mainProgressBar, activity);
+
+        groupAPI.addFootballMember(MyGlobals.footballGroup.getId(), memberName).enqueue(new Callback<FootballMember>() {
+            @Override
+            public void onResponse(Call<FootballMember> call, Response<FootballMember> response) {
+                if (response.code() == 200) { // OK
+                    MyGlobals.footballGroup.addMember(response.body());
+                    membersRV.getAdapter().notifyItemInserted(MyGlobals.footballGroup.getMembers().size());
+                    Toast.makeText(activity, "Member added successfully!", Toast.LENGTH_SHORT).show();
+                } else if (response.code() == 400) {
+                    try {
+                        Toast.makeText(activity, response.errorBody().string(), Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        Toast.makeText(activity, "Something went wrong!", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                }
+                dialog.dismiss();
+                GlobalMethods.hidePGAndEnableUi(mainProgressBar, activity);
+            }
+
+            @Override
+            public void onFailure(Call<FootballMember> call, Throwable t) {
+                Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+
+                GlobalMethods.hidePGAndEnableUi(mainProgressBar, activity);
+                dialog.dismiss();
+            }
+        });
+    }
+
+    /** ==================== END BTN IMPLEMENTATION ========================================== */
+
+    /** ================= START LISTENER'S IMPLEMENTATION =================================== */
 
     @Override
     public void onGameCreatedGroupIMPL() {
@@ -411,10 +383,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         team2RV.setAdapter(team2Adapter);
         team2RV.setLayoutManager(new LinearLayoutManager(activity));
 
-        // Show progress bar and disable UI interactions
-        mainProgressBar.setVisibility(View.VISIBLE);
-        activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        GlobalMethods.showPGAndBlockUI(mainProgressBar, activity);
 
         // Request game stats
         groupAPI.getGameStats(game.getId()).enqueue(new Callback<List<FootballMember>>() {
@@ -440,19 +409,16 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
                     Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                     dialog.dismiss();
                 }
-                // Hide progress bar and allow UI interactions
-                mainProgressBar.setVisibility(View.GONE);
-                activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                GlobalMethods.hidePGAndEnableUi(mainProgressBar, activity);
             }
 
             @Override
             public void onFailure(Call<List<FootballMember>> call, Throwable t) {
                 Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
                 Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+
                 dialog.dismiss();
-                // Hide progress bar and allow UI interactions
-                mainProgressBar.setVisibility(View.GONE);
-                activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                GlobalMethods.hidePGAndEnableUi(mainProgressBar, activity);
             }
         });
 
@@ -461,6 +427,42 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         dialog = dialogBuilder.create();
     }
 
+    @Override
+    public void deleteMember(Member<?> member) {
+        ConfirmActionDialog.showDialog(activity, "Are you sure you want to delete the member?", () -> {
+            GlobalMethods.showPGAndBlockUI(settingsProgressBar, activity);
+            groupAPI.removeMemberFromGroup(member.getId()).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.code() == 200) { // OK
+                        MyGlobals.footballGroup.removeMember(member.getId());
+
+                        // Update recyclers
+                        membersRV.getAdapter().notifyDataSetChanged();
+                        settingsMembersRV.getAdapter().notifyDataSetChanged();
+
+                        Toast.makeText(activity, "Member deleted successfully!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                    }
+                    GlobalMethods.hidePGAndEnableUi(settingsProgressBar, activity);
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    GlobalMethods.hidePGAndEnableUi(settingsProgressBar, activity);
+                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                }
+            });
+        });
+    }
+
+    /** ================= END LISTENER'S IMPLEMENTATION =================================== */
+
+    /** ================= START HELPER FUNCTIONS =================================== */
+
     /**
      * This method removes the game and updates the group members stats accordingly.
      * @param game - game to be removed
@@ -468,10 +470,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
      */
     private void removeGame(Game<?,?> game, List<FootballMember> members) {
         ConfirmActionDialog.showDialog(activity, "Are you sure you want to delete this game!", () -> {
-            // Show progress bar and disable UI interactions
-            mainProgressBar.setVisibility(View.VISIBLE);
-            activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            GlobalMethods.showPGAndBlockUI(mainProgressBar, activity);
 
             groupAPI.deleteGame(game.getId()).enqueue(new Callback<Void>() {
                 @Override
@@ -489,9 +488,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
                         Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
                         Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                     }
-                    // Hide progress bar and allow UI interactions
-                    mainProgressBar.setVisibility(View.GONE);
-                    activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    GlobalMethods.hidePGAndEnableUi(mainProgressBar, activity);
                     dialog.dismiss();
                 }
 
@@ -499,10 +496,9 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
                 public void onFailure(Call<Void> call, Throwable t) {
                     Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
                     Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+
                     dialog.dismiss();
-                    // Hide progress bar and allow UI interactions
-                    mainProgressBar.setVisibility(View.GONE);
-                    activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    GlobalMethods.hidePGAndEnableUi(mainProgressBar, activity);
                 }
             });
 
@@ -545,43 +541,20 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         return null;
     }
 
-    @Override
-    public void deleteMember(Member<?> member) {
-        ConfirmActionDialog.showDialog(activity, "Are you sure you want to delete the member?", () -> {
-            // Show progress bar and disable UI interactions
-            settingsProgressBar.setVisibility(View.VISIBLE);
-            activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            groupAPI.removeMemberFromGroup(member.getId()).enqueue(new Callback<Void>() {
-                @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
-                    if (response.code() == 200) { // OK
-                        MyGlobals.footballGroup.removeMember(member.getId());
-
-                        // Update recyclers
-                        membersRV.getAdapter().notifyDataSetChanged();
-                        settingsMembersRV.getAdapter().notifyDataSetChanged();
-
-                        Toast.makeText(activity, "Member deleted successfully!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                        Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
-                    }
-                    // Hide progress bar and allow UI interactions
-                    settingsProgressBar.setVisibility(View.GONE);
-                    activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                }
-
-                @Override
-                public void onFailure(Call<Void> call, Throwable t) {
-                    // Hide progress bar and allow UI interactions
-                    settingsProgressBar.setVisibility(View.GONE);
-                    activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
-                }
-            });
-        });
+    /**
+     * This method returns the member that is associated with the currently
+     * logged in user.
+     */
+    private FootballMember getAssociatedMember() {
+        FootballMember output = null;
+        for (FootballMember fbMember : MyGlobals.footballGroup.getMembers()) {
+            if (fbMember.getUser() == null) { } // skip
+            else if (fbMember.getUser().getId() == MyAuthManager.user.getId()) {
+                output = fbMember;
+                break;
+            }
+        }
+        return output;
     }
 
 }

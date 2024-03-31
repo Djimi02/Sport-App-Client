@@ -2,24 +2,20 @@ package com.example.sport_app_client;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Patterns;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.sport_app_client.helpers.KeyboardHidder;
+import com.example.sport_app_client.helpers.GlobalMethods;
 import com.example.sport_app_client.helpers.MyGlobals;
-import com.example.sport_app_client.model.User;
 import com.example.sport_app_client.retrofit.MyAuthManager;
 import com.example.sport_app_client.retrofit.RetrofitService;
 import com.example.sport_app_client.retrofit.api.AuthAPI;
@@ -77,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
             }
             lastClickTime = SystemClock.elapsedRealtime();
             logIn();
-            KeyboardHidder.hideSoftKeyboard(LoginActivity.this);
+            GlobalMethods.hideSoftKeyboard(LoginActivity.this);
         });
 
         this.goToRegisterBTN = findViewById(R.id.LogInPageRegisterBTN);

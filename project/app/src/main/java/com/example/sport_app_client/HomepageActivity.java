@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.example.sport_app_client.adapter.UserGroupsRVAdapter;
 import com.example.sport_app_client.groupActivities.GroupActivity;
+import com.example.sport_app_client.helpers.GlobalMethods;
 import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.interfaces.CreateOrJoinOrLeaveGroupListener;
 import com.example.sport_app_client.interfaces.GameCreatedListener;
@@ -140,7 +141,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
             return;
         }
 
-        showPGAndBlockUI();
+        GlobalMethods.showPGAndBlockUI(progressBar, this);
 
         // Request group data
         groupAPI.getFootballGroup(member.getGroup().getId()).enqueue(new Callback<FootballGroup>() {
@@ -157,21 +158,21 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
                     Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
                     Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                 }
-                hidePGAndEnableUi();
+                GlobalMethods.hidePGAndEnableUi(progressBar, HomepageActivity.this);
             }
 
             @Override
             public void onFailure(Call<FootballGroup> call, Throwable t) {
                 Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
                 Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
-                hidePGAndEnableUi();
+                GlobalMethods.hidePGAndEnableUi(progressBar, HomepageActivity.this);
                 System.out.println(t.toString());
             }
         });
     }
 
     private void requestGroupCreation(String groupName) {
-        showPGAndBlockUI();
+        GlobalMethods.showPGAndBlockUI(progressBar, this);
 
         // Send request
         groupAPI.createFootballGroup(groupName, MyAuthManager.user.getId()).enqueue(new Callback<FootballGroup>() {
@@ -199,13 +200,13 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
                     Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
                     Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                 }
-                hidePGAndEnableUi();
+                GlobalMethods.hidePGAndEnableUi(progressBar, HomepageActivity.this);
             }
 
             @Override
             public void onFailure(Call<FootballGroup> call, Throwable t) {
                 Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
-                hidePGAndEnableUi();
+                GlobalMethods.hidePGAndEnableUi(progressBar, HomepageActivity.this);
             }
         });
     }
@@ -315,14 +316,5 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
 
     /** ================= START HELPER FUNCTIONS =================================== */
 
-    private void showPGAndBlockUI() {
-        progressBar.setVisibility(View.VISIBLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-    }
 
-    private void hidePGAndEnableUi() {
-        progressBar.setVisibility(View.GONE);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-    }
 }
