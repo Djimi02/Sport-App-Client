@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -77,7 +76,7 @@ public class UserGroupsRVAdapter extends RecyclerView.Adapter<UserGroupsRVAdapte
                 @Override
                 public void onClick(View view) {
                     int position = getAdapterPosition();
-                    listener.goToGroupActivity(members.get(position).getGroup().getId(), members.get(position).getSport());
+                    listener.openGroupInActivity(members.get(position).getGroup().getId(), members.get(position).getSport());
                 }
             });
         }

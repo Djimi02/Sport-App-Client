@@ -69,6 +69,8 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         computeGeneralStats();
     }
 
+    /** ==================== START CODE INITIALIZATION ======================================= */
+
     private void initVars() {
         this.retrofit = new RetrofitService().getRetrofit();
     }
@@ -86,9 +88,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
 
         this.settingsBTN = findViewById(R.id.homepageSettingsBTN);
         settingsBTN.setOnClickListener((view -> {
-            Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(intent);
+            onGoToSettingsBTNClick();
         }));
 
         this.createGroupBTN = findViewById(R.id.homepageCreateGroupBTN);
@@ -96,6 +96,74 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
             openCreateGroupDialog();
         });
     }
+
+    private void openCreateGroupDialog() {
+        // Build dialog
+        dialogBuilder = new AlertDialog.Builder(this);
+        final View popupView = getLayoutInflater().inflate(R.layout.create_group_dialog, null);
+
+        final EditText groupNameET = popupView.findViewById(R.id.createGroupDialogET);
+        final Spinner spinner = popupView.findViewById(R.id.createGroupDialogSpinner);
+        spinner.setAdapter(new ArrayAdapter<Sports>(this, android.R.layout.simple_spinner_item, Sports.values()));
+        final Button createBTN = popupView.findViewById(R.id.createGroupDialogBTN);
+        createBTN.setOnClickListener(view -> {
+            onCreateGroupBTNClick(groupNameET, spinner);
+        });
+
+        // Show dialog
+        dialogBuilder.setView(popupView);
+        dialog = dialogBuilder.create();
+        dialog.show();
+    }
+
+
+    /** ==================== END CODE INITIALIZATION ========================================= */
+
+    /** ==================== START BTN IMPLEMENTATION ========================================== */
+
+    private void onGoToSettingsBTNClick() {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(intent);
+    }
+
+    private void onCreateGroupBTNClick(EditText groupNameET, Spinner spinner) {
+        String groupName = groupNameET.getText().toString().trim();
+        if (groupName.isEmpty()) {
+            groupNameET.setError("Add group name!");
+            return;
+        } else if (spinner.getSelectedItemPosition() == 0) {
+            Toast.makeText(HomepageActivity.this, "Select a sport!", Toast.LENGTH_SHORT).show();
+        }
+
+        switch (spinner.getSelectedItem().toString()) {
+            case "Football":
+                Intent intent = new Intent(HomepageActivity.this, GroupActivity.class);
+                intent.putExtra("new_group", 1); // 1 means true
+                intent.putExtra("group_name", groupName);
+                intent.putExtra("fragment", "FOOTBALL");
+                startActivity(intent);
+                dialog.dismiss();
+                break;
+        }
+    }
+
+    @Override
+    public void openGroupInActivity(Long groupID, Sports sport) {
+        switch (sport) {
+            case FOOTBALL:
+                Intent intent = new Intent(HomepageActivity.this, GroupActivity.class);
+                intent.putExtra("new_group", 0); // 0 means false
+                intent.putExtra("group_id", groupID);
+                intent.putExtra("fragment", "FOOTBALL");
+                startActivity(intent);
+                break;
+            default:
+                break;
+        }
+    }
+
+    /** ==================== END BTN IMPLEMENTATION ========================================== */
 
     private void computeGeneralStats() {
         if (MyAuthManager.user == null) {
@@ -119,57 +187,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         this.totalLosesTV.setText("Total loses: " + loses);
     }
 
-    private void openCreateGroupDialog() {
-        // Build dialog
-        dialogBuilder = new AlertDialog.Builder(this);
-        final View popupView = getLayoutInflater().inflate(R.layout.create_group_dialog, null);
-
-        final EditText groupNameET = popupView.findViewById(R.id.createGroupDialogET);
-        final Spinner spinner = popupView.findViewById(R.id.createGroupDialogSpinner);
-        spinner.setAdapter(new ArrayAdapter<Sports>(this, android.R.layout.simple_spinner_item, Sports.values()));
-        final Button createBTN = popupView.findViewById(R.id.createGroupDialogBTN);
-        createBTN.setOnClickListener(view -> {
-            String groupName = groupNameET.getText().toString().trim();
-            if (groupName.isEmpty()) {
-                groupNameET.setError("Add group name!");
-                return;
-            } else if (spinner.getSelectedItemPosition() == 0) {
-                Toast.makeText(HomepageActivity.this, "Select a sport!", Toast.LENGTH_SHORT).show();
-            }
-
-            switch (spinner.getSelectedItem().toString()) {
-                case "Football":
-                    Intent intent = new Intent(HomepageActivity.this, GroupActivity.class);
-                    intent.putExtra("new_group", 1); // 1 means true
-                    intent.putExtra("group_name", groupName);
-                    intent.putExtra("fragment", "FOOTBALL");
-                    startActivity(intent);
-                    dialog.dismiss();
-                    return;
-            }
-        });
-
-        // Show dialog
-        dialogBuilder.setView(popupView);
-        dialog = dialogBuilder.create();
-        dialog.show();
-    }
-
-    @Override
-    public void goToGroupActivity(Long groupID, Sports sport) {
-
-        switch (sport) {
-            case FOOTBALL:
-                Intent intent = new Intent(HomepageActivity.this, GroupActivity.class);
-                intent.putExtra("new_group", 0); // 0 means false
-                intent.putExtra("group_id", groupID);
-                intent.putExtra("fragment", "FOOTBALL");
-                startActivity(intent);
-                break;
-            default:
-                break;
-        }
-    }
+    /** ================= START LISTENER'S IMPLEMENTATION =================================== */
 
     @Override
     public void onGroupLeft(long memberID) {
@@ -208,4 +226,6 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
             }
         }
     }
+
+    /** ================= END LISTENER'S IMPLEMENTATION =================================== */
 }
