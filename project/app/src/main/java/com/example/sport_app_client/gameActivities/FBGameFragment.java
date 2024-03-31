@@ -167,19 +167,12 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
         });
 
         this.step1RandomBTN = view.findViewById(R.id.footballgameStep1RandomBTN);
-        step1RandomBTN.setOnClickListener(view -> {
-            GlobalMethods.showPGAndBlockUI(progressBar, activity);
-
-            generateRandomTeams();
-
-            GlobalMethods.hidePGAndEnableUi(progressBar, activity);
-        });
+        step1RandomBTN.setOnClickListener(view -> generateRandomTeams());
 
         initRecyclerViews();
     }
 
     private void initRecyclerViews() {
-
         // Step 1
         this.membersRV = view.findViewById(R.id.footballgameStep1MembersRV);
         GroupMembersRVAdapter membersAdapter = new GroupMembersRVAdapter(members, this);
@@ -197,7 +190,7 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
                     case DragEvent.ACTION_DROP:
                         if (!(team2.contains(draggedMember) || team1.contains(draggedMember) || !(step1ManualSelectionRB.isChecked()))) {
                             team1.add(draggedMember);
-                            step1Team1Adapter.notifyDataSetChanged();
+                            step1Team1Adapter.notifyItemInserted(team1.size()-1);
                         }
                         break;
                 }
@@ -216,7 +209,7 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
                     case DragEvent.ACTION_DROP:
                         if (!(team2.contains(draggedMember) || team1.contains(draggedMember) || !(step1ManualSelectionRB.isChecked()))) {
                             team2.add(draggedMember);
-                            step1Team2Adapter.notifyDataSetChanged();
+                            step1Team2Adapter.notifyItemInserted(team2.size()-1);
                         }
                         break;
                 }
@@ -234,7 +227,7 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
                     if (!(step1RandomMembers.contains(draggedMember))) {
                         step1RandomMembers.add(draggedMember);
                     }
-                    randomMembersAdapter.notifyDataSetChanged();
+                    randomMembersAdapter.notifyItemInserted(step1RandomMembers.size()-1);
                     break;
             }
             return true;
@@ -343,7 +336,6 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
             return false;
         }
 
-        // Update step 2 based on step 1
         step2Team1RV.getAdapter().notifyDataSetChanged();
         step2Team2RV.getAdapter().notifyDataSetChanged();
 
@@ -361,6 +353,8 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
     }
 
     private void finalizeStep3() {
+        GlobalMethods.showPGAndBlockUI(progressBar, activity);
+
         collectAndUpdateGameStats(); // Collect game stats
 
         // Create request
@@ -369,8 +363,6 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
         request.setGroupID(MyGlobals.footballGroup.getId());
         request.setVictory(victory);
         request.setMembersGameStats(allTemporaryMembers);
-
-        GlobalMethods.showPGAndBlockUI(progressBar, activity);
 
         // Send request
         footballGroupAPI.addNewFootballGame(request).enqueue(new Callback<FootballGame>() {
