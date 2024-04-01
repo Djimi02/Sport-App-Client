@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -233,7 +232,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.code() == 200) { // OK
-                        MyGlobals.createOrJoinOrLeaveGroupListener.onGroupLeft(MyGlobals.associatedFBMember.getId()); // remove from homepage
+                        MyGlobals.createOrJoinOrLeaveGroupListener.onGroupRemoved(MyGlobals.associatedFBMember.getId()); // remove from homepage
 
                         activity.finish(); // Exit activity
 
@@ -264,7 +263,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.code() == 200) { // OK
-                        MyGlobals.createOrJoinOrLeaveGroupListener.onGroupLeft(MyGlobals.associatedFBMember.getId());
+                        MyGlobals.createOrJoinOrLeaveGroupListener.onGroupRemoved(MyGlobals.associatedFBMember.getId());
                         Toast.makeText(activity, "Group deleted successfully!", Toast.LENGTH_SHORT).show();
                         activity.finish();
                     } else {

@@ -251,10 +251,6 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     /** ==================== END BTN IMPLEMENTATION ========================================== */
 
     private void computeGeneralStats() {
-        if (MyAuthManager.user == null) {
-            return;
-        }
-
         // Compute total groups
         this.totalGroups.setText("Total groups: " + MyAuthManager.user.getMembers().size());
 
@@ -275,16 +271,16 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     /** ================= START LISTENER'S IMPLEMENTATION =================================== */
 
     @Override
-    public void onGroupLeft(long memberID) {
+    public void onGroupRemoved(long memberID) {
         Toast.makeText(this, "on group left", Toast.LENGTH_SHORT).show();
         for (int i = 0; i < MyAuthManager.user.getMembers().size(); i++) {
             if (MyAuthManager.user.getMembers().get(i).getId() == memberID) {
                 MyAuthManager.user.getMembers().remove(i);
                 userGroupsRV.getAdapter().notifyItemRemoved(i); // update the rv
-                return;
+                break;
             }
         }
-        totalGroups.setText("Total groups: " + MyAuthManager.user.getMembers().size());
+        computeGeneralStats();
     }
 
     @Override
@@ -308,8 +304,11 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
                 MyAuthManager.user.getMembers().get(i).setDraws(member.getDraws());
                 MyAuthManager.user.getMembers().get(i).setLoses(member.getLoses());
                 userGroupsRV.getAdapter().notifyItemChanged(i);
+                break;
             }
         }
+
+        computeGeneralStats();
     }
 
     /** ================= END LISTENER'S IMPLEMENTATION =================================== */
