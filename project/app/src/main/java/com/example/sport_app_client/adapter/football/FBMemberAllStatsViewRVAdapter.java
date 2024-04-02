@@ -30,8 +30,7 @@ public class FBMemberAllStatsViewRVAdapter extends RecyclerView.Adapter<FBMember
 
         View spotView = inflater.inflate(R.layout.fb_member_all_stats_rv_item, parent, false);
 
-        FBMemberAllStatsViewRVAdapter.ViewHolder viewHolder = new FBMemberAllStatsViewRVAdapter.ViewHolder(spotView);
-        return viewHolder;
+        return new FBMemberAllStatsViewRVAdapter.ViewHolder(spotView);
     }
 
     @Override

@@ -23,7 +23,7 @@ import com.example.sport_app_client.R;
 import com.example.sport_app_client.adapter.GamesRVAdapter;
 import com.example.sport_app_client.adapter.GroupSettingsMembersRVAdapter;
 import com.example.sport_app_client.adapter.football.FBMemberAllStatsViewRVAdapter;
-import com.example.sport_app_client.adapter.football.FBMemberGameStatsViewRVAdapter;
+import com.example.sport_app_client.adapter.football.FBGameStep3RVAdapter;
 import com.example.sport_app_client.gameActivities.FootballGameActivity;
 import com.example.sport_app_client.helpers.ConfirmActionDialog;
 import com.example.sport_app_client.helpers.GlobalMethods;
@@ -373,12 +373,12 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
 
         // Init recyclers
         RecyclerView team1RV = popupView.findViewById(R.id.fbGameDialogTeam1RV);
-        FBMemberGameStatsViewRVAdapter team1Adapter = new FBMemberGameStatsViewRVAdapter(team1);
+        FBGameStep3RVAdapter team1Adapter = new FBGameStep3RVAdapter(team1);
         team1RV.setAdapter(team1Adapter);
         team1RV.setLayoutManager(new LinearLayoutManager(activity));
 
         RecyclerView team2RV = popupView.findViewById(R.id.fbGameDialogTeam2RV);
-        FBMemberGameStatsViewRVAdapter team2Adapter = new FBMemberGameStatsViewRVAdapter(team2);
+        FBGameStep3RVAdapter team2Adapter = new FBGameStep3RVAdapter(team2);
         team2RV.setAdapter(team2Adapter);
         team2RV.setLayoutManager(new LinearLayoutManager(activity));
 

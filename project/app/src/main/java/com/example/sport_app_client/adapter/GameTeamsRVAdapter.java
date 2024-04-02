@@ -37,14 +37,13 @@ public class GameTeamsRVAdapter extends RecyclerView.Adapter<GameTeamsRVAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.memberNameTV.setText("" + members.get(position).getNickname());
+        holder.memberNameTV.setText(members.get(position).getNickname().toString());
+
         Member<?> memberToBeDeleted = members.get(position);
-        holder.removeMemberBTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                members.remove(memberToBeDeleted);
-                notifyDataSetChanged();
-            }
+        holder.removeMemberBTN.setOnClickListener(v -> {
+            int position1 = members.indexOf(memberToBeDeleted);
+            members.remove(memberToBeDeleted);
+            notifyItemRemoved(position1);
         });
     }
 

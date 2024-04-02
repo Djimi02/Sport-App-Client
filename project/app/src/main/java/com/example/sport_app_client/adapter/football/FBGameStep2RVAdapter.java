@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,13 +17,13 @@ import com.example.sport_app_client.model.member.FootballMember;
 import java.util.HashMap;
 import java.util.List;
 
-public class FBMembersGameStatsSelectorRVAdapter extends RecyclerView.Adapter<FBMembersGameStatsSelectorRVAdapter.ViewHolder> {
+public class FBGameStep2RVAdapter extends RecyclerView.Adapter<FBGameStep2RVAdapter.ViewHolder> {
 
     private List<FootballMember> members;
     private HashMap<FootballMember, FootballMember> map;
     private OpenFBMemberStatDialog openFBMemberStatDialog;
 
-    public FBMembersGameStatsSelectorRVAdapter(List<FootballMember> members, OpenFBMemberStatDialog openFBMemberStatDialog) {
+    public FBGameStep2RVAdapter(List<FootballMember> members, OpenFBMemberStatDialog openFBMemberStatDialog) {
         this.members = members;
         this.openFBMemberStatDialog = openFBMemberStatDialog;
         this.map = new HashMap<>();
@@ -38,7 +37,7 @@ public class FBMembersGameStatsSelectorRVAdapter extends RecyclerView.Adapter<FB
 
         View spotView = inflater.inflate(R.layout.game_member_item_rv, parent, false);
 
-        return new FBMembersGameStatsSelectorRVAdapter.ViewHolder(spotView);
+        return new FBGameStep2RVAdapter.ViewHolder(spotView);
     }
 
     // set values for each holder given its position

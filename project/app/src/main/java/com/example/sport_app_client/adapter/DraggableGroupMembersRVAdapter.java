@@ -17,12 +17,12 @@ import com.example.sport_app_client.model.member.Member;
 
 import java.util.List;
 
-public class GroupMembersRVAdapter extends RecyclerView.Adapter<GroupMembersRVAdapter.ViewHolder> {
+public class DraggableGroupMembersRVAdapter extends RecyclerView.Adapter<DraggableGroupMembersRVAdapter.ViewHolder> {
 
     private List<? extends Member<?>> members;
     private OnGameMemberDragListener listener;
 
-    public GroupMembersRVAdapter(List<? extends Member<?>> members, OnGameMemberDragListener listener) {
+    public DraggableGroupMembersRVAdapter(List<? extends Member<?>> members, OnGameMemberDragListener listener) {
         this.members = members;
         this.listener = listener;
     }
@@ -35,24 +35,21 @@ public class GroupMembersRVAdapter extends RecyclerView.Adapter<GroupMembersRVAd
 
         View spotView = inflater.inflate(R.layout.game_member_item_rv, parent, false);
 
-        GroupMembersRVAdapter.ViewHolder viewHolder = new GroupMembersRVAdapter.ViewHolder(spotView);
+        DraggableGroupMembersRVAdapter.ViewHolder viewHolder = new DraggableGroupMembersRVAdapter.ViewHolder(spotView);
         return viewHolder;
     }
 
     // set values for each holder given its position
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.memberNameTV.setText("" + members.get(position).getNickname());
+        holder.memberNameTV.setText(members.get(position).getNickname().toString());
         Member<?> draggedMember = members.get(position);
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                ClipData dragData = ClipData.newPlainText("", "");
-                View.DragShadowBuilder myShadow = new View.DragShadowBuilder(holder.itemView);
-                view.startDragAndDrop(dragData, myShadow, null, 0);
-                listener.draggedMember(draggedMember);
-                return true;
-            }
+        holder.itemView.setOnLongClickListener(v -> {
+            ClipData dragData = ClipData.newPlainText("", "");
+            View.DragShadowBuilder myShadow = new View.DragShadowBuilder(holder.itemView);
+            v.startDragAndDrop(dragData, myShadow, null, 0);
+            listener.draggedMember(draggedMember);
+            return true;
         });
     }
 

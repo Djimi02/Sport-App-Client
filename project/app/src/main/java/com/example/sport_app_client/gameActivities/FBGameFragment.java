@@ -12,7 +12,6 @@ import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -24,10 +23,9 @@ import android.widget.ViewFlipper;
 
 import com.example.sport_app_client.R;
 import com.example.sport_app_client.adapter.GameTeamsRVAdapter;
-import com.example.sport_app_client.adapter.GroupMembersRVAdapter;
-import com.example.sport_app_client.adapter.football.FBMemberGameStatsViewRVAdapter;
-import com.example.sport_app_client.adapter.football.FBMembersGameStatsSelectorRVAdapter;
-import com.example.sport_app_client.groupActivities.FBGroupFragment;
+import com.example.sport_app_client.adapter.DraggableGroupMembersRVAdapter;
+import com.example.sport_app_client.adapter.football.FBGameStep3RVAdapter;
+import com.example.sport_app_client.adapter.football.FBGameStep2RVAdapter;
 import com.example.sport_app_client.helpers.GlobalMethods;
 import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.interfaces.OnGameMemberDragListener;
@@ -47,7 +45,6 @@ import java.util.Random;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 public class FBGameFragment extends Fragment implements OnGameMemberDragListener, OpenFBMemberStatDialog {
 
@@ -182,7 +179,7 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
     private void initRecyclerViews() {
         // Step 1
         this.membersRV = view.findViewById(R.id.footballgameStep1MembersRV);
-        GroupMembersRVAdapter membersAdapter = new GroupMembersRVAdapter(members, this);
+        DraggableGroupMembersRVAdapter membersAdapter = new DraggableGroupMembersRVAdapter(members, this);
         membersRV.setAdapter(membersAdapter);
         membersRV.setLayoutManager(new LinearLayoutManager(activity));
 
@@ -242,23 +239,23 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
 
         // Step 2
         this.step2Team1RV = view.findViewById(R.id.footballgameStep2Team1RV);
-        FBMembersGameStatsSelectorRVAdapter step2Team1Adapter = new FBMembersGameStatsSelectorRVAdapter(team1, this);
+        FBGameStep2RVAdapter step2Team1Adapter = new FBGameStep2RVAdapter(team1, this);
         step2Team1RV.setAdapter(step2Team1Adapter);
         step2Team1RV.setLayoutManager(new LinearLayoutManager(activity));
 
         this.step2Team2RV = view.findViewById(R.id.footballgameStep2Team2RV);
-        FBMembersGameStatsSelectorRVAdapter step2Team2Adapter = new FBMembersGameStatsSelectorRVAdapter(team2, this);
+        FBGameStep2RVAdapter step2Team2Adapter = new FBGameStep2RVAdapter(team2, this);
         step2Team2RV.setAdapter(step2Team2Adapter);
         step2Team2RV.setLayoutManager(new LinearLayoutManager(activity));
 
         // Step 3
         this.step3Team1RV = view.findViewById(R.id.footballgameStep3Team1RV);
-        FBMemberGameStatsViewRVAdapter step3Team1Adapter = new FBMemberGameStatsViewRVAdapter(step3Team1);
+        FBGameStep3RVAdapter step3Team1Adapter = new FBGameStep3RVAdapter(step3Team1);
         step3Team1RV.setAdapter(step3Team1Adapter);
         step3Team1RV.setLayoutManager(new LinearLayoutManager(activity));
 
         this.step3Team2RV = view.findViewById(R.id.footballgameStep3Team2RV);
-        FBMemberGameStatsViewRVAdapter step3Team2Adapter = new FBMemberGameStatsViewRVAdapter(step3Team2);
+        FBGameStep3RVAdapter step3Team2Adapter = new FBGameStep3RVAdapter(step3Team2);
         step3Team2RV.setAdapter(step3Team2Adapter);
         step3Team2RV.setLayoutManager(new LinearLayoutManager(activity));
     }
@@ -352,10 +349,10 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
     private void goFromStep2ToStep3() {
         // update step 3 based on step 2
         step3Team1.clear();
-        step3Team1.addAll(((FBMembersGameStatsSelectorRVAdapter)step2Team1RV.getAdapter()).getCurrentGameStats().values());
+        step3Team1.addAll(((FBGameStep2RVAdapter)step2Team1RV.getAdapter()).getCurrentGameStats().values());
         step3Team1RV.getAdapter().notifyDataSetChanged();
         step3Team2.clear();
-        step3Team2.addAll(((FBMembersGameStatsSelectorRVAdapter)step2Team2RV.getAdapter()).getCurrentGameStats().values());
+        step3Team2.addAll(((FBGameStep2RVAdapter)step2Team2RV.getAdapter()).getCurrentGameStats().values());
         step3Team2RV.getAdapter().notifyDataSetChanged();
     }
 
@@ -413,7 +410,7 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
         // Collect and update team1 members with stats from the game
         int team1TotalGoals = 0;
         currentGameStatsTeam1 =
-                ((FBMembersGameStatsSelectorRVAdapter) step2Team1RV.getAdapter()).getCurrentGameStats();
+                ((FBGameStep2RVAdapter) step2Team1RV.getAdapter()).getCurrentGameStats();
         for (FootballMember member : currentGameStatsTeam1.keySet()) {
             FootballMember tempMember = currentGameStatsTeam1.get(member);
             tempMember.setIsPartOfTeam1(true);
@@ -432,7 +429,7 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
         // Collect and update team2 members with stats from the game
         int team2TotalGoals = 0;
         currentGameStatsTeam2 =
-                ((FBMembersGameStatsSelectorRVAdapter) step2Team2RV.getAdapter()).getCurrentGameStats();
+                ((FBGameStep2RVAdapter) step2Team2RV.getAdapter()).getCurrentGameStats();
         for (FootballMember member : currentGameStatsTeam2.keySet()) {
             FootballMember tempMember = currentGameStatsTeam2.get(member);
             tempMember.setIsPartOfTeam1(false);
@@ -471,7 +468,7 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
      */
     private void undoCollectGameStats() {
         currentGameStatsTeam1 =
-                ((FBMembersGameStatsSelectorRVAdapter) step2Team1RV.getAdapter()).getCurrentGameStats();
+                ((FBGameStep2RVAdapter) step2Team1RV.getAdapter()).getCurrentGameStats();
         for (FootballMember member : currentGameStatsTeam1.keySet()) {
             FootballMember tempMember = currentGameStatsTeam1.get(member);
 
@@ -482,7 +479,7 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
         }
 
         currentGameStatsTeam2 =
-                ((FBMembersGameStatsSelectorRVAdapter) step2Team2RV.getAdapter()).getCurrentGameStats();
+                ((FBGameStep2RVAdapter) step2Team2RV.getAdapter()).getCurrentGameStats();
         for (FootballMember member : currentGameStatsTeam2.keySet()) {
             FootballMember tempMember = currentGameStatsTeam2.get(member);
 
