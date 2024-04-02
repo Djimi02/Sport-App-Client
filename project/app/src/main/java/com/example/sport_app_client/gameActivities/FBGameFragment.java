@@ -3,6 +3,7 @@ package com.example.sport_app_client.gameActivities;
 import android.app.Activity;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,9 +14,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
@@ -28,6 +31,7 @@ import com.example.sport_app_client.groupActivities.FBGroupFragment;
 import com.example.sport_app_client.helpers.GlobalMethods;
 import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.interfaces.OnGameMemberDragListener;
+import com.example.sport_app_client.interfaces.OpenFBMemberStatDialog;
 import com.example.sport_app_client.model.game.FootballGame;
 import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.model.member.Member;
@@ -45,7 +49,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class FBGameFragment extends Fragment implements OnGameMemberDragListener {
+public class FBGameFragment extends Fragment implements OnGameMemberDragListener, OpenFBMemberStatDialog {
 
     private Activity activity;
     private View view;
@@ -101,6 +105,9 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
     private RecyclerView step3Team1RV;
     private RecyclerView step3Team2RV;
 
+    /* Dialog */
+    private AlertDialog.Builder dialogBuilder;
+    private AlertDialog dialog;
 
     /** Vars */
     private List<FootballMember> members; // links to the real members so modification is propagated
@@ -235,12 +242,12 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
 
         // Step 2
         this.step2Team1RV = view.findViewById(R.id.footballgameStep2Team1RV);
-        FBMembersGameStatsSelectorRVAdapter step2Team1Adapter = new FBMembersGameStatsSelectorRVAdapter(team1);
+        FBMembersGameStatsSelectorRVAdapter step2Team1Adapter = new FBMembersGameStatsSelectorRVAdapter(team1, this);
         step2Team1RV.setAdapter(step2Team1Adapter);
         step2Team1RV.setLayoutManager(new LinearLayoutManager(activity));
 
         this.step2Team2RV = view.findViewById(R.id.footballgameStep2Team2RV);
-        FBMembersGameStatsSelectorRVAdapter step2Team2Adapter = new FBMembersGameStatsSelectorRVAdapter(team2);
+        FBMembersGameStatsSelectorRVAdapter step2Team2Adapter = new FBMembersGameStatsSelectorRVAdapter(team2, this);
         step2Team2RV.setAdapter(step2Team2Adapter);
         step2Team2RV.setLayoutManager(new LinearLayoutManager(activity));
 
@@ -525,6 +532,106 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
     @Override
     public void draggedMember(Member<?> member) {
         this.draggedMember = (FootballMember) member;
+    }
+
+    @Override
+    public void openDialog(FootballMember member) {
+        // Build dialog
+        dialogBuilder = new AlertDialog.Builder(activity);
+        final View popupView = getLayoutInflater().inflate(R.layout.fb_member_game_stats_dialog, null);
+
+        initOpenDialogViews(popupView, member);
+
+        // Show dialog
+        dialogBuilder.setView(popupView);
+        dialog = dialogBuilder.create();
+        dialog.show();
+    }
+
+    private void initOpenDialogViews(View popupView, FootballMember member) {
+        TextView name = popupView.findViewById(R.id.fbMemberGameStatsNameTV);
+        name.setText(member.getNickname());
+
+        Button memberGoalsBTN1 = popupView.findViewById(R.id.fbMemberGameStatsGoalsBTN1);
+        EditText memberGoalsET = popupView.findViewById(R.id.fbMemberGameStatsGoalsET);
+        Button memberGoalsBTN2 = popupView.findViewById(R.id.fbMemberGameStatsGoalsBTN2);
+        memberGoalsBTN1.setOnClickListener(v -> {
+            int value = Integer.parseInt(memberGoalsET.getText().toString());
+            if (value > 0) {
+                value--;
+                memberGoalsET.setText(Integer.toString(value));
+            }
+        });
+        memberGoalsBTN2.setOnClickListener(v -> {
+            int value = Integer.parseInt(memberGoalsET.getText().toString());
+            if (value < 99) {
+                value++;
+                memberGoalsET.setText(Integer.toString(value));
+            }
+        });
+
+        Button memberAssistsBTN1 = popupView.findViewById(R.id.fbMemberGameStatsAssistsBTN1);
+        EditText memberAssistsET = popupView.findViewById(R.id.fbMemberGameStatsAssistsET);
+        Button memberAssistsBTN2 = popupView.findViewById(R.id.fbMemberGameStatsAssistsBTN2);
+        memberAssistsBTN1.setOnClickListener(v -> {
+            int value = Integer.parseInt(memberAssistsET.getText().toString());
+            if (value > 0) {
+                value--;
+                memberAssistsET.setText(Integer.toString(value));
+            }
+        });
+        memberAssistsBTN2.setOnClickListener(v -> {
+            int value = Integer.parseInt(memberAssistsET.getText().toString());
+            if (value < 99) {
+                value++;
+                memberAssistsET.setText(Integer.toString(value));
+            }
+        });
+
+        Button memberSavesBTN1 = popupView.findViewById(R.id.fbMemberGameStatsSavesBTN1);
+        EditText memberSavesET = popupView.findViewById(R.id.fbMemberGameStatsSavesET);
+        Button memberSavesBTN2 = popupView.findViewById(R.id.fbMemberGameStatsSavesBTN2);
+        memberSavesBTN1.setOnClickListener(v -> {
+            int value = Integer.parseInt(memberSavesET.getText().toString());
+            if (value > 0) {
+                value--;
+                memberSavesET.setText(Integer.toString(value));
+            }
+        });
+        memberSavesBTN2.setOnClickListener(v -> {
+            int value = Integer.parseInt(memberSavesET.getText().toString());
+            if (value < 99) {
+                value++;
+                memberSavesET.setText(Integer.toString(value));
+            }
+        });
+
+        Button memberFoulsBTN1 = popupView.findViewById(R.id.fbMemberGameStatsFoulsBTN1);
+        EditText memberFoulsET = popupView.findViewById(R.id.fbMemberGameStatsFoulsET);
+        Button memberFoulsBTN2 = popupView.findViewById(R.id.fbMemberGameStatsFoulsBTN2);
+        memberFoulsBTN1.setOnClickListener(v -> {
+            int value = Integer.parseInt(memberFoulsET.getText().toString());
+            if (value > 0) {
+                value--;
+                memberFoulsET.setText(Integer.toString(value));
+            }
+        });
+        memberFoulsBTN2.setOnClickListener(v -> {
+            int value = Integer.parseInt(memberFoulsET.getText().toString());
+            if (value < 99) {
+                value++;
+                memberFoulsET.setText(Integer.toString(value));
+            }
+        });
+
+        Button saveStatsBTN = popupView.findViewById(R.id.fbMemberGameStatsSaveStatsBTN);
+        saveStatsBTN.setOnClickListener(v -> {
+            member.setGoals(Integer.parseInt(memberGoalsET.getText().toString()));
+            member.setAssists(Integer.parseInt(memberAssistsET.getText().toString()));
+            member.setSaves(Integer.parseInt(memberSavesET.getText().toString()));
+            member.setFouls(Integer.parseInt(memberFoulsET.getText().toString()));
+            dialog.dismiss();
+        });
     }
 
     /** ================= END LISTENER'S IMPLEMENTATION =================================== */
