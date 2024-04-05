@@ -6,6 +6,7 @@ import com.example.sport_app_client.model.member.Member;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +16,8 @@ import lombok.Setter;
 public abstract class Group<MemberT extends Member<?>, GameT extends Game<?,?>> {
 
     protected Long id;
+
+    protected UUID uuid;
 
     protected String name;
 
