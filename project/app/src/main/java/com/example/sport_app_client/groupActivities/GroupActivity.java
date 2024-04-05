@@ -16,17 +16,18 @@ public class GroupActivity extends AppCompatActivity{
         this.getSupportActionBar().hide();
 
         // Get the data from the intent
+        boolean isJoining = getIntent().getBooleanExtra("join", false);
         String fragmentToLoad = getIntent().getStringExtra("fragment");
-        loadFragment(fragmentToLoad);
+        loadFragment(fragmentToLoad, isJoining);
     }
 
-    public void loadFragment(String fragmentToLoad) {
+    public void loadFragment(String fragmentToLoad, boolean isJoining) {
         Fragment fragment = null;
 
         // Determine which fragment to load based on the data
         switch (fragmentToLoad) {
             case "FOOTBALL":
-                fragment = FBGroupFragment.newInstance();
+                fragment = FBGroupFragment.newInstance(isJoining);
                 break;
             case "-":
                 break;
@@ -35,7 +36,7 @@ public class GroupActivity extends AppCompatActivity{
         // Replace the container with the new fragment
         if (fragment != null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.groupFragmentContainer, fragment)
+                    .replace(R.id.fragmentContainer, fragment)
                     .commit();
         }
     }

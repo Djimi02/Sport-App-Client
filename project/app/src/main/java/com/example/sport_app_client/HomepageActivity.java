@@ -8,8 +8,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,6 +34,8 @@ import com.example.sport_app_client.retrofit.MyAuthManager;
 import com.example.sport_app_client.retrofit.RetrofitService;
 import com.example.sport_app_client.retrofit.api.FbAPI;
 
+import java.io.EOFException;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -49,6 +52,8 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     private RecyclerView userGroupsRV;
     private Button settingsBTN;
     private Button createGroupBTN;
+    private Button findGroupBTN;
+
 
     /* Dialog */
     private AlertDialog.Builder dialogBuilder;
@@ -109,6 +114,9 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         createGroupBTN.setOnClickListener(view -> {
             openCreateGroupDialog();
         });
+
+        this.findGroupBTN = findViewById(R.id.homepageFindGroupBTN);
+        findGroupBTN.setOnClickListener(v -> openFindViewDialog());
     }
 
     private void openCreateGroupDialog() {
@@ -130,6 +138,37 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         dialog.show();
     }
 
+    private void openFindViewDialog() {
+        // Build dialog
+        dialogBuilder = new AlertDialog.Builder(this);
+        final View popupView = getLayoutInflater().inflate(R.layout.find_group_dialog, null);
+
+        // Init views
+        Button btn = popupView.findViewById(R.id.findGroupDialogBTN);
+        EditText et = popupView.findViewById(R.id.findGroupDialogET);
+        et.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (et.getText().toString().trim().length() != 36) {
+                    btn.setEnabled(false);
+                    return;
+                }
+                btn.setEnabled(true);
+            }
+        });
+        btn.setOnClickListener(v -> onJoinGroupBTNClick(et.getText().toString().trim(), btn));
+
+        // Show dialog
+        dialogBuilder.setView(popupView);
+        dialog = dialogBuilder.create();
+        dialog.show();
+    }
+
 
     /** ==================== END CODE INITIALIZATION ========================================= */
 
@@ -144,7 +183,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         GlobalMethods.showPGAndBlockUI(progressBar, this);
 
         // Request group data
-        groupAPI.getFootballGroup(member.getGroup().getId()).enqueue(new Callback<FootballGroup>() {
+        groupAPI.getFootballGroupByID(member.getGroup().getId()).enqueue(new Callback<FootballGroup>() {
             @Override
             public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
                 if (response.code() == 200) { // OK
@@ -166,6 +205,52 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
                 Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
                 Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                 GlobalMethods.hidePGAndEnableUi(progressBar, HomepageActivity.this);
+                System.out.println(t.toString());
+            }
+        });
+    }
+
+    private void requestGroupData(String uuid) {
+        if (uuid == null) { // Something went wrong with intent data
+            Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show(); // delete later
+            return;
+        } else if (uuid.isEmpty()) { // Something went wrong with intent data
+            Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show(); // delete later
+            return;
+        }
+
+        GlobalMethods.showPGAndBlockUI(progressBar, this);
+
+        // Request group data
+        groupAPI.getFootballGroupByUUID(uuid).enqueue(new Callback<FootballGroup>() {
+            @Override
+            public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
+                if (response.code() == 200) { // OK
+                    MyGlobals.footballGroup = response.body();
+
+                    // Start group activity
+                    Intent intent = new Intent(HomepageActivity.this, GroupActivity.class);
+                    intent.putExtra("fragment", "FOOTBALL");
+                    intent.putExtra("join", true);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                }
+                GlobalMethods.hidePGAndEnableUi(progressBar, HomepageActivity.this);
+                dialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<FootballGroup> call, Throwable t) {
+                if (t instanceof EOFException) {
+                    Toast.makeText(HomepageActivity.this, "Incorrect group code!", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                }
+                GlobalMethods.hidePGAndEnableUi(progressBar, HomepageActivity.this);
+                dialog.dismiss();
                 System.out.println(t.toString());
             }
         });
@@ -246,6 +331,12 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
             default:
                 break;
         }
+    }
+
+    private void onJoinGroupBTNClick(String uuid, Button btn) {
+        GlobalMethods.hideSoftKeyboard(this);
+        btn.setEnabled(false);
+        requestGroupData(uuid);
     }
 
     /** ==================== END BTN IMPLEMENTATION ========================================== */

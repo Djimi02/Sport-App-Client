@@ -19,7 +19,10 @@ public interface FbAPI {
     /* GROUP */
 
     @GET("/football/group/get/{id}")
-    Call<FootballGroup> getFootballGroup(@Path("id") Long groupID);
+    Call<FootballGroup> getFootballGroupByID(@Path("id") Long groupID);
+
+    @GET("/football/group/get/uuid/{uuid}")
+    Call<FootballGroup> getFootballGroupByUUID(@Path("uuid") String groupUUID);
 
     @POST("/football/group/save/{name}/{userid}")
     Call<FootballGroup> createFootballGroup(@Path("name") String name, @Path("userid") Long userID);

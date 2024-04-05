@@ -48,24 +48,23 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FBGroupFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FBGroupFragment extends Fragment implements GameCreatedListener, GameClickListener, GroupMemberDeletedListener {
     private Activity activity;
     private View view;
 
-    public FBGroupFragment() {}
+    private boolean isJoining;
+
+    public FBGroupFragment(boolean isJoining) {
+        this.isJoining = isJoining;
+    }
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      * @return A new instance of fragment FBGroupFragment.
      */
-    public static FBGroupFragment newInstance() {
-        FBGroupFragment fragment = new FBGroupFragment();
+    public static FBGroupFragment newInstance(boolean isJoining) {
+        FBGroupFragment fragment = new FBGroupFragment(isJoining);
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -84,9 +83,12 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fb_group_fragment_layout, container, false);
 
-
-        initVars();
-        initViews();
+        if (isJoining) {
+            openJoinGroupDialog();
+        } else { // init will be called again if join group is successful
+            initVars();
+            initViews();
+        }
 
         return view;
     }
@@ -209,6 +211,30 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
 
         // Show dialog
         dialogBuilder.setView(popupView);
+        dialog = dialogBuilder.create();
+        dialog.show();
+    }
+
+    private void openJoinGroupDialog() {
+        // Build dialog
+        dialogBuilder = new AlertDialog.Builder(activity);
+        final View popupView = getLayoutInflater().inflate(R.layout.select_member_dialog, null);
+
+        // Init dialog views
+        TextView groupName = popupView.findViewById(R.id.selectMemberDialogGroupNameTV);
+        groupName.setText(MyGlobals.footballGroup.getName().toString());
+        RecyclerView rv = popupView.findViewById(R.id.selectMemberDialogRV);
+        // adapters etc
+        Button backBTN = popupView.findViewById(R.id.selectMemberDialogBackBTN);
+        backBTN.setOnClickListener(v -> activity.finish());
+        Button newMemberBTN = popupView.findViewById(R.id.selectMemberNewMemberBTN);
+        newMemberBTN.setOnClickListener(v -> {
+            Toast.makeText(activity, "new member", Toast.LENGTH_SHORT).show();
+        });
+
+        // Show dialog
+        dialogBuilder.setView(popupView);
+        dialogBuilder.setCancelable(false);
         dialog = dialogBuilder.create();
         dialog.show();
     }

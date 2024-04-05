@@ -35,7 +35,7 @@ public class GameActivity extends AppCompatActivity {
         // Replace the container with the new fragment
         if (fragment != null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.groupFragmentContainer, fragment)
+                    .replace(R.id.fragmentContainer, fragment)
                     .commit();
         }
     }
