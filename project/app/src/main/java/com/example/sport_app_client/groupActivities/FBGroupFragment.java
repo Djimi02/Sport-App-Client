@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.example.sport_app_client.R;
 import com.example.sport_app_client.adapter.GamesRVAdapter;
 import com.example.sport_app_client.adapter.GroupSettingsMembersRVAdapter;
+import com.example.sport_app_client.adapter.SelectMemberToJoinGroupRVAdapter;
 import com.example.sport_app_client.adapter.football.FBMemberAllStatsViewRVAdapter;
 import com.example.sport_app_client.adapter.football.FBGameStep3RVAdapter;
 import com.example.sport_app_client.gameActivities.GameActivity;
@@ -31,6 +32,7 @@ import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.interfaces.GameClickListener;
 import com.example.sport_app_client.interfaces.GameCreatedListener;
 import com.example.sport_app_client.interfaces.GroupMemberDeletedListener;
+import com.example.sport_app_client.interfaces.SelectMemberToJoinGroupListener;
 import com.example.sport_app_client.model.game.FootballGame;
 import com.example.sport_app_client.model.game.Game;
 import com.example.sport_app_client.model.member.FootballMember;
@@ -48,7 +50,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class FBGroupFragment extends Fragment implements GameCreatedListener, GameClickListener, GroupMemberDeletedListener {
+public class FBGroupFragment extends Fragment implements GameCreatedListener, GameClickListener, GroupMemberDeletedListener, SelectMemberToJoinGroupListener {
     private Activity activity;
     private View view;
 
@@ -115,6 +117,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
 
     /* Vars */
     private FbAPI groupAPI;
+    private List<Member<?>> membersWithoutUsers;
 
     /** ==================== START CODE INITIALIZATION ======================================= */
 
@@ -223,14 +226,21 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         // Init dialog views
         TextView groupName = popupView.findViewById(R.id.selectMemberDialogGroupNameTV);
         groupName.setText(MyGlobals.footballGroup.getName().toString());
+        findMembersWithoutUsers();
         RecyclerView rv = popupView.findViewById(R.id.selectMemberDialogRV);
-        // adapters etc
+        if (membersWithoutUsers.size() == 0) { // Hide if no members to be displayed
+            rv.setVisibility(View.GONE);
+            TextView tv = popupView.findViewById(R.id.selectMemberDialogTV1);
+            tv.setText("No available members!".toString());
+        } else {
+            SelectMemberToJoinGroupRVAdapter adapter = new SelectMemberToJoinGroupRVAdapter(membersWithoutUsers, this);
+            rv.setAdapter(adapter);
+            rv.setLayoutManager(new LinearLayoutManager(activity));
+        }
         Button backBTN = popupView.findViewById(R.id.selectMemberDialogBackBTN);
         backBTN.setOnClickListener(v -> activity.finish());
         Button newMemberBTN = popupView.findViewById(R.id.selectMemberNewMemberBTN);
-        newMemberBTN.setOnClickListener(v -> {
-            Toast.makeText(activity, "new member", Toast.LENGTH_SHORT).show();
-        });
+        newMemberBTN.setOnClickListener(v -> onJoinAsNewMemberBTNClicked());
 
         // Show dialog
         dialogBuilder.setView(popupView);
@@ -307,6 +317,10 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
                 }
             });
         });
+    }
+
+    private void onJoinAsNewMemberBTNClicked() {
+        Toast.makeText(activity, "new member", Toast.LENGTH_SHORT).show();
     }
 
     private void onAddMemberBTNClick(View popupView, Button addBTN, EditText memberNameET) {
@@ -484,6 +498,14 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         });
     }
 
+    /**
+     * Method is called when joining from rv.
+     */
+    @Override
+    public void onMemberSelected(Member<?> member) {
+        Toast.makeText(activity, "selected " + member.getNickname(), Toast.LENGTH_SHORT).show();
+    }
+
     /** ================= END LISTENER'S IMPLEMENTATION =================================== */
 
     /** ================= START HELPER FUNCTIONS =================================== */
@@ -580,6 +602,23 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
             }
         }
         return output;
+    }
+
+    /**
+     * The method fills in this.membersWithoutUsers with members from
+     * MyGlobals.footballGroup who do not have associated user.
+     */
+    private void findMembersWithoutUsers() {
+        if (membersWithoutUsers == null) {
+            membersWithoutUsers = new ArrayList<>();
+        } else {
+            membersWithoutUsers.clear();
+        }
+        for (Member<?> member : MyGlobals.footballGroup.getMembers()) {
+            if (member.getUser() == null) {
+                membersWithoutUsers.add(member);
+            }
+        }
     }
 
 }

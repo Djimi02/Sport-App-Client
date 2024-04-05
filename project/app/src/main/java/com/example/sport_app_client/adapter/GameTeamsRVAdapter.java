@@ -31,8 +31,7 @@ public class GameTeamsRVAdapter extends RecyclerView.Adapter<GameTeamsRVAdapter.
 
         View spotView = inflater.inflate(R.layout.game_member_item_rv, parent, false);
 
-        GameTeamsRVAdapter.ViewHolder viewHolder = new GameTeamsRVAdapter.ViewHolder(spotView);
-        return viewHolder;
+        return new GameTeamsRVAdapter.ViewHolder(spotView);
     }
 
     @Override
