@@ -24,7 +24,7 @@ import com.example.sport_app_client.adapter.GamesRVAdapter;
 import com.example.sport_app_client.adapter.GroupSettingsMembersRVAdapter;
 import com.example.sport_app_client.adapter.football.FBMemberAllStatsViewRVAdapter;
 import com.example.sport_app_client.adapter.football.FBGameStep3RVAdapter;
-import com.example.sport_app_client.gameActivities.FootballGameActivity;
+import com.example.sport_app_client.gameActivities.GameActivity;
 import com.example.sport_app_client.helpers.ConfirmActionDialog;
 import com.example.sport_app_client.helpers.GlobalMethods;
 import com.example.sport_app_client.helpers.MyGlobals;
@@ -218,7 +218,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
     /** ==================== START BTN IMPLEMENTATION ========================================== */
 
     private void onAddGameBTNClick() {
-        Intent intent = new Intent(activity, FootballGameActivity.class);
+        Intent intent = new Intent(activity, GameActivity.class);
         intent.putExtra("fragment", "FOOTBALL");
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(intent);

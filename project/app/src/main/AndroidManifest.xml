@@ -16,7 +16,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".gameActivities.FootballGameActivity"
+            android:name=".gameActivities.GameActivity"
             android:exported="false" />
         <activity
             android:name=".SettingsActivity"

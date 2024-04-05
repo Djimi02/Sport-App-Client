@@ -7,7 +7,7 @@ import android.os.Bundle;
 
 import com.example.sport_app_client.R;
 
-public class FootballGameActivity extends AppCompatActivity {
+public class GameActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
