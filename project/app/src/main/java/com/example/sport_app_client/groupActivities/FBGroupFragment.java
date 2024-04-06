@@ -327,7 +327,34 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
     }
 
     private void onJoinAsNewMemberBTNClicked() {
-        Toast.makeText(activity, "new member", Toast.LENGTH_SHORT).show();
+        GlobalMethods.showPGAndBlockUI(joinGroupDialogPB, activity);
+
+        groupAPI.joinGroupAsNewMember(MyAuthManager.user.getId(), MyGlobals.footballGroup.getId()).enqueue(new Callback<FootballMember>() {
+            @Override
+            public void onResponse(Call<FootballMember> call, Response<FootballMember> response) {
+                if (response.code() == 200) { // OK
+                    FootballMember newMember = response.body();
+                    MyGlobals.footballGroup.addMember(newMember);
+                    MyGlobals.associatedFBMember = (FootballMember) newMember;
+                    MyGlobals.createOrJoinOrLeaveGroupListener.onGroupJoined(newMember, MyGlobals.footballGroup);
+                    initViews();
+                    dialog.dismiss();
+                } else {
+                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_SHORT).show();
+                }
+
+                GlobalMethods.hidePGAndEnableUi(joinGroupDialogPB, activity);
+            }
+
+            @Override
+            public void onFailure(Call<FootballMember> call, Throwable t) {
+                Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_SHORT).show();
+
+                GlobalMethods.hidePGAndEnableUi(joinGroupDialogPB, activity);
+            }
+        });
     }
 
     private void onAddMemberBTNClick(View popupView, Button addBTN, EditText memberNameET) {
