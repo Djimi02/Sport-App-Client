@@ -1,52 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/selectMemberDialogGroupNameTV"
-        android:layout_marginTop="@dimen/_15sdp"
+    <ProgressBar
+        android:id="@+id/selectMemberDialogPG"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="group name"
-        android:textSize="@dimen/_20sdp"
-        android:layout_gravity="center_horizontal"/>
-
-    <TextView
-        android:id="@+id/selectMemberDialogTV1"
-        android:layout_marginTop="@dimen/_10sdp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Choose a member to join the group as!"
-        android:layout_gravity="center_horizontal"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/selectMemberDialogRV"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_200sdp"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
-        android:layout_marginTop="@dimen/_10sdp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="@dimen/_15sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:layout_gravity="center_vertical"
-            android:id="@+id/selectMemberDialogBackBTN"
-            android:layout_weight="1"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/selectMemberDialogGroupNameTV"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="BACK"/>
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:text="group name"
+            android:textSize="@dimen/_20sdp" />
 
-        <Button
-            android:layout_gravity="center_vertical"
-            android:id="@+id/selectMemberNewMemberBTN"
-            android:layout_weight="1"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/selectMemberDialogTV1"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="join as new member"/>
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:text="Choose a member to join the group as!" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/selectMemberDialogRV"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_200sdp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp">
+
+            <Button
+                android:id="@+id/selectMemberDialogBackBTN"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:text="BACK" />
+
+            <Button
+                android:id="@+id/selectMemberNewMemberBTN"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:text="join as new member" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

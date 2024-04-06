@@ -28,6 +28,7 @@ import com.example.sport_app_client.interfaces.GameCreatedListener;
 import com.example.sport_app_client.interfaces.UserGroupClickListener;
 import com.example.sport_app_client.model.Sports;
 import com.example.sport_app_client.model.group.FootballGroup;
+import com.example.sport_app_client.model.group.Group;
 import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.model.member.Member;
 import com.example.sport_app_client.retrofit.MyAuthManager;
@@ -383,8 +384,19 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     }
 
     @Override
-    public void onGroupJoined(Member<?> member) {
+    public void onGroupJoined(Member<?> member, Group<?,?> group) {
+        // Create copies so that there are no cyclic references
+        FootballGroup tempGroup = new FootballGroup(group.getName());
+        tempGroup.setId(group.getId());
+        tempGroup.setName(group.getName());
+        tempGroup.setUuid(group.getUuid());
 
+        FootballMember tempMember = new FootballMember(member.getNickname(), tempGroup);
+        tempMember.setId(member.getId());
+
+        MyAuthManager.user.getMembers().add(tempMember);
+        totalGroups.setText("Total groups: " + MyAuthManager.user.getMembers().size());
+        userGroupsRV.getAdapter().notifyItemInserted(MyAuthManager.user.getMembers().size()-1); // update the rv
     }
 
     @Override

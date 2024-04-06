@@ -27,6 +27,12 @@ public interface FbAPI {
     @POST("/football/group/save/{name}/{userid}")
     Call<FootballGroup> createFootballGroup(@Path("name") String name, @Path("userid") Long userID);
 
+    @POST("/football/group/join/notnew/{userid}/{memberid}")
+    Call<Void> joinGroupAsExistingMember(@Path("userid") long userID, @Path("memberid") long memberID);
+
+    @POST("/football/group/join/new/{userid}/{groupid}")
+    Call<FootballMember> joinGroupAsNewMember(@Path("userid") long userID, @Path("groupid") long groupID);
+
     @DELETE("/football/group/delete/{id}")
     Call<Void> deleteGroup(@Path("id") Long groupID);
 

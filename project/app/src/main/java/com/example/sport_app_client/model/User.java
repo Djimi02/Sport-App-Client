@@ -19,6 +19,13 @@ public class User {
 
     public User() { initVars(); }
 
+    public User(String userName, long id) {
+        this.userName = userName;
+        this.id = id;
+
+        initVars();
+    }
+
     public User(String userName, String email) {
         this.userName = userName;
         this.email = email;

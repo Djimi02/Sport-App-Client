@@ -33,6 +33,7 @@ import com.example.sport_app_client.interfaces.GameClickListener;
 import com.example.sport_app_client.interfaces.GameCreatedListener;
 import com.example.sport_app_client.interfaces.GroupMemberDeletedListener;
 import com.example.sport_app_client.interfaces.SelectMemberToJoinGroupListener;
+import com.example.sport_app_client.model.User;
 import com.example.sport_app_client.model.game.FootballGame;
 import com.example.sport_app_client.model.game.Game;
 import com.example.sport_app_client.model.member.FootballMember;
@@ -85,11 +86,13 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fb_group_fragment_layout, container, false);
 
+        this.mainProgressBar = view.findViewById(R.id.fbGroupProgressBar);
+
+        initVars();
         if (isJoining) {
             openJoinGroupDialog();
-        } else { // init will be called again if join group is successful
-            initVars();
-            initViews();
+        } else {
+            initViews(); // init will be called again if join group is successful
         }
 
         return view;
@@ -104,6 +107,9 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
     private RecyclerView gamesRV;
     private RecyclerView membersRV;
     private ProgressBar mainProgressBar;
+
+    /* Join Group Dialog global views */
+    private ProgressBar joinGroupDialogPB;
 
     /* Settings Views */
     private RecyclerView settingsMembersRV;
@@ -123,19 +129,19 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
 
     private void initVars() {
         this.groupAPI = new RetrofitService().getRetrofit().create(FbAPI.class);
-        MyGlobals.associatedFBMember = getAssociatedMember();
-        if (MyGlobals.associatedFBMember == null) { // should not happen
-            Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-            Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
-            activity.finish();
-            return;
+        if (!isJoining) { // get associated member if not new user
+            MyGlobals.associatedFBMember = getAssociatedMember();
+            if (MyGlobals.associatedFBMember == null) { // should not happen
+                Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                activity.finish();
+                return;
+            }
         }
         MyGlobals.gameCreatedListenerGroup = this;
     }
 
     private void initViews() {
-        this.mainProgressBar = view.findViewById(R.id.fbGroupProgressBar);
-
         this.groupNameTV = view.findViewById(R.id.footballpageGroupNameTV);
         groupNameTV.setText(MyGlobals.footballGroup.getName().toString());
 
@@ -224,6 +230,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         final View popupView = getLayoutInflater().inflate(R.layout.select_member_dialog, null);
 
         // Init dialog views
+        this.joinGroupDialogPB = popupView.findViewById(R.id.selectMemberDialogPG);
         TextView groupName = popupView.findViewById(R.id.selectMemberDialogGroupNameTV);
         groupName.setText(MyGlobals.footballGroup.getName().toString());
         findMembersWithoutUsers();
@@ -503,7 +510,34 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
      */
     @Override
     public void onMemberSelected(Member<?> member) {
-        Toast.makeText(activity, "selected " + member.getNickname(), Toast.LENGTH_SHORT).show();
+        GlobalMethods.showPGAndBlockUI(joinGroupDialogPB, activity);
+
+        groupAPI.joinGroupAsExistingMember(MyAuthManager.user.getId(), member.getId()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.code() == 200) { // OK
+                    // A copy of the user is made so that there is no cyclic references
+                    member.setUser(new User(MyAuthManager.user.getUserName(), MyAuthManager.user.getId()));
+                    MyGlobals.createOrJoinOrLeaveGroupListener.onGroupJoined(member, MyGlobals.footballGroup);
+                    initViews();
+                    MyGlobals.associatedFBMember = (FootballMember) member;
+                    dialog.dismiss();
+                } else {
+                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_SHORT).show();
+                }
+
+                GlobalMethods.hidePGAndEnableUi(joinGroupDialogPB, activity);
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_SHORT).show();
+
+                GlobalMethods.hidePGAndEnableUi(joinGroupDialogPB, activity);
+            }
+        });
     }
 
     /** ================= END LISTENER'S IMPLEMENTATION =================================== */
