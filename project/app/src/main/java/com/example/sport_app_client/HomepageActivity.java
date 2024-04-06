@@ -227,13 +227,17 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
             @Override
             public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
                 if (response.code() == 200) { // OK
-                    MyGlobals.footballGroup = response.body();
+                    if (isUserPartOfGroup(response.body().getId())) {
+                        Toast.makeText(HomepageActivity.this, "You are already in this group!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        MyGlobals.footballGroup = response.body();
 
-                    // Start group activity
-                    Intent intent = new Intent(HomepageActivity.this, GroupActivity.class);
-                    intent.putExtra("fragment", "FOOTBALL");
-                    intent.putExtra("join", true);
-                    startActivity(intent);
+                        // Start group activity
+                        Intent intent = new Intent(HomepageActivity.this, GroupActivity.class);
+                        intent.putExtra("fragment", "FOOTBALL");
+                        intent.putExtra("join", true);
+                        startActivity(intent);
+                    }
                 } else {
                     Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
                     Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
@@ -418,5 +422,12 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
 
     /** ================= START HELPER FUNCTIONS =================================== */
 
-
+    private boolean isUserPartOfGroup(long groupID) {
+        for (Member<?> member : MyAuthManager.user.getMembers()) {
+            if (member.getGroup().getId() == groupID) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

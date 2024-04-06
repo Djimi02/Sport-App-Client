@@ -15,7 +15,7 @@ import lombok.Setter;
 @Setter
 public abstract class Group<MemberT extends Member<?>, GameT extends Game<?,?>> {
 
-    protected Long id;
+    protected long id;
 
     protected UUID uuid;
 
