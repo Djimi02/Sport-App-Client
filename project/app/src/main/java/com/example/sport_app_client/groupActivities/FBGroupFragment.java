@@ -192,7 +192,11 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         leaveGroupBTN.setOnClickListener(view -> onLeaveGroupBTNClick());
 
         this.deleteGroupBTN = view.findViewById(R.id.groupSettingsDeleteBTN);
-        deleteGroupBTN.setOnClickListener(view -> onDeleteGroupBTNClick());
+        if (MyGlobals.associatedFBMember.getIsAdmin()) {
+            deleteGroupBTN.setOnClickListener(view -> onDeleteGroupBTNClick());
+        } else {
+            deleteGroupBTN.setVisibility(View.GONE);
+        }
     }
 
     /**
