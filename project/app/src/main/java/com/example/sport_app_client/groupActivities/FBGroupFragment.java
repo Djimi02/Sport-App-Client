@@ -1,5 +1,6 @@
 package com.example.sport_app_client.groupActivities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.sport_app_client.R;
 import com.example.sport_app_client.adapter.football.FBGameStep3RVAdapter;
 import com.example.sport_app_client.adapter.football.FBMemberAllStatsViewRVAdapter;
+import com.example.sport_app_client.gameActivities.GameActivity;
 import com.example.sport_app_client.helpers.ConfirmActionDialog;
 import com.example.sport_app_client.helpers.GlobalMethods;
 import com.example.sport_app_client.helpers.MyGlobals;
@@ -42,7 +44,6 @@ public class FBGroupFragment extends GroupFragment {
      * @return A new instance of fragment FBGroupFragment.
      */
     public static FBGroupFragment newInstance(boolean isJoining) {
-        System.out.println("log from extended new Instance");
         FBGroupFragment fragment = new FBGroupFragment(isJoining);
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -51,7 +52,6 @@ public class FBGroupFragment extends GroupFragment {
 
     public FBGroupFragment(boolean isJoining) {
         super(isJoining);
-        System.out.println("log from extended constructor");
     }
 
     /* Vars */
@@ -64,6 +64,7 @@ public class FBGroupFragment extends GroupFragment {
         this.groupAPI = new RetrofitService().getRetrofit().create(FbAPI.class);
         if (!isJoining) { // get associated member if not new user
             MyGlobals.associatedFBMember = getAssociatedMember();
+            MyGlobals.associatedMember = MyGlobals.associatedFBMember;
             if (MyGlobals.associatedFBMember == null) { // should not happen
                 Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
                 Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
@@ -75,7 +76,7 @@ public class FBGroupFragment extends GroupFragment {
 
     @Override
     protected void initSportDependentViews() {
-        this.membersRV = view.findViewById(R.id.footballpageMembersRV);
+        this.membersRV = view.findViewById(R.id.GroupFragmentMembersRV);
         FBMemberAllStatsViewRVAdapter membersAdapter = new FBMemberAllStatsViewRVAdapter(MyGlobals.footballGroup.getMembers());
         membersRV.setAdapter(membersAdapter);
         membersRV.setLayoutManager(new LinearLayoutManager(activity));
@@ -84,6 +85,14 @@ public class FBGroupFragment extends GroupFragment {
     /** ==================== END CODE INITIALIZATION ========================================= */
 
     /** ==================== START BTN IMPLEMENTATION ========================================== */
+
+    @Override
+    protected void onAddGameBTNClick() {
+        Intent intent = new Intent(activity, GameActivity.class);
+        intent.putExtra("fragment", "FOOTBALL");
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(intent);
+    }
 
     @Override
     protected void onLeaveGroupBTNClick() {
@@ -156,7 +165,8 @@ public class FBGroupFragment extends GroupFragment {
                 if (response.code() == 200) { // OK
                     FootballMember newMember = response.body();
                     MyGlobals.footballGroup.addMember(newMember);
-                    MyGlobals.associatedFBMember = (FootballMember) newMember;
+                    MyGlobals.associatedFBMember = newMember;
+                    MyGlobals.associatedMember = MyGlobals.associatedFBMember;
                     MyGlobals.createOrJoinOrLeaveGroupListener.onGroupJoined(newMember, MyGlobals.footballGroup);
                     initViews();
                     dialog.dismiss();
@@ -350,6 +360,7 @@ public class FBGroupFragment extends GroupFragment {
                     MyGlobals.createOrJoinOrLeaveGroupListener.onGroupJoined(member, MyGlobals.footballGroup);
                     initViews();
                     MyGlobals.associatedFBMember = (FootballMember) member;
+                    MyGlobals.associatedMember = MyGlobals.associatedFBMember;
                     dialog.dismiss();
                 } else {
                     Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();

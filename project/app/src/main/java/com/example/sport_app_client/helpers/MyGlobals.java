@@ -5,6 +5,7 @@ import com.example.sport_app_client.interfaces.CreateOrJoinOrLeaveGroupListener;
 import com.example.sport_app_client.model.group.FootballGroup;
 import com.example.sport_app_client.model.group.Group;
 import com.example.sport_app_client.model.member.FootballMember;
+import com.example.sport_app_client.model.member.Member;
 
 public final class MyGlobals {
 
@@ -14,6 +15,7 @@ public final class MyGlobals {
 
     /* Pointers to objects */
     public static Group<?,?> group = null;
+    public static Member<?> associatedMember = null;
 
     public static GameCreatedListener gameCreatedListenerGroup = null;
 

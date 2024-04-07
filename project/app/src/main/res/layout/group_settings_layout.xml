@@ -38,7 +38,7 @@
         android:text="Delete Group"/>
 
     <ProgressBar
-        android:id="@+id/fbGroupSettingsProgressBar"
+        android:id="@+id/GroupSettingsProgressBar"
         style="?android:attr/progressBarStyle"
         android:visibility="gone"
         android:layout_width="match_parent"
