@@ -1,38 +1,21 @@
 package com.example.sport_app_client.groupActivities;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.sport_app_client.R;
-import com.example.sport_app_client.adapter.GamesRVAdapter;
-import com.example.sport_app_client.adapter.GroupSettingsMembersRVAdapter;
-import com.example.sport_app_client.adapter.SelectMemberToJoinGroupRVAdapter;
-import com.example.sport_app_client.adapter.football.FBMemberAllStatsViewRVAdapter;
 import com.example.sport_app_client.adapter.football.FBGameStep3RVAdapter;
-import com.example.sport_app_client.gameActivities.GameActivity;
+import com.example.sport_app_client.adapter.football.FBMemberAllStatsViewRVAdapter;
 import com.example.sport_app_client.helpers.ConfirmActionDialog;
 import com.example.sport_app_client.helpers.GlobalMethods;
 import com.example.sport_app_client.helpers.MyGlobals;
-import com.example.sport_app_client.interfaces.GameClickListener;
-import com.example.sport_app_client.interfaces.GameCreatedListener;
-import com.example.sport_app_client.interfaces.GroupMemberDeletedListener;
-import com.example.sport_app_client.interfaces.SelectMemberToJoinGroupListener;
 import com.example.sport_app_client.model.User;
 import com.example.sport_app_client.model.game.FootballGame;
 import com.example.sport_app_client.model.game.Game;
@@ -51,15 +34,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class FBGroupFragment extends Fragment implements GameCreatedListener, GameClickListener, GroupMemberDeletedListener, SelectMemberToJoinGroupListener {
-    private Activity activity;
-    private View view;
-
-    private boolean isJoining;
-
-    public FBGroupFragment(boolean isJoining) {
-        this.isJoining = isJoining;
-    }
+public class FBGroupFragment extends GroupFragment {
 
     /**
      * Use this factory method to create a new instance of
@@ -67,67 +42,25 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
      * @return A new instance of fragment FBGroupFragment.
      */
     public static FBGroupFragment newInstance(boolean isJoining) {
+        System.out.println("log from extended new Instance");
         FBGroupFragment fragment = new FBGroupFragment(isJoining);
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        activity = getActivity();
+    public FBGroupFragment(boolean isJoining) {
+        super(isJoining);
+        System.out.println("log from extended constructor");
     }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fb_group_fragment_layout, container, false);
-
-        this.mainProgressBar = view.findViewById(R.id.fbGroupProgressBar);
-
-        initVars();
-        if (isJoining) {
-            openJoinGroupDialog();
-        } else {
-            initViews(); // init will be called again if join group is successful
-        }
-
-        return view;
-    }
-
-    /* Main Activity Views */
-    private TextView groupNameTV;
-    private DrawerLayout drawerLayout;
-    private Button addMemberBTN;
-    private Button addGameBTN;
-    private Button settingsBTN;
-    private RecyclerView gamesRV;
-    private RecyclerView membersRV;
-    private ProgressBar mainProgressBar;
-
-    /* Join Group Dialog global views */
-    private ProgressBar joinGroupDialogPB;
-
-    /* Settings Views */
-    private RecyclerView settingsMembersRV;
-    private Button leaveGroupBTN;
-    private Button deleteGroupBTN;
-    private ProgressBar settingsProgressBar;
-
-    /* Dialog */
-    private AlertDialog.Builder dialogBuilder;
-    private AlertDialog dialog;
 
     /* Vars */
     private FbAPI groupAPI;
-    private List<Member<?>> membersWithoutUsers;
 
     /** ==================== START CODE INITIALIZATION ======================================= */
 
-    private void initVars() {
+    @Override
+    protected void initSportDependentVars() {
         this.groupAPI = new RetrofitService().getRetrofit().create(FbAPI.class);
         if (!isJoining) { // get associated member if not new user
             MyGlobals.associatedFBMember = getAssociatedMember();
@@ -138,140 +71,22 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
                 return;
             }
         }
-        MyGlobals.gameCreatedListenerGroup = this;
     }
 
-    private void initViews() {
-        this.groupNameTV = view.findViewById(R.id.footballpageGroupNameTV);
-        groupNameTV.setText(MyGlobals.footballGroup.getName().toString());
-
-        this.addMemberBTN = view.findViewById(R.id.footballpageAddMemberBTN);
-        addMemberBTN.setOnClickListener((view -> {
-            openAddMemberDialog();
-        }));
-
-        this.addGameBTN = view.findViewById(R.id.footballpageAddGameBTN);
-        addGameBTN.setOnClickListener((view) -> {
-            onAddGameBTNClick();
-        });
-
-        this.drawerLayout = view.findViewById(R.id.fb_drawer_layout);
-
-        this.settingsBTN = view.findViewById(R.id.footballpageSettingsBTN);
-        settingsBTN.setOnClickListener(view -> {
-            openSettings();
-        });
-
-        initRecyclers();
-
-        initSettingsViews();
-    }
-
-    private void initRecyclers() {
-        this.gamesRV = view.findViewById(R.id.footballpageGamesRV);
-        // Sorting the array
-        MyGlobals.footballGroup.setGames(
-                MyGlobals.footballGroup.getGames().stream()
-                        .sorted(Comparator.comparing(FootballGame::getDate).reversed()) // Sort by releaseDate in descending order
-                        .collect(Collectors.toList())
-        );
-        GamesRVAdapter gamesAdapter = new GamesRVAdapter(MyGlobals.footballGroup.getGames(), this);
-        gamesRV.setAdapter(gamesAdapter);
-        gamesRV.setLayoutManager(new LinearLayoutManager(activity));
-
+    @Override
+    protected void initSportDependentViews() {
         this.membersRV = view.findViewById(R.id.footballpageMembersRV);
         FBMemberAllStatsViewRVAdapter membersAdapter = new FBMemberAllStatsViewRVAdapter(MyGlobals.footballGroup.getMembers());
         membersRV.setAdapter(membersAdapter);
         membersRV.setLayoutManager(new LinearLayoutManager(activity));
     }
 
-    private void initSettingsViews() {
-        this.settingsProgressBar = view.findViewById(R.id.fbGroupSettingsProgressBar);
-
-        this.leaveGroupBTN = view.findViewById(R.id.groupSettingsLeaveBTN);
-        leaveGroupBTN.setOnClickListener(view -> onLeaveGroupBTNClick());
-
-        this.deleteGroupBTN = view.findViewById(R.id.groupSettingsDeleteBTN);
-        if (MyGlobals.associatedFBMember.getIsAdmin()) {
-            deleteGroupBTN.setOnClickListener(view -> onDeleteGroupBTNClick());
-        } else {
-            deleteGroupBTN.setVisibility(View.GONE);
-        }
-    }
-
-    /**
-     * This method loads the needed data for the side drawer and opens it.
-     */
-    private void openSettings() {
-        settingsMembersRV = view.findViewById(R.id.groupSettingsMembersRV);
-        GroupSettingsMembersRVAdapter settingsMembersAdapter =
-                new GroupSettingsMembersRVAdapter(MyGlobals.footballGroup.getMembers(),this, MyGlobals.associatedFBMember);
-        settingsMembersRV.setAdapter(settingsMembersAdapter);
-        settingsMembersRV.setLayoutManager(new LinearLayoutManager(activity));
-
-        drawerLayout.open();
-    }
-
-    private void openAddMemberDialog() {
-        // Build dialog
-        dialogBuilder = new AlertDialog.Builder(activity);
-        final View popupView = getLayoutInflater().inflate(R.layout.add_member_dialog, null);
-
-        // Init views
-        final EditText memberNameET = popupView.findViewById(R.id.addFootballMemberDialogET);
-        final Button addBTN = popupView.findViewById(R.id.addFootballMemberDialogBTN);
-        addBTN.setOnClickListener(view -> onAddMemberBTNClick(popupView, addBTN, memberNameET));
-
-        // Show dialog
-        dialogBuilder.setView(popupView);
-        dialog = dialogBuilder.create();
-        dialog.show();
-    }
-
-    private void openJoinGroupDialog() {
-        // Build dialog
-        dialogBuilder = new AlertDialog.Builder(activity);
-        final View popupView = getLayoutInflater().inflate(R.layout.select_member_dialog, null);
-
-        // Init dialog views
-        this.joinGroupDialogPB = popupView.findViewById(R.id.selectMemberDialogPG);
-        TextView groupName = popupView.findViewById(R.id.selectMemberDialogGroupNameTV);
-        groupName.setText(MyGlobals.footballGroup.getName().toString());
-        findMembersWithoutUsers();
-        RecyclerView rv = popupView.findViewById(R.id.selectMemberDialogRV);
-        if (membersWithoutUsers.size() == 0) { // Hide if no members to be displayed
-            rv.setVisibility(View.GONE);
-            TextView tv = popupView.findViewById(R.id.selectMemberDialogTV1);
-            tv.setText("No available members!".toString());
-        } else {
-            SelectMemberToJoinGroupRVAdapter adapter = new SelectMemberToJoinGroupRVAdapter(membersWithoutUsers, this);
-            rv.setAdapter(adapter);
-            rv.setLayoutManager(new LinearLayoutManager(activity));
-        }
-        Button backBTN = popupView.findViewById(R.id.selectMemberDialogBackBTN);
-        backBTN.setOnClickListener(v -> activity.finish());
-        Button newMemberBTN = popupView.findViewById(R.id.selectMemberNewMemberBTN);
-        newMemberBTN.setOnClickListener(v -> onJoinAsNewMemberBTNClicked());
-
-        // Show dialog
-        dialogBuilder.setView(popupView);
-        dialogBuilder.setCancelable(false);
-        dialog = dialogBuilder.create();
-        dialog.show();
-    }
-
     /** ==================== END CODE INITIALIZATION ========================================= */
 
     /** ==================== START BTN IMPLEMENTATION ========================================== */
 
-    private void onAddGameBTNClick() {
-        Intent intent = new Intent(activity, GameActivity.class);
-        intent.putExtra("fragment", "FOOTBALL");
-        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        startActivity(intent);
-    }
-
-    private void onLeaveGroupBTNClick() {
+    @Override
+    protected void onLeaveGroupBTNClick() {
         ConfirmActionDialog.showDialog(activity, "Are you sure you want to leave the group?", () -> {
             GlobalMethods.showPGAndBlockUI(settingsProgressBar, activity);
 
@@ -301,7 +116,8 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         });
     }
 
-    private void onDeleteGroupBTNClick() {
+    @Override
+    protected void onDeleteGroupBTNClick() {
         ConfirmActionDialog.showDialog(activity, "Are you sure you want to delete the group?", () -> {
             GlobalMethods.showPGAndBlockUI(settingsProgressBar, activity);
 
@@ -330,7 +146,8 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         });
     }
 
-    private void onJoinAsNewMemberBTNClicked() {
+    @Override
+    protected void onJoinAsNewMemberBTNClicked() {
         GlobalMethods.showPGAndBlockUI(joinGroupDialogPB, activity);
 
         groupAPI.joinGroupAsNewMember(MyAuthManager.user.getId(), MyGlobals.footballGroup.getId()).enqueue(new Callback<FootballMember>() {
@@ -361,7 +178,8 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         });
     }
 
-    private void onAddMemberBTNClick(View popupView, Button addBTN, EditText memberNameET) {
+    @Override
+    protected void onAddMemberBTNClick(View popupView, Button addBTN, EditText memberNameET) {
         GlobalMethods.hideSoftKeyboard(popupView, activity);
         addBTN.setEnabled(false);
 
@@ -413,20 +231,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
     /** ================= START LISTENER'S IMPLEMENTATION =================================== */
 
     @Override
-    public void onGameCreatedGroupIMPL() {
-        // Update members rv with new stats after game
-        this.membersRV.getAdapter().notifyDataSetChanged();
-
-        // Update games rv with new game
-        this.gamesRV.getAdapter().notifyItemInserted(0);
-    }
-
-    @Override
-    public void openGameDialog(Game<?,?> game) {
-        // Build dialog
-        dialogBuilder = new AlertDialog.Builder(activity);
-        final View popupView = getLayoutInflater().inflate(R.layout.fb_game_stats_dialog, null);
-
+    protected void setUpSportSpecificGameDialog(View popupView, Game<?,?> game) {
         // Init vars
         List<FootballMember> allMembers = new ArrayList<>();
         List<FootballMember> team1 = new ArrayList<>();
@@ -498,10 +303,6 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
                 GlobalMethods.hidePGAndEnableUi(mainProgressBar, activity);
             }
         });
-
-        // Show dialog
-        dialogBuilder.setView(popupView);
-        dialog = dialogBuilder.create();
     }
 
     @Override
@@ -536,9 +337,6 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         });
     }
 
-    /**
-     * Method is called when joining from rv.
-     */
     @Override
     public void onMemberSelected(Member<?> member) {
         GlobalMethods.showPGAndBlockUI(joinGroupDialogPB, activity);
@@ -580,7 +378,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
      * @param game - game to be removed
      * @param members - game stats
      */
-    private void removeGame(Game<?,?> game, List<FootballMember> members) {
+    private void removeGame(Game<?, ?> game, List<FootballMember> members) {
         ConfirmActionDialog.showDialog(activity, "Are you sure you want to delete this game!", () -> {
             GlobalMethods.showPGAndBlockUI(mainProgressBar, activity);
 
@@ -596,6 +394,7 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
                         // Update recyclers
                         membersRV.getAdapter().notifyDataSetChanged();
                         gamesRV.getAdapter().notifyDataSetChanged();
+                        Toast.makeText(activity, "Game deleted successfully!", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
                         Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
@@ -623,10 +422,11 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
      * @param members - the list of game stats
      */
     private void decreaseMemberStatsAfterGameDeleted(Game<?,?> game, List<FootballMember> members) {
+        Toast.makeText(activity, "decresed stats of " + members.size(), Toast.LENGTH_SHORT).show();
         for (int i = 0; i < members.size(); i++) {
             FootballMember associatedGMember = getGroupMemberByNickname(members.get(i).getNickname());
             if (associatedGMember == null) {
-                return;
+                continue;
             }
             associatedGMember.setGoals(associatedGMember.getGoals() - members.get(i).getGoals());
             associatedGMember.setAssists(associatedGMember.getAssists() - members.get(i).getAssists());
@@ -653,6 +453,15 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         return null;
     }
 
+    @Override
+    protected void sortGames() {
+        MyGlobals.footballGroup.setGames(
+                MyGlobals.footballGroup.getGames().stream()
+                        .sorted(Comparator.comparing(FootballGame::getDate).reversed()) // Sort by releaseDate in descending order
+                        .collect(Collectors.toList())
+        );
+    }
+
     /**
      * This method returns the member that is associated with the currently
      * logged in user.
@@ -668,22 +477,4 @@ public class FBGroupFragment extends Fragment implements GameCreatedListener, Ga
         }
         return output;
     }
-
-    /**
-     * The method fills in this.membersWithoutUsers with members from
-     * MyGlobals.footballGroup who do not have associated user.
-     */
-    private void findMembersWithoutUsers() {
-        if (membersWithoutUsers == null) {
-            membersWithoutUsers = new ArrayList<>();
-        } else {
-            membersWithoutUsers.clear();
-        }
-        for (Member<?> member : MyGlobals.footballGroup.getMembers()) {
-            if (member.getUser() == null) {
-                membersWithoutUsers.add(member);
-            }
-        }
-    }
-
 }

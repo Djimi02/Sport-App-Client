@@ -3,6 +3,7 @@ package com.example.sport_app_client.helpers;
 import com.example.sport_app_client.interfaces.GameCreatedListener;
 import com.example.sport_app_client.interfaces.CreateOrJoinOrLeaveGroupListener;
 import com.example.sport_app_client.model.group.FootballGroup;
+import com.example.sport_app_client.model.group.Group;
 import com.example.sport_app_client.model.member.FootballMember;
 
 public final class MyGlobals {
@@ -12,6 +13,7 @@ public final class MyGlobals {
     public final static String ERROR_MESSAGE_2 = "Check your internet or try again later!";
 
     /* Pointers to objects */
+    public static Group<?,?> group = null;
 
     public static GameCreatedListener gameCreatedListenerGroup = null;
 

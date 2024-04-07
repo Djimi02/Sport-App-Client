@@ -189,6 +189,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
             public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
                 if (response.code() == 200) { // OK
                     MyGlobals.footballGroup = response.body();
+                    MyGlobals.group = MyGlobals.footballGroup;
 
                     // Start group activity
                     Intent intent = new Intent(HomepageActivity.this, GroupActivity.class);
@@ -231,6 +232,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
                         Toast.makeText(HomepageActivity.this, "You are already in this group!", Toast.LENGTH_SHORT).show();
                     } else {
                         MyGlobals.footballGroup = response.body();
+                        MyGlobals.group = MyGlobals.footballGroup;
 
                         // Start group activity
                         Intent intent = new Intent(HomepageActivity.this, GroupActivity.class);
@@ -270,6 +272,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
             public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
                 if (response.code() == 200) { // ok
                     MyGlobals.footballGroup = response.body();
+                    MyGlobals.group = MyGlobals.footballGroup;
 
                     FootballMember initialMember = MyGlobals.footballGroup.getMembers().get(0);
                     // Set temporary group so that they don't have cyclic references to each

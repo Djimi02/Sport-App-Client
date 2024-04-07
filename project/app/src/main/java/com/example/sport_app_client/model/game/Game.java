@@ -19,11 +19,11 @@ public abstract class Game<GroupT extends Group<?,?>, MemberT extends Member<?>>
     protected LocalDate date;
     protected Sports sport;
     protected String results;
-    private Integer victory; // -1 -> team 1 won, 0 -> draw, 1 -> team 2 won
+    protected Integer victory; // -1 -> team 1 won, 0 -> draw, 1 -> team 2 won
 
-    private GroupT group;
+    protected GroupT group;
 
-    private List<MemberT> members;
+    protected List<MemberT> members;
 
     public Game() {initVars();}
 
