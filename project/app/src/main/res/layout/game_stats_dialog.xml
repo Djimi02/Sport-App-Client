@@ -7,29 +7,29 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/fbGameDialogDate"
+        android:id="@+id/GameDialogDate"
         android:text="date"
         android:layout_gravity="center"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/fbGameDialogResult"
+        android:id="@+id/GameDialogResult"
         android:layout_gravity="center"
         android:text="result"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="@dimen/_200sdp"
-        android:id="@+id/fbGameDialogTeam1RV"/>
+        android:id="@+id/GameDialogTeam1RV"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="@dimen/_200sdp"
-        android:id="@+id/fbGameDialogTeam2RV"/>
+        android:id="@+id/GameDialogTeam2RV"/>
 
     <Button
-        android:id="@+id/fbGameDialogDeleteBTN"
+        android:id="@+id/GameDialogDeleteBTN"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="delete game"

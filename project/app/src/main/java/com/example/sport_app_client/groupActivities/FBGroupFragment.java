@@ -1,10 +1,8 @@
 package com.example.sport_app_client.groupActivities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.sport_app_client.R;
 import com.example.sport_app_client.adapter.football.FBGameStep3RVAdapter;
 import com.example.sport_app_client.adapter.football.FBMemberAllStatsViewRVAdapter;
-import com.example.sport_app_client.gameActivities.GameActivity;
 import com.example.sport_app_client.helpers.ConfirmActionDialog;
 import com.example.sport_app_client.helpers.GlobalMethods;
 import com.example.sport_app_client.helpers.MyGlobals;
@@ -57,7 +54,7 @@ public class FBGroupFragment extends GroupFragment {
     /* Vars */
     private FbAPI groupAPI;
 
-    /** ==================== START CODE INITIALIZATION ======================================= */
+    // ==================== START CODE INITIALIZATION =======================================
 
     @Override
     protected void initSportDependentVars() {
@@ -82,17 +79,9 @@ public class FBGroupFragment extends GroupFragment {
         membersRV.setLayoutManager(new LinearLayoutManager(activity));
     }
 
-    /** ==================== END CODE INITIALIZATION ========================================= */
+    // ==================== END CODE INITIALIZATION =========================================
 
-    /** ==================== START BTN IMPLEMENTATION ========================================== */
-
-    @Override
-    protected void onAddGameBTNClick() {
-        Intent intent = new Intent(activity, GameActivity.class);
-        intent.putExtra("fragment", "FOOTBALL");
-        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        startActivity(intent);
-    }
+    // ==================== START BTN IMPLEMENTATION ==========================================
 
     @Override
     protected void onLeaveGroupBTNClick() {
@@ -189,19 +178,7 @@ public class FBGroupFragment extends GroupFragment {
     }
 
     @Override
-    protected void onAddMemberBTNClick(View popupView, Button addBTN, EditText memberNameET) {
-        GlobalMethods.hideSoftKeyboard(popupView, activity);
-        addBTN.setEnabled(false);
-
-        String memberName = memberNameET.getText().toString().trim();
-        if (memberName.isEmpty()) {
-            memberNameET.setError("Input member name!");
-            return;
-        } else if (memberName.length() > 10) {
-            memberNameET.setError("Name can be 12 characters max!");
-            return;
-        }
-
+    protected void onAddMemberBTNClickSportSpecific(String memberName) {
         GlobalMethods.showPGAndBlockUI(mainProgressBar, activity);
 
         groupAPI.addFootballMember(MyGlobals.footballGroup.getId(), memberName).enqueue(new Callback<FootballMember>() {
@@ -236,41 +213,33 @@ public class FBGroupFragment extends GroupFragment {
         });
     }
 
-    /** ==================== END BTN IMPLEMENTATION ========================================== */
+    // ==================== END BTN IMPLEMENTATION ==========================================
 
-    /** ================= START LISTENER'S IMPLEMENTATION =================================== */
+    // ================= START LISTENER'S IMPLEMENTATION ===================================
 
     @Override
-    protected void setUpSportSpecificGameDialog(View popupView, Game<?,?> game) {
+    protected void setUpSportSpecificGameDialog(View popupView, Button deleteBTN, Game<?,?> game) {
         // Init vars
         List<FootballMember> allMembers = new ArrayList<>();
         List<FootballMember> team1 = new ArrayList<>();
         List<FootballMember> team2 = new ArrayList<>();
 
-        // Init views
-        TextView date = popupView.findViewById(R.id.fbGameDialogDate);
-        date.setText(game.getDate().toString());
-        TextView result = popupView.findViewById(R.id.fbGameDialogResult);
-        result.setText(game.getResults().toString());
-        Button deleteBTN = popupView.findViewById(R.id.fbGameDialogDeleteBTN);
-        FootballMember associatedMember = getAssociatedMember();
-        if (associatedMember != null) {
-            if (associatedMember.getIsAdmin()) {
-                deleteBTN.setVisibility(View.VISIBLE);
-                deleteBTN.setOnClickListener(view -> {
-                    deleteBTN.setEnabled(false);
-                    removeGame(game, allMembers);
-                });
-            }
+        // enable btn if member is admin
+        if (MyGlobals.associatedMember.getIsAdmin()) {
+            deleteBTN.setVisibility(View.VISIBLE);
+            deleteBTN.setOnClickListener(view -> {
+                deleteBTN.setEnabled(false);
+                removeGame(game, allMembers);
+            });
         }
 
         // Init recyclers
-        RecyclerView team1RV = popupView.findViewById(R.id.fbGameDialogTeam1RV);
+        RecyclerView team1RV = popupView.findViewById(R.id.GameDialogTeam1RV);
         FBGameStep3RVAdapter team1Adapter = new FBGameStep3RVAdapter(team1);
         team1RV.setAdapter(team1Adapter);
         team1RV.setLayoutManager(new LinearLayoutManager(activity));
 
-        RecyclerView team2RV = popupView.findViewById(R.id.fbGameDialogTeam2RV);
+        RecyclerView team2RV = popupView.findViewById(R.id.GameDialogTeam2RV);
         FBGameStep3RVAdapter team2Adapter = new FBGameStep3RVAdapter(team2);
         team2RV.setAdapter(team2Adapter);
         team2RV.setLayoutManager(new LinearLayoutManager(activity));
@@ -380,9 +349,9 @@ public class FBGroupFragment extends GroupFragment {
         });
     }
 
-    /** ================= END LISTENER'S IMPLEMENTATION =================================== */
+    // ================= END LISTENER'S IMPLEMENTATION ===================================
 
-    /** ================= START HELPER FUNCTIONS =================================== */
+    // ================= START HELPER FUNCTIONS ===================================
 
     /**
      * This method removes the game and updates the group members stats accordingly.

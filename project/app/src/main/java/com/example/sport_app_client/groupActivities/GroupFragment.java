@@ -23,11 +23,13 @@ import com.example.sport_app_client.adapter.GamesRVAdapter;
 import com.example.sport_app_client.adapter.GroupSettingsMembersRVAdapter;
 import com.example.sport_app_client.adapter.SelectMemberToJoinGroupRVAdapter;
 import com.example.sport_app_client.gameActivities.GameActivity;
+import com.example.sport_app_client.helpers.GlobalMethods;
 import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.interfaces.GameClickListener;
 import com.example.sport_app_client.interfaces.GameCreatedListener;
 import com.example.sport_app_client.interfaces.GroupMemberDeletedListener;
 import com.example.sport_app_client.interfaces.SelectMemberToJoinGroupListener;
+import com.example.sport_app_client.model.Sports;
 import com.example.sport_app_client.model.game.Game;
 import com.example.sport_app_client.model.member.Member;
 
@@ -95,15 +97,18 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
     /* Vars */
     protected List<Member<?>> membersWithoutUsers;
 
-    /** ==================== START CODE INITIALIZATION ======================================= */
+    // ==================== START CODE INITIALIZATION =======================================
 
+    /** This method initializes all the variables required for this fragment. */
     private void initVars() {
         MyGlobals.gameCreatedListenerGroup = this;
         initSportDependentVars();
     }
 
+    /** This method should initialize the variables that are dependent on sport specific data. */
     protected abstract void initSportDependentVars();
 
+    /** This method initializes all the views included in this fragment. */
     protected void initViews() {
         initSportDependentViews();
 
@@ -111,29 +116,25 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         groupNameTV.setText(MyGlobals.group.getName().toString());
 
         this.addMemberBTN = view.findViewById(R.id.GroupFragmentAddMemberBTN);
-        addMemberBTN.setOnClickListener((view -> {
-            openAddMemberDialog();
-        }));
+        addMemberBTN.setOnClickListener((view -> openAddMemberDialog()));
 
         this.addGameBTN = view.findViewById(R.id.GroupFragmentAddGameBTN);
-        addGameBTN.setOnClickListener((view) -> {
-            onAddGameBTNClick();
-        });
+        addGameBTN.setOnClickListener((view) -> onAddGameBTNClick(MyGlobals.group.getSport()));
 
         this.drawerLayout = view.findViewById(R.id.group_drawer_layout);
 
         this.settingsBTN = view.findViewById(R.id.GroupFragmentSettingsBTN);
-        settingsBTN.setOnClickListener(view -> {
-            openSettings();
-        });
+        settingsBTN.setOnClickListener(view -> openSettings());
 
         initRecyclers();
 
         initSettingsViews();
     }
 
+    /** This method should initialize the views that are dependent on sport specific data. */
     protected abstract void initSportDependentViews();
 
+    /** This method initializes all the recycler views included in this fragment. */
     private void initRecyclers() {
         this.gamesRV = view.findViewById(R.id.GroupFragmentGamesRV);
         sortGames();
@@ -142,6 +143,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         gamesRV.setLayoutManager(new LinearLayoutManager(activity));
     }
 
+    /** This method initializes all the views included in the side drawer. */
     private void initSettingsViews() {
         this.settingsProgressBar = view.findViewById(R.id.GroupSettingsProgressBar);
 
@@ -169,6 +171,10 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         drawerLayout.open();
     }
 
+    /**
+     * This method initializes all the views in the layout R.layout.add_member_dialog
+     * and opens it as dialog window.
+     */
     private void openAddMemberDialog() {
         // Build dialog
         dialogBuilder = new AlertDialog.Builder(activity);
@@ -185,6 +191,10 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         dialog.show();
     }
 
+    /**
+     * This method initializes all the views in the layout R.layout.select_member_dialog
+     * and opens it as dialog window.
+     */
     private void openJoinGroupDialog() {
         // Build dialog
         dialogBuilder = new AlertDialog.Builder(activity);
@@ -217,24 +227,87 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         dialog.show();
     }
 
-    /** ==================== END CODE INITIALIZATION ========================================= */
+    // ==================== END CODE INITIALIZATION =========================================
 
-    /** ==================== START BTN IMPLEMENTATION ========================================== */
+    // ==================== START BTN IMPLEMENTATION ==========================================
 
-    protected abstract void onAddGameBTNClick();
+    /** This method starts GameActivity and passes the correct sport as intent string extra. */
+    private void onAddGameBTNClick(Sports sport) {
+        Intent intent = new Intent(activity, GameActivity.class);
 
+        switch (sport){
+            case FOOTBALL: intent.putExtra("fragment", "FOOTBALL"); break;
+            case BASKETBALL: break;
+            case TENNIS: break;
+            case TABLE_TENNIS: break;
+            default: return;
+        }
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(intent);
+    }
+
+    /** This method starts GameActivity and passes the correct sport as intent string extra. */
     protected abstract void onLeaveGroupBTNClick();
 
+    /**
+     * This method should call ConfirmActionDialog.showDialog() and pass as arguments the
+     * currently active activity, the text of the dialog and the required action. The required
+     * action is API.deleteGroup();. On successful request, a call to
+     * MyGlobals.createOrJoinOrLeaveGroupListener.onGroupRemoved(); should be made.
+     * Also GlobalMethods.showPGAndBlockUI(); and GlobalMethods.hidePGAndEnableUi(); should be
+     * called before the request and on response/fail respectively.
+     */
     protected abstract void onDeleteGroupBTNClick();
 
+    /**
+     * This method should call ConfirmActionDialog.showDialog() and pass as arguments the
+     * currently active activity, the text of the dialog and the required action. The required
+     * action is API.joinGroupAsNewMember();. On successful request, the method should:
+     * 1. Update global group and member variables; 2. call initViews()
+     * 3. call MyGlobals.createOrJoinOrLeaveGroupListener.onGroupJoined();
+     * Also GlobalMethods.showPGAndBlockUI(); and GlobalMethods.hidePGAndEnableUi(); should be
+     * called before the request and on response/fail respectively.
+     */
     protected abstract void onJoinAsNewMemberBTNClicked();
 
-    protected abstract void onAddMemberBTNClick(View popupView, Button addBTN, EditText memberNameET);
+    /**
+     * This method checks if the name adheres to the requirements and if it does
+     * it sends request to the server to save and return a member with the specified name.
+     * @param popupView - view of the dialog
+     * @param addBTN - the btn in the dialog
+     * @param memberNameET - the edit text in the dialog
+     */
+    private void onAddMemberBTNClick(View popupView, Button addBTN, EditText memberNameET) {
+        GlobalMethods.hideSoftKeyboard(popupView, activity);
+        addBTN.setEnabled(false);
 
-    /** ==================== END BTN IMPLEMENTATION ========================================== */
+        String memberName = memberNameET.getText().toString().trim();
+        if (memberName.isEmpty()) {
+            memberNameET.setError("Input member name!");
+            return;
+        } else if (memberName.length() > 10) {
+            memberNameET.setError("Name can be 12 characters max!");
+            return;
+        }
 
-    /** ================= START LISTENER'S IMPLEMENTATION =================================== */
+        onAddMemberBTNClickSportSpecific(memberName);
+    }
 
+    /**
+     * This method should send request via API.addFootballMember();. On successful response
+     * the method should update the global group variable and update the this.membersRV adapter.
+     * Also GlobalMethods.showPGAndBlockUI(); and GlobalMethods.hidePGAndEnableUi(); should be
+     * called before the request and on response/fail respectively.
+     * @param memberName - the name of the member to be created,saved and returned
+     */
+    protected abstract void onAddMemberBTNClickSportSpecific(String memberName);
+
+    // ==================== END BTN IMPLEMENTATION ==========================================
+
+    // ================= START LISTENER'S IMPLEMENTATION ===================================
+
+    /** This method updates the recyclers in this fragment. */
     @Override
     public void onGameCreatedGroupIMPL() {
         // Update members rv with new stats after game
@@ -244,33 +317,69 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         this.gamesRV.getAdapter().notifyItemInserted(0);
     }
 
+    /**
+     * This method initializes all the views in the layout R.layout.game_stats_dialog
+     * and opens it as dialog window.
+     * @param game - game's stats to be diplayed
+     */
     @Override
     public void openGameDialog(Game<?,?> game) {
         // Build dialog
         dialogBuilder = new AlertDialog.Builder(activity);
         final View popupView = getLayoutInflater().inflate(R.layout.game_stats_dialog, null);
 
-        setUpSportSpecificGameDialog(popupView, game);
+        // Init general views views
+        TextView date = popupView.findViewById(R.id.GameDialogDate);
+        date.setText(game.getDate().toString());
+        TextView result = popupView.findViewById(R.id.GameDialogResult);
+        result.setText(game.getResults().toString());
+        Button deleteBTN = popupView.findViewById(R.id.GameDialogDeleteBTN);
+
+        setUpSportSpecificGameDialog(popupView, deleteBTN, game);
 
         // Show dialog
         dialogBuilder.setView(popupView);
         dialog = dialogBuilder.create();
     }
 
-    protected abstract void setUpSportSpecificGameDialog(View popupView, Game<?,?> game);
+    /**
+     * This method should initialize sport specific recycler views, btn functionality
+     * and send request to load group data via API.getGameStats();
+     * @param popupView - the dialog layout view
+     * @param deleteBTN - the delete btn in the view
+     * @param game - the game whose stats are to be loaded.
+     */
+    protected abstract void setUpSportSpecificGameDialog(View popupView, Button deleteBTN, Game<?,?> game);
 
+    /**
+     * This method should call ConfirmActionDialog.showDialog() and pass as arguments the
+     * currently active activity, the text of the dialog and the required action. The required
+     * action is API.removeMemberFromGroup();. On successful request, the member should be
+     * removed from the global group variable and the recyclers should be updated;
+     * Also GlobalMethods.showPGAndBlockUI(); and GlobalMethods.hidePGAndEnableUi(); should be
+     * called before the request and on response/fail respectively.
+     * @param member - member to be deleted
+     */
     @Override
     public abstract void deleteMember(Member<?> member);
 
     /**
-     * Method is called when joining from rv.
+     * This method should call ConfirmActionDialog.showDialog() and pass as arguments the
+     * currently active activity, the text of the dialog and the required action. The required
+     * action is API.joinGroupAsExistingMember();. On successful request:
+     * 1. the specified member's user attribute should be set the current user;
+     * 2. set the associated member to the specified member
+     * 3. call MyGlobals.createOrJoinOrLeaveGroupListener.onGroupJoined() and initViews();
+     * Also GlobalMethods.showPGAndBlockUI(); and GlobalMethods.hidePGAndEnableUi(); should be
+     * called before the request and on response/fail respectively.
+     * @param member - specified member
      */
     @Override
     public abstract void onMemberSelected(Member<?> member);
 
-    /** ================= END LISTENER'S IMPLEMENTATION =================================== */
+    // ================= END LISTENER'S IMPLEMENTATION ===================================
 
-    /** ================= START HELPER FUNCTIONS =================================== */
+    // ================= START HELPER FUNCTIONS ===================================
 
     /**
      * The method fills in this.membersWithoutUsers with members from
@@ -289,6 +398,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         }
     }
 
+    /** This method should sort the games of sport specific group. */
     protected abstract void sortGames();
 
 }
