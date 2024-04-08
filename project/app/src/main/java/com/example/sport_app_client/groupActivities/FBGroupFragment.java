@@ -402,7 +402,6 @@ public class FBGroupFragment extends GroupFragment {
      * @param members - the list of game stats
      */
     private void decreaseMemberStatsAfterGameDeleted(Game<?,?> game, List<FootballMember> members) {
-        Toast.makeText(activity, "decresed stats of " + members.size(), Toast.LENGTH_SHORT).show();
         for (int i = 0; i < members.size(); i++) {
             FootballMember associatedGMember = getGroupMemberByNickname(members.get(i).getNickname());
             if (associatedGMember == null) {

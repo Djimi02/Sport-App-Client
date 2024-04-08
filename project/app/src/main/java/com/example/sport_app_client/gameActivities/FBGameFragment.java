@@ -363,7 +363,6 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
 
         // Create request
         AddNewFBGameRequest request = new AddNewFBGameRequest();
-        request.setUpdatedMembers(allMembersWithUpdatedStats);
         request.setGroupID(MyGlobals.footballGroup.getId());
         request.setVictory(victory);
         request.setMembersGameStats(allTemporaryMembers);
