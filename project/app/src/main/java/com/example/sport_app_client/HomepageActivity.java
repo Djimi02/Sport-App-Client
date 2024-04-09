@@ -175,7 +175,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
 
     /** ======================== START REQUEST DATA ======================================== */
 
-    private void requestGroupData(Member<?> member) {
+    private void requestGroupData(Member<?,?> member) {
         if (member == null) { // Something went wrong with intent data
             Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show(); // delete later
             return;
@@ -331,7 +331,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     }
 
     @Override
-    public void openGroupInActivity(Member<?> member) {
+    public void openGroupInActivity(Member<?,?> member) {
         switch (member.getSport()) {
             case FOOTBALL:
                 requestGroupData(member);
@@ -357,7 +357,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         int wins = 0;
         int draws = 0;
         int loses = 0;
-        for (Member<?> member : MyAuthManager.user.getMembers()) {
+        for (Member<?,?> member : MyAuthManager.user.getMembers()) {
             wins += member.getWins();
             draws += member.getDraws();
             loses += member.getLoses();
@@ -383,7 +383,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     }
 
     @Override
-    public void onGroupCreated(Member<?> member) {
+    public void onGroupCreated(Member<?,?> member) {
         Toast.makeText(this, "on group created", Toast.LENGTH_SHORT).show();
         MyAuthManager.user.getMembers().add(member);
         totalGroups.setText("Total groups: " + MyAuthManager.user.getMembers().size());
@@ -391,7 +391,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     }
 
     @Override
-    public void onGroupJoined(Member<?> member, Group<?,?> group) {
+    public void onGroupJoined(Member<?,?> member, Group<?,?> group) {
         // Create copies so that there are no cyclic references
         FootballGroup tempGroup = new FootballGroup(group.getName());
         tempGroup.setId(group.getId());
@@ -407,7 +407,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     }
 
     @Override
-    public void onGameCreatedOrDeletedHomepageIMPL(Member<?> member) {
+    public void onGameCreatedOrDeletedHomepageIMPL(Member<?,?> member) {
         for (int i = 0; i < MyAuthManager.user.getMembers().size(); i++) {
             if (MyAuthManager.user.getMembers().get(i).getId() == member.getId()) {
                 MyAuthManager.user.getMembers().get(i).setWins(member.getWins());
@@ -426,7 +426,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     /** ================= START HELPER FUNCTIONS =================================== */
 
     private boolean isUserPartOfGroup(long groupID) {
-        for (Member<?> member : MyAuthManager.user.getMembers()) {
+        for (Member<?,?> member : MyAuthManager.user.getMembers()) {
             if (member.getGroup().getId() == groupID) {
                 return true;
             }

@@ -3,7 +3,6 @@ package com.example.sport_app_client.groupActivities;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -218,7 +217,7 @@ public class FBGroupFragment extends GroupFragment {
     // ================= START LISTENER'S IMPLEMENTATION ===================================
 
     @Override
-    protected void setUpSportSpecificGameDialog(View popupView, Button deleteBTN, Game<?,?> game) {
+    protected void setUpSportSpecificGameDialog(View popupView, Button deleteBTN, Game<?> game) {
         // Init vars
         List<FootballMember> allMembers = new ArrayList<>();
         List<FootballMember> team1 = new ArrayList<>();
@@ -285,7 +284,7 @@ public class FBGroupFragment extends GroupFragment {
     }
 
     @Override
-    public void deleteMember(Member<?> member) {
+    public void deleteMember(Member<?,?> member) {
         ConfirmActionDialog.showDialog(activity, "Are you sure you want to delete the member?", () -> {
             GlobalMethods.showPGAndBlockUI(settingsProgressBar, activity);
             groupAPI.removeMemberFromGroup(member.getId()).enqueue(new Callback<Void>() {
@@ -317,7 +316,7 @@ public class FBGroupFragment extends GroupFragment {
     }
 
     @Override
-    public void onMemberSelected(Member<?> member) {
+    public void onMemberSelected(Member<?,?> member) {
         GlobalMethods.showPGAndBlockUI(joinGroupDialogPB, activity);
 
         groupAPI.joinGroupAsExistingMember(MyAuthManager.user.getId(), member.getId()).enqueue(new Callback<Void>() {
@@ -358,7 +357,7 @@ public class FBGroupFragment extends GroupFragment {
      * @param game - game to be removed
      * @param members - game stats
      */
-    private void removeGame(Game<?, ?> game, List<FootballMember> members) {
+    private void removeGame(Game<?> game, List<FootballMember> members) {
         ConfirmActionDialog.showDialog(activity, "Are you sure you want to delete this game!", () -> {
             GlobalMethods.showPGAndBlockUI(mainProgressBar, activity);
 
@@ -401,7 +400,7 @@ public class FBGroupFragment extends GroupFragment {
      * this.group.getMembers and decreases their stats;
      * @param members - the list of game stats
      */
-    private void decreaseMemberStatsAfterGameDeleted(Game<?,?> game, List<FootballMember> members) {
+    private void decreaseMemberStatsAfterGameDeleted(Game<?> game, List<FootballMember> members) {
         for (int i = 0; i < members.size(); i++) {
             FootballMember associatedGMember = getGroupMemberByNickname(members.get(i).getNickname());
             if (associatedGMember == null) {

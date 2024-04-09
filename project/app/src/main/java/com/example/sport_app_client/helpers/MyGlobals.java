@@ -15,7 +15,7 @@ public final class MyGlobals {
 
     /* Pointers to objects */
     public static Group<?,?> group = null;
-    public static Member<?> associatedMember = null;
+    public static Member<?,?> associatedMember = null;
 
     public static GameCreatedListener gameCreatedListenerGroup = null;
 

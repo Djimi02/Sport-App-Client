@@ -19,10 +19,10 @@ import java.util.List;
 
 public class DraggableGroupMembersRVAdapter extends RecyclerView.Adapter<DraggableGroupMembersRVAdapter.ViewHolder> {
 
-    private List<? extends Member<?>> members;
+    private List<? extends Member<?,?>> members;
     private OnGameMemberDragListener listener;
 
-    public DraggableGroupMembersRVAdapter(List<? extends Member<?>> members, OnGameMemberDragListener listener) {
+    public DraggableGroupMembersRVAdapter(List<? extends Member<?,?>> members, OnGameMemberDragListener listener) {
         this.members = members;
         this.listener = listener;
     }
@@ -43,7 +43,7 @@ public class DraggableGroupMembersRVAdapter extends RecyclerView.Adapter<Draggab
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.memberNameTV.setText(members.get(position).getNickname().toString());
-        Member<?> draggedMember = members.get(position);
+        Member<?,?> draggedMember = members.get(position);
         holder.itemView.setOnLongClickListener(v -> {
             ClipData dragData = ClipData.newPlainText("", "");
             View.DragShadowBuilder myShadow = new View.DragShadowBuilder(holder.itemView);

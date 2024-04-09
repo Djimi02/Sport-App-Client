@@ -95,7 +95,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
     protected AlertDialog dialog;
 
     /* Vars */
-    protected List<Member<?>> membersWithoutUsers;
+    protected List<Member<?,?>> membersWithoutUsers;
 
     // ==================== START CODE INITIALIZATION =======================================
 
@@ -323,7 +323,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
      * @param game - game's stats to be diplayed
      */
     @Override
-    public void openGameDialog(Game<?,?> game) {
+    public void openGameDialog(Game<?> game) {
         // Build dialog
         dialogBuilder = new AlertDialog.Builder(activity);
         final View popupView = getLayoutInflater().inflate(R.layout.game_stats_dialog, null);
@@ -349,7 +349,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
      * @param deleteBTN - the delete btn in the view
      * @param game - the game whose stats are to be loaded.
      */
-    protected abstract void setUpSportSpecificGameDialog(View popupView, Button deleteBTN, Game<?,?> game);
+    protected abstract void setUpSportSpecificGameDialog(View popupView, Button deleteBTN, Game<?> game);
 
     /**
      * This method should call ConfirmActionDialog.showDialog() and pass as arguments the
@@ -361,7 +361,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
      * @param member - member to be deleted
      */
     @Override
-    public abstract void deleteMember(Member<?> member);
+    public abstract void deleteMember(Member<?,?> member);
 
     /**
      * This method should call ConfirmActionDialog.showDialog() and pass as arguments the
@@ -375,7 +375,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
      * @param member - specified member
      */
     @Override
-    public abstract void onMemberSelected(Member<?> member);
+    public abstract void onMemberSelected(Member<?,?> member);
 
     // ================= END LISTENER'S IMPLEMENTATION ===================================
 
@@ -391,7 +391,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         } else {
             membersWithoutUsers.clear();
         }
-        for (Member<?> member : MyGlobals.group.getMembers()) {
+        for (Member<?,?> member : MyGlobals.group.getMembers()) {
             if (member.getUser() == null) {
                 membersWithoutUsers.add(member);
             }

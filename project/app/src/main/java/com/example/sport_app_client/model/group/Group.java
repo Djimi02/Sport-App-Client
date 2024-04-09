@@ -13,7 +13,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public abstract class Group<MemberT extends Member<?>, GameT extends Game<?,?>> {
+public abstract class Group<MemberT extends Member<?,?>, GameT extends Game<?>> {
 
     protected long id;
 

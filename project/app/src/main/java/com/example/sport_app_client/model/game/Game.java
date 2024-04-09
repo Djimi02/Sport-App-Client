@@ -13,7 +13,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public abstract class Game<GroupT extends Group<?,?>, MemberT extends Member<?>> {
+public abstract class Game<GroupT extends Group<?,?>> {
 
     protected Long id;
     protected LocalDate date;
@@ -22,8 +22,6 @@ public abstract class Game<GroupT extends Group<?,?>, MemberT extends Member<?>>
     protected Integer victory; // -1 -> team 1 won, 0 -> draw, 1 -> team 2 won
 
     protected GroupT group;
-
-    protected List<MemberT> members;
 
     public Game() {initVars();}
 
@@ -35,22 +33,7 @@ public abstract class Game<GroupT extends Group<?,?>, MemberT extends Member<?>>
     }
 
     private void initVars() {
-        this.members = new ArrayList<>();
         this.victory = null;
-    }
-
-    public void removeMember(Long memberID) {
-        int memberToBeRemoved = -1;
-        for (int i = 0; i < this.members.size(); i++) {
-            if (this.members.get(i).getId() == memberID) {
-                memberToBeRemoved = i;
-                break;
-            }
-        }
-
-        if (memberToBeRemoved != -1) {
-            this.members.remove(memberToBeRemoved);
-        }
     }
 
 }

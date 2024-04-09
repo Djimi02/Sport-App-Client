@@ -526,7 +526,7 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
 
     /** ================= START LISTENER'S IMPLEMENTATION =================================== */
     @Override
-    public void draggedMember(Member<?> member) {
+    public void draggedMember(Member<?,?> member) {
         this.draggedMember = (FootballMember) member;
     }
 

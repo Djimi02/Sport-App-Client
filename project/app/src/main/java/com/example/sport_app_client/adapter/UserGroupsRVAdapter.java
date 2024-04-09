@@ -18,11 +18,11 @@ import java.util.List;
 
 public class UserGroupsRVAdapter extends RecyclerView.Adapter<UserGroupsRVAdapter.ViewHolder> {
 
-    private List<Member<?>> members;
+    private List<Member<?,?>> members;
     private UserGroupClickListener listener;
 
 
-    public UserGroupsRVAdapter(List<Member<?>> members, UserGroupClickListener listener) {
+    public UserGroupsRVAdapter(List<Member<?,?>> members, UserGroupClickListener listener) {
         this.members = members;
         this.listener = listener;
     }
