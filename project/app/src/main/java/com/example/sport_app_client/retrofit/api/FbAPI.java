@@ -3,6 +3,7 @@ package com.example.sport_app_client.retrofit.api;
 import com.example.sport_app_client.model.game.FootballGame;
 import com.example.sport_app_client.model.group.FootballGroup;
 import com.example.sport_app_client.model.member.FootballMember;
+import com.example.sport_app_client.model.stats.FBStats;
 import com.example.sport_app_client.retrofit.request.AddNewFBGameRequest;
 
 import java.util.List;
@@ -47,7 +48,7 @@ public interface FbAPI {
     /* Game */
 
     @GET("/football/game/get/gamestats/{id}")
-    Call<List<FootballMember>> getGameStats(@Path("id") Long gameID);
+    Call<List<FBStats>> getGameStats(@Path("id") Long gameID);
 
     @POST("/football/game/save")
     Call<FootballGame> addNewFootballGame(@Body AddNewFBGameRequest request);

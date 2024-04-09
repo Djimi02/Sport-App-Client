@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.sport_app_client.R;
 import com.example.sport_app_client.interfaces.OpenFBMemberStatDialog;
 import com.example.sport_app_client.model.member.FootballMember;
+import com.example.sport_app_client.model.member.Member;
+import com.example.sport_app_client.model.stats.FBStats;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,13 +22,13 @@ import java.util.List;
 public class FBGameStep2RVAdapter extends RecyclerView.Adapter<FBGameStep2RVAdapter.ViewHolder> {
 
     private List<FootballMember> members;
-    private HashMap<FootballMember, FootballMember> map;
+    private HashMap<FootballMember, FBStats> membersWithStatsMap;
     private OpenFBMemberStatDialog openFBMemberStatDialog;
 
     public FBGameStep2RVAdapter(List<FootballMember> members, OpenFBMemberStatDialog openFBMemberStatDialog) {
         this.members = members;
         this.openFBMemberStatDialog = openFBMemberStatDialog;
-        this.map = new HashMap<>();
+        this.membersWithStatsMap = new HashMap<>();
     }
 
     @NonNull
@@ -45,15 +47,16 @@ public class FBGameStep2RVAdapter extends RecyclerView.Adapter<FBGameStep2RVAdap
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         FootballMember member = members.get(position);
 
-        if (map.get(member) == null) {
-            FootballMember tempMemberStats = new FootballMember();
-            tempMemberStats.setNickname(member.getNickname());
-            map.put(members.get(position), tempMemberStats);
+        if (membersWithStatsMap.get(member) == null) {
+            FBStats tempMemberStats = new FBStats();
+            // Setting temporary member so that we know whose stats are these when displaying
+            tempMemberStats.setMember(new FootballMember(member.getNickname(), null));
+            membersWithStatsMap.put(members.get(position), tempMemberStats);
         }
 
         holder.memberNameTV.setText(member.getNickname().toString());
         holder.btn.setOnClickListener(view -> {
-            openFBMemberStatDialog.openDialog(map.get(member));
+            openFBMemberStatDialog.openDialog(member.getNickname(), membersWithStatsMap.get(member));
         });
     }
 
@@ -67,12 +70,12 @@ public class FBGameStep2RVAdapter extends RecyclerView.Adapter<FBGameStep2RVAdap
      * where the key is a member of the group and the value is
      * their stat in the game
      */
-    public HashMap<FootballMember, FootballMember> getCurrentGameStats() {
-        HashMap<FootballMember, FootballMember> output = new HashMap<>();
+    public HashMap<FootballMember, FBStats> getCurrentGameStats() {
+        HashMap<FootballMember, FBStats> output = new HashMap<>();
 
         // Return only the relevant ones
         for (int i = 0; i < members.size(); i++) {
-            output.put(members.get(i), map.get(members.get(i)));
+            output.put(members.get(i), membersWithStatsMap.get(members.get(i)));
         }
 
         return output;

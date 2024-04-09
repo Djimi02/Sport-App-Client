@@ -4,13 +4,14 @@ import com.example.sport_app_client.model.Sports;
 import com.example.sport_app_client.model.User;
 import com.example.sport_app_client.model.game.Game;
 import com.example.sport_app_client.model.group.Group;
+import com.example.sport_app_client.model.stats.Stats;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public abstract class Member<GroupT extends Group<?,?>, GameT extends Game<?>> {
+public abstract class Member<GroupT extends Group<?,?>, StatsT extends Stats<?,?>> {
     protected long id;
     protected String nickname;
     protected User user;
@@ -18,29 +19,21 @@ public abstract class Member<GroupT extends Group<?,?>, GameT extends Game<?>> {
 
     protected GroupT group;
 
-    protected GameT game;
+    protected StatsT stats;
 
     protected Boolean isAdmin;
 
-    /* Stats */
-
-    protected Integer wins;
-    protected Integer draws;
-    protected Integer loses;
-
     public Member() {initVars();}
 
-    public Member(String nickname, Sports sport, GroupT group) {
+    public Member(String nickname, Sports sport, GroupT group, StatsT statsT) {
         this.nickname = nickname;
         this.sport = sport;
         this.group = group;
-
+        this.stats = statsT;
         initVars();
     }
 
     private void initVars() {
-        this.wins = 0;
-        this.draws = 0;
-        this.loses = 0;
+        this.isAdmin = false;
     }
 }

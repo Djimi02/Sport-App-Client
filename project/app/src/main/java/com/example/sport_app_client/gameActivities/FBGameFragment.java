@@ -33,6 +33,7 @@ import com.example.sport_app_client.interfaces.OpenFBMemberStatDialog;
 import com.example.sport_app_client.model.game.FootballGame;
 import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.model.member.Member;
+import com.example.sport_app_client.model.stats.FBStats;
 import com.example.sport_app_client.retrofit.RetrofitService;
 import com.example.sport_app_client.retrofit.api.FbAPI;
 import com.example.sport_app_client.retrofit.request.AddNewFBGameRequest;
@@ -40,6 +41,7 @@ import com.example.sport_app_client.retrofit.request.AddNewFBGameRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import retrofit2.Call;
@@ -112,12 +114,11 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
     private List<FootballMember> team2;
     private List<FootballMember> step1RandomMembers;
     private FootballMember draggedMember;
-    private List<FootballMember> step3Team1;
-    private List<FootballMember> step3Team2;
-    private List<FootballMember> allMembersWithUpdatedStats;
-    private List<FootballMember> allTemporaryMembers; // represent game stats
-    private HashMap<FootballMember, FootballMember> currentGameStatsTeam1;
-    private HashMap<FootballMember, FootballMember> currentGameStatsTeam2;
+    private List<FBStats> step3Team1Stats;
+    private List<FBStats> step3Team2Stats;
+    private Map<Long, FBStats> gameStats; // key is member id and value is member stats
+    private HashMap<FootballMember, FBStats> currentGameStatsTeam1;
+    private HashMap<FootballMember, FBStats> currentGameStatsTeam2;
     private Integer victory;
 
     /** Retrofit */
@@ -131,10 +132,9 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
         this.team1 = new ArrayList<>();
         this.team2 = new ArrayList<>();
         this.step1RandomMembers = new ArrayList<>();
-        this.step3Team1 = new ArrayList<>();
-        this.step3Team2 = new ArrayList<>();
-        this.allMembersWithUpdatedStats = new ArrayList<>();
-        this.allTemporaryMembers = new ArrayList<>();
+        this.step3Team1Stats = new ArrayList<>();
+        this.step3Team2Stats = new ArrayList<>();
+        this.gameStats = new HashMap<>();
 
         this.footballGroupAPI = new RetrofitService().getRetrofit().create(FbAPI.class);
     }
@@ -250,12 +250,12 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
 
         // Step 3
         this.step3Team1RV = view.findViewById(R.id.footballgameStep3Team1RV);
-        FBGameStep3RVAdapter step3Team1Adapter = new FBGameStep3RVAdapter(step3Team1);
+        FBGameStep3RVAdapter step3Team1Adapter = new FBGameStep3RVAdapter(step3Team1Stats);
         step3Team1RV.setAdapter(step3Team1Adapter);
         step3Team1RV.setLayoutManager(new LinearLayoutManager(activity));
 
         this.step3Team2RV = view.findViewById(R.id.footballgameStep3Team2RV);
-        FBGameStep3RVAdapter step3Team2Adapter = new FBGameStep3RVAdapter(step3Team2);
+        FBGameStep3RVAdapter step3Team2Adapter = new FBGameStep3RVAdapter(step3Team2Stats);
         step3Team2RV.setAdapter(step3Team2Adapter);
         step3Team2RV.setLayoutManager(new LinearLayoutManager(activity));
     }
@@ -348,11 +348,16 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
 
     private void goFromStep2ToStep3() {
         // update step 3 based on step 2
-        step3Team1.clear();
-        step3Team1.addAll(((FBGameStep2RVAdapter)step2Team1RV.getAdapter()).getCurrentGameStats().values());
+        step3Team1Stats.clear();
+        step3Team1Stats.addAll(((FBGameStep2RVAdapter)step2Team1RV.getAdapter()).getCurrentGameStats().values());
+        currentGameStatsTeam1 =
+                ((FBGameStep2RVAdapter) step2Team1RV.getAdapter()).getCurrentGameStats();
         step3Team1RV.getAdapter().notifyDataSetChanged();
-        step3Team2.clear();
-        step3Team2.addAll(((FBGameStep2RVAdapter)step2Team2RV.getAdapter()).getCurrentGameStats().values());
+
+        step3Team2Stats.clear();
+        step3Team2Stats.addAll(((FBGameStep2RVAdapter)step2Team2RV.getAdapter()).getCurrentGameStats().values());
+        currentGameStatsTeam2 =
+                ((FBGameStep2RVAdapter) step2Team2RV.getAdapter()).getCurrentGameStats();
         step3Team2RV.getAdapter().notifyDataSetChanged();
     }
 
@@ -365,7 +370,7 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
         AddNewFBGameRequest request = new AddNewFBGameRequest();
         request.setGroupID(MyGlobals.footballGroup.getId());
         request.setVictory(victory);
-        request.setMembersGameStats(allTemporaryMembers);
+        request.setGameStats(gameStats);
 
         // Send request
         footballGroupAPI.addNewFootballGame(request).enqueue(new Callback<FootballGame>() {
@@ -408,55 +413,67 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
     private void collectAndUpdateGameStats() {
         // Collect and update team1 members with stats from the game
         int team1TotalGoals = 0;
-        currentGameStatsTeam1 =
-                ((FBGameStep2RVAdapter) step2Team1RV.getAdapter()).getCurrentGameStats();
         for (FootballMember member : currentGameStatsTeam1.keySet()) {
-            FootballMember tempMember = currentGameStatsTeam1.get(member);
-            tempMember.setIsPartOfTeam1(true);
+            FBStats tempStats = currentGameStatsTeam1.get(member);
+            tempStats.setIsPartOfTeam1(true);
 
-            member.setGoals(member.getGoals() + tempMember.getGoals());
-            member.setAssists(member.getAssists() + tempMember.getAssists());
-            member.setSaves(member.getSaves() + tempMember.getSaves());
-            member.setFouls(member.getFouls() + tempMember.getFouls());
+            member.getStats().setGoals(member.getStats().getGoals() + tempStats.getGoals());
+            member.getStats().setAssists(member.getStats().getAssists() + tempStats.getAssists());
+            member.getStats().setSaves(member.getStats().getSaves() + tempStats.getSaves());
+            member.getStats().setFouls(member.getStats().getFouls() + tempStats.getFouls());
 
-            allMembersWithUpdatedStats.add(member);
-            allTemporaryMembers.add(tempMember);
+            gameStats.put(member.getId(), tempStats);
 
-            team1TotalGoals += tempMember.getGoals();
+            team1TotalGoals += tempStats.getGoals();
         }
 
         // Collect and update team2 members with stats from the game
         int team2TotalGoals = 0;
-        currentGameStatsTeam2 =
-                ((FBGameStep2RVAdapter) step2Team2RV.getAdapter()).getCurrentGameStats();
         for (FootballMember member : currentGameStatsTeam2.keySet()) {
-            FootballMember tempMember = currentGameStatsTeam2.get(member);
-            tempMember.setIsPartOfTeam1(false);
+            FBStats tempStats = currentGameStatsTeam2.get(member);
+            tempStats.setIsPartOfTeam1(false);
 
-            member.setGoals(member.getGoals() + tempMember.getGoals());
-            member.setAssists(member.getAssists() + tempMember.getAssists());
-            member.setSaves(member.getSaves() + tempMember.getSaves());
-            member.setFouls(member.getFouls() + tempMember.getFouls());
+            member.getStats().setGoals(member.getStats().getGoals() + tempStats.getGoals());
+            member.getStats().setAssists(member.getStats().getAssists() + tempStats.getAssists());
+            member.getStats().setSaves(member.getStats().getSaves() + tempStats.getSaves());
+            member.getStats().setFouls(member.getStats().getFouls() + tempStats.getFouls());
 
-            allMembersWithUpdatedStats.add(member);
-            allTemporaryMembers.add(tempMember);
+            gameStats.put(member.getId(), tempStats);
 
-            team2TotalGoals += tempMember.getGoals();
+            team2TotalGoals += tempStats.getGoals();
         }
 
-        // Increment wins/draws/loses
+        // Increment wins/draws/loses of members and temp stats
         if (team1TotalGoals > team2TotalGoals) {
             this.victory = -1;
-            new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> member.setWins(member.getWins()+1));
-            new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> member.setLoses(member.getLoses()+1));
+            new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> {
+                member.getStats().setWins(member.getStats().getWins() + 1);
+                currentGameStatsTeam1.get(member).setWins(1);
+            });
+            new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> {
+                member.getStats().setLoses(member.getStats().getLoses()+1);
+                currentGameStatsTeam2.get(member).setLoses(1);
+            });
         } else if (team2TotalGoals > team1TotalGoals) {
             this.victory = 1;
-            new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> member.setWins(member.getWins()+1));
-            new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> member.setLoses(member.getLoses()+1));
+            new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> {
+                member.getStats().setWins(member.getStats().getWins() + 1);
+                currentGameStatsTeam2.get(member).setWins(1);
+            });
+            new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> {
+                member.getStats().setLoses(member.getStats().getLoses()+1);
+                currentGameStatsTeam1.get(member).setLoses(1);
+            });
         } else {
             this.victory = 0;
-            new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> member.setDraws(member.getDraws()+1));
-            new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> member.setDraws(member.getDraws()+1));
+            new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> {
+                member.getStats().setDraws(member.getStats().getDraws()+1);
+                currentGameStatsTeam1.get(member).setDraws(1);
+            });
+            new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> {
+                member.getStats().setDraws(member.getStats().getDraws()+1);
+                currentGameStatsTeam2.get(member).setDraws(1);
+            });
         }
 
     }
@@ -469,38 +486,43 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
         currentGameStatsTeam1 =
                 ((FBGameStep2RVAdapter) step2Team1RV.getAdapter()).getCurrentGameStats();
         for (FootballMember member : currentGameStatsTeam1.keySet()) {
-            FootballMember tempMember = currentGameStatsTeam1.get(member);
+            FBStats tempStats = currentGameStatsTeam1.get(member);
 
-            member.setGoals(member.getGoals() - tempMember.getGoals());
-            member.setAssists(member.getAssists() - tempMember.getAssists());
-            member.setSaves(member.getSaves() - tempMember.getSaves());
-            member.setFouls(member.getFouls() - tempMember.getFouls());
+            member.getStats().setWins(member.getStats().getWins() - tempStats.getWins());
+            member.getStats().setDraws(member.getStats().getDraws() - tempStats.getDraws());
+            member.getStats().setLoses(member.getStats().getLoses() - tempStats.getLoses());
+            member.getStats().setGoals(member.getStats().getGoals() - tempStats.getGoals());
+            member.getStats().setAssists(member.getStats().getAssists() - tempStats.getAssists());
+            member.getStats().setSaves(member.getStats().getSaves() - tempStats.getSaves());
+            member.getStats().setFouls(member.getStats().getFouls() - tempStats.getFouls());
         }
 
         currentGameStatsTeam2 =
                 ((FBGameStep2RVAdapter) step2Team2RV.getAdapter()).getCurrentGameStats();
         for (FootballMember member : currentGameStatsTeam2.keySet()) {
-            FootballMember tempMember = currentGameStatsTeam2.get(member);
+            FBStats tempStats = currentGameStatsTeam2.get(member);
 
-            member.setGoals(member.getGoals() - tempMember.getGoals());
-            member.setAssists(member.getAssists() - tempMember.getAssists());
-            member.setSaves(member.getSaves() - tempMember.getSaves());
-            member.setFouls(member.getFouls() - tempMember.getFouls());
+            member.getStats().setWins(member.getStats().getWins() - tempStats.getWins());
+            member.getStats().setDraws(member.getStats().getDraws() - tempStats.getDraws());
+            member.getStats().setLoses(member.getStats().getLoses() - tempStats.getLoses());
+            member.getStats().setGoals(member.getStats().getGoals() - tempStats.getGoals());
+            member.getStats().setAssists(member.getStats().getAssists() - tempStats.getAssists());
+            member.getStats().setSaves(member.getStats().getSaves() - tempStats.getSaves());
+            member.getStats().setFouls(member.getStats().getFouls() - tempStats.getFouls());
         }
 
-        if (this.victory == -1) {
-            new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> member.setWins(member.getWins()-1));
-            new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> member.setLoses(member.getLoses()-1));
-        } else if (this.victory == 1) {
-            new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> member.setWins(member.getWins()-1));
-            new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> member.setLoses(member.getLoses()-1));
-        } else if (this.victory == 0) {
-            new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> member.setDraws(member.getDraws()-1));
-            new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> member.setDraws(member.getDraws()-1));
-        }
+//        if (this.victory == -1) {
+//            new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> member.setWins(member.getWins()-1));
+//            new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> member.setLoses(member.getLoses()-1));
+//        } else if (this.victory == 1) {
+//            new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> member.setWins(member.getWins()-1));
+//            new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> member.setLoses(member.getLoses()-1));
+//        } else if (this.victory == 0) {
+//            new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> member.setDraws(member.getDraws()-1));
+//            new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> member.setDraws(member.getDraws()-1));
+//        }
 
-        this.allMembersWithUpdatedStats.clear();
-        this.allTemporaryMembers.clear();
+        this.gameStats.clear();
     }
 
     /**
@@ -531,12 +553,12 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
     }
 
     @Override
-    public void openDialog(FootballMember member) {
+    public void openDialog(String memberName, FBStats stats) {
         // Build dialog
         dialogBuilder = new AlertDialog.Builder(activity);
         final View popupView = getLayoutInflater().inflate(R.layout.fb_member_game_stats_dialog, null);
 
-        initOpenDialogViews(popupView, member);
+        initOpenStatsDialogViews(popupView, memberName, stats);
 
         // Show dialog
         dialogBuilder.setView(popupView);
@@ -544,9 +566,9 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
         dialog.show();
     }
 
-    private void initOpenDialogViews(View popupView, FootballMember member) {
+    private void initOpenStatsDialogViews(View popupView, String memberName, FBStats stats) {
         TextView name = popupView.findViewById(R.id.fbMemberGameStatsNameTV);
-        name.setText(member.getNickname());
+        name.setText(memberName);
 
         Button memberGoalsBTN1 = popupView.findViewById(R.id.fbMemberGameStatsGoalsBTN1);
         EditText memberGoalsET = popupView.findViewById(R.id.fbMemberGameStatsGoalsET);
@@ -622,10 +644,10 @@ public class FBGameFragment extends Fragment implements OnGameMemberDragListener
 
         Button saveStatsBTN = popupView.findViewById(R.id.fbMemberGameStatsSaveStatsBTN);
         saveStatsBTN.setOnClickListener(v -> {
-            member.setGoals(Integer.parseInt(memberGoalsET.getText().toString()));
-            member.setAssists(Integer.parseInt(memberAssistsET.getText().toString()));
-            member.setSaves(Integer.parseInt(memberSavesET.getText().toString()));
-            member.setFouls(Integer.parseInt(memberFoulsET.getText().toString()));
+            stats.setGoals(Integer.parseInt(memberGoalsET.getText().toString()));
+            stats.setAssists(Integer.parseInt(memberAssistsET.getText().toString()));
+            stats.setSaves(Integer.parseInt(memberSavesET.getText().toString()));
+            stats.setFouls(Integer.parseInt(memberFoulsET.getText().toString()));
             dialog.dismiss();
         });
     }

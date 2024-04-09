@@ -36,13 +36,13 @@ public class FBMemberAllStatsViewRVAdapter extends RecyclerView.Adapter<FBMember
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.memberNameTV.setText(members.get(position).getNickname().toString());
-        holder.memberWinsTV.setText(members.get(position).getWins().toString());
-        holder.memberDrawsTV.setText(members.get(position).getDraws().toString());
-        holder.memberLosesTV.setText(members.get(position).getLoses().toString());
-        holder.memberGoalsTV.setText(Integer.toString(members.get(position).getGoals()));
-        holder.memberAssistsTV.setText(Integer.toString(members.get(position).getAssists()));
-        holder.memberSavesTV.setText(Integer.toString(members.get(position).getSaves()));
-        holder.memberFoulsTV.setText(Integer.toString(members.get(position).getFouls()));
+        holder.memberWinsTV.setText(members.get(position).getStats().getWins().toString());
+        holder.memberDrawsTV.setText(members.get(position).getStats().getDraws().toString());
+        holder.memberLosesTV.setText(members.get(position).getStats().getLoses().toString());
+        holder.memberGoalsTV.setText(Integer.toString(members.get(position).getStats().getGoals()));
+        holder.memberAssistsTV.setText(Integer.toString(members.get(position).getStats().getAssists()));
+        holder.memberSavesTV.setText(Integer.toString(members.get(position).getStats().getSaves()));
+        holder.memberFoulsTV.setText(Integer.toString(members.get(position).getStats().getFouls()));
     }
 
     @Override

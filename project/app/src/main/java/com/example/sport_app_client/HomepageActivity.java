@@ -358,9 +358,9 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         int draws = 0;
         int loses = 0;
         for (Member<?,?> member : MyAuthManager.user.getMembers()) {
-            wins += member.getWins();
-            draws += member.getDraws();
-            loses += member.getLoses();
+            wins += member.getStats().getWins();
+            draws += member.getStats().getDraws();
+            loses += member.getStats().getLoses();
         }
         this.totalWinsTV.setText("Total wins: " + wins);
         this.totalDrawsTV.setText("Total draws: " + draws);
@@ -410,9 +410,9 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     public void onGameCreatedOrDeletedHomepageIMPL(Member<?,?> member) {
         for (int i = 0; i < MyAuthManager.user.getMembers().size(); i++) {
             if (MyAuthManager.user.getMembers().get(i).getId() == member.getId()) {
-                MyAuthManager.user.getMembers().get(i).setWins(member.getWins());
-                MyAuthManager.user.getMembers().get(i).setDraws(member.getDraws());
-                MyAuthManager.user.getMembers().get(i).setLoses(member.getLoses());
+                MyAuthManager.user.getMembers().get(i).getStats().setWins(member.getStats().getWins());
+                MyAuthManager.user.getMembers().get(i).getStats().setDraws(member.getStats().getDraws());
+                MyAuthManager.user.getMembers().get(i).getStats().setLoses(member.getStats().getLoses());
                 userGroupsRV.getAdapter().notifyItemChanged(i);
                 break;
             }

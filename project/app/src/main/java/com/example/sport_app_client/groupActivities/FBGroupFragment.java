@@ -19,6 +19,7 @@ import com.example.sport_app_client.model.game.FootballGame;
 import com.example.sport_app_client.model.game.Game;
 import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.model.member.Member;
+import com.example.sport_app_client.model.stats.FBStats;
 import com.example.sport_app_client.retrofit.MyAuthManager;
 import com.example.sport_app_client.retrofit.RetrofitService;
 import com.example.sport_app_client.retrofit.api.FbAPI;
@@ -219,44 +220,44 @@ public class FBGroupFragment extends GroupFragment {
     @Override
     protected void setUpSportSpecificGameDialog(View popupView, Button deleteBTN, Game<?> game) {
         // Init vars
-        List<FootballMember> allMembers = new ArrayList<>();
-        List<FootballMember> team1 = new ArrayList<>();
-        List<FootballMember> team2 = new ArrayList<>();
+        List<FBStats> allStats = new ArrayList<>();
+        List<FBStats> team1Stats = new ArrayList<>();
+        List<FBStats> team2Stats = new ArrayList<>();
 
         // enable btn if member is admin
         if (MyGlobals.associatedMember.getIsAdmin()) {
             deleteBTN.setVisibility(View.VISIBLE);
             deleteBTN.setOnClickListener(view -> {
                 deleteBTN.setEnabled(false);
-                removeGame(game, allMembers);
+                removeGame(game, allStats);
             });
         }
 
         // Init recyclers
         RecyclerView team1RV = popupView.findViewById(R.id.GameDialogTeam1RV);
-        FBGameStep3RVAdapter team1Adapter = new FBGameStep3RVAdapter(team1);
+        FBGameStep3RVAdapter team1Adapter = new FBGameStep3RVAdapter(team1Stats);
         team1RV.setAdapter(team1Adapter);
         team1RV.setLayoutManager(new LinearLayoutManager(activity));
 
         RecyclerView team2RV = popupView.findViewById(R.id.GameDialogTeam2RV);
-        FBGameStep3RVAdapter team2Adapter = new FBGameStep3RVAdapter(team2);
+        FBGameStep3RVAdapter team2Adapter = new FBGameStep3RVAdapter(team2Stats);
         team2RV.setAdapter(team2Adapter);
         team2RV.setLayoutManager(new LinearLayoutManager(activity));
 
         GlobalMethods.showPGAndBlockUI(mainProgressBar, activity);
 
         // Request game stats
-        groupAPI.getGameStats(game.getId()).enqueue(new Callback<List<FootballMember>>() {
+        groupAPI.getGameStats(game.getId()).enqueue(new Callback<List<FBStats>>() {
             @Override
-            public void onResponse(Call<List<FootballMember>> call, Response<List<FootballMember>> response) {
+            public void onResponse(Call<List<FBStats>> call, Response<List<FBStats>> response) {
                 if (response.code() == 200) { // OK
-                    allMembers.addAll(response.body());
+                    allStats.addAll(response.body());
                     // Split game members into teams
-                    for ( FootballMember member : response.body()) {
-                        if (member.getIsPartOfTeam1()) {
-                            team1.add(member);
+                    for (FBStats stats : response.body()) {
+                        if (stats.getIsPartOfTeam1()) {
+                            team1Stats.add(stats);
                         } else {
-                            team2.add(member);
+                            team2Stats.add(stats);
                         }
                     }
 
@@ -273,7 +274,7 @@ public class FBGroupFragment extends GroupFragment {
             }
 
             @Override
-            public void onFailure(Call<List<FootballMember>> call, Throwable t) {
+            public void onFailure(Call<List<FBStats>> call, Throwable t) {
                 Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
                 Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
 
@@ -355,9 +356,9 @@ public class FBGroupFragment extends GroupFragment {
     /**
      * This method removes the game and updates the group members stats accordingly.
      * @param game - game to be removed
-     * @param members - game stats
+     * @param gameStats - game stats
      */
-    private void removeGame(Game<?> game, List<FootballMember> members) {
+    private void removeGame(Game<?> game, List<FBStats> gameStats) {
         ConfirmActionDialog.showDialog(activity, "Are you sure you want to delete this game!", () -> {
             GlobalMethods.showPGAndBlockUI(mainProgressBar, activity);
 
@@ -366,7 +367,7 @@ public class FBGroupFragment extends GroupFragment {
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.code() == 200) { // OK
                         // Update current data
-                        decreaseMemberStatsAfterGameDeleted(game, members);
+                        decreaseMemberStatsAfterGameDeleted(game, gameStats);
                         MyGlobals.footballGroup.getGames().remove(game);
                         MyGlobals.gameCreatedListenerHomepage.onGameCreatedOrDeletedHomepageIMPL(MyGlobals.associatedFBMember);
 
@@ -398,33 +399,27 @@ public class FBGroupFragment extends GroupFragment {
     /**
      * This method takes as input the game stats and find each associated member in
      * this.group.getMembers and decreases their stats;
-     * @param members - the list of game stats
+     * @param gameStats - the list of game stats
      */
-    private void decreaseMemberStatsAfterGameDeleted(Game<?> game, List<FootballMember> members) {
-        for (int i = 0; i < members.size(); i++) {
-            FootballMember associatedGMember = getGroupMemberByNickname(members.get(i).getNickname());
+    private void decreaseMemberStatsAfterGameDeleted(Game<?> game, List<FBStats> gameStats) {
+        for (FBStats stats : gameStats) {
+            FootballMember associatedGMember = getGroupMemberById(stats.getMember().getId());
             if (associatedGMember == null) {
                 continue;
             }
-            associatedGMember.setGoals(associatedGMember.getGoals() - members.get(i).getGoals());
-            associatedGMember.setAssists(associatedGMember.getAssists() - members.get(i).getAssists());
-            associatedGMember.setSaves(associatedGMember.getSaves() - members.get(i).getSaves());
-            associatedGMember.setFouls(associatedGMember.getFouls() - members.get(i).getFouls());
-            if (game.getVictory() == 0) { // draw
-                associatedGMember.setDraws(associatedGMember.getDraws()-1);
-            } else if ((game.getVictory() == -1 && members.get(i).getIsPartOfTeam1() ||
-                    (game.getVictory() == 1 && !members.get(i).getIsPartOfTeam1()))) { // player had won
-                associatedGMember.setWins(associatedGMember.getWins()-1);
-            } else if ((game.getVictory() == 1 && members.get(i).getIsPartOfTeam1() ||
-                    (game.getVictory() == -1 && !members.get(i).getIsPartOfTeam1()))) { // player had lost
-                associatedGMember.setLoses(associatedGMember.getLoses()-1);
-            }
+
+            associatedGMember.getStats().setWins(associatedGMember.getStats().getWins() - stats.getWins());
+            associatedGMember.getStats().setDraws(associatedGMember.getStats().getDraws() - stats.getDraws());
+            associatedGMember.getStats().setLoses(associatedGMember.getStats().getLoses() - stats.getLoses());
+            associatedGMember.getStats().setGoals(associatedGMember.getStats().getGoals() - stats.getGoals());
+            associatedGMember.getStats().setAssists(associatedGMember.getStats().getAssists() - stats.getAssists());
+            associatedGMember.getStats().setSaves(associatedGMember.getStats().getSaves() - stats.getSaves());
+            associatedGMember.getStats().setFouls(associatedGMember.getStats().getFouls() - stats.getFouls());
         }
     }
-
-    private FootballMember getGroupMemberByNickname(String nickname) {
+    private FootballMember getGroupMemberById(long memberID) {
         for (FootballMember member : MyGlobals.footballGroup.getMembers()) {
-            if (member.getNickname().equals(nickname)) {
+            if (member.getId() == memberID) {
                 return member;
             }
         }

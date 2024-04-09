@@ -3,37 +3,20 @@ package com.example.sport_app_client.model.member;
 import com.example.sport_app_client.model.Sports;
 import com.example.sport_app_client.model.game.FootballGame;
 import com.example.sport_app_client.model.group.FootballGroup;
+import com.example.sport_app_client.model.stats.FBStats;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class FootballMember extends Member<FootballGroup, FootballGame> {
-
-    /* Stats */
-    private int goals;
-    private int assists;
-    private int saves;
-    private int fouls;
-    private Boolean isPartOfTeam1; // used for games
+public class FootballMember extends Member<FootballGroup, FBStats> {
 
     public FootballMember() {
-        super.setSport(Sports.FOOTBALL);
-        initVars();
+        setSport(Sports.FOOTBALL);
     }
 
     public FootballMember(String nickname, FootballGroup group) {
-        super(nickname, Sports.FOOTBALL, group);
-
-        initVars();
-    }
-
-    private void initVars() {
-        this.goals = 0;
-        this.assists = 0;
-        this.saves = 0;
-        this.fouls = 0;
-        this.isPartOfTeam1 = null;
+        super(nickname, Sports.FOOTBALL, group, new FBStats());
     }
 }

@@ -11,15 +11,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sport_app_client.R;
 import com.example.sport_app_client.model.member.FootballMember;
+import com.example.sport_app_client.model.stats.FBStats;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class FBGameStep3RVAdapter extends RecyclerView.Adapter<FBGameStep3RVAdapter.ViewHolder> {
 
-    private List<FootballMember> members;
+    private List<FBStats> stats; // needed separate list as we need ordering for the rv
 
-    public FBGameStep3RVAdapter(List<FootballMember> members) {
-        this.members = members;
+    public FBGameStep3RVAdapter(List<FBStats> stats) {
+        this.stats = stats;
     }
 
 
@@ -38,24 +40,17 @@ public class FBGameStep3RVAdapter extends RecyclerView.Adapter<FBGameStep3RVAdap
     // set values for each holder given its position
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.memberNameTV.setText(members.get(position).getNickname().toString());
-        holder.memberGoalsTV.setText(Integer.toString(members.get(position).getGoals()));
-        holder.memberAssistsTV.setText(Integer.toString(members.get(position).getAssists()));
-        holder.memberSavesTV.setText(Integer.toString(members.get(position).getSaves()));
-        holder.memberFoulsTV.setText(Integer.toString(members.get(position).getFouls()));
+        FBStats statsInRV = stats.get(position);
+        holder.memberNameTV.setText(statsInRV.getMember().getNickname().toString());
+        holder.memberGoalsTV.setText(Integer.toString(statsInRV.getGoals()));
+        holder.memberAssistsTV.setText(Integer.toString(statsInRV.getAssists()));
+        holder.memberSavesTV.setText(Integer.toString(statsInRV.getSaves()));
+        holder.memberFoulsTV.setText(Integer.toString(statsInRV.getFouls()));
     }
 
     @Override
     public int getItemCount() {
-        return this.members.size();
-    }
-
-    public List<FootballMember> getMembers() {
-        return this.members;
-    }
-
-    public void setMembers(List<FootballMember> members) {
-        this.members = members;
+        return this.stats.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
