@@ -19,7 +19,7 @@ public abstract class Game<GroupT extends Group<?,?>> {
     protected LocalDate date;
     protected Sports sport;
     protected String results;
-    protected Integer victory; // -1 -> team 1 won, 0 -> draw, 1 -> team 2 won
+//    protected Integer victory; // -1 -> team 1 won, 0 -> draw, 1 -> team 2 won
 
     protected GroupT group;
 
@@ -33,7 +33,7 @@ public abstract class Game<GroupT extends Group<?,?>> {
     }
 
     private void initVars() {
-        this.victory = null;
+//        this.victory = null;
     }
 
 }
