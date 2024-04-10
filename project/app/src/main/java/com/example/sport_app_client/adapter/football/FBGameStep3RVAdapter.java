@@ -41,7 +41,7 @@ public class FBGameStep3RVAdapter extends RecyclerView.Adapter<FBGameStep3RVAdap
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         FBStats statsInRV = stats.get(position);
-        holder.memberNameTV.setText(statsInRV.getMember().getNickname().toString());
+        holder.memberNameTV.setText(statsInRV.getMemberName().toString());
         holder.memberGoalsTV.setText(Integer.toString(statsInRV.getGoals()));
         holder.memberAssistsTV.setText(Integer.toString(statsInRV.getAssists()));
         holder.memberSavesTV.setText(Integer.toString(statsInRV.getSaves()));

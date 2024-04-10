@@ -50,7 +50,7 @@ public class FBGameStep2RVAdapter extends RecyclerView.Adapter<FBGameStep2RVAdap
         if (membersWithStatsMap.get(member) == null) {
             FBStats tempMemberStats = new FBStats();
             // Setting temporary member so that we know whose stats are these when displaying
-            tempMemberStats.setMember(new FootballMember(member.getNickname(), null));
+            tempMemberStats.setMemberName(member.getNickname());
             membersWithStatsMap.put(members.get(position), tempMemberStats);
         }
 

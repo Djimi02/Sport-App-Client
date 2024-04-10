@@ -13,12 +13,15 @@ public abstract class Stats<MemberT extends Member<?,?>, GameT extends Game<?>> 
 
     protected Long id;
 
+    protected String memberName;
+
     protected Integer wins;
     protected Integer draws;
     protected Integer loses;
 
-    protected GameT game;
-
+    // Not used in the android app
+//    protected GameT game;
+//
     protected MemberT member;
 
     protected Sports sport;
