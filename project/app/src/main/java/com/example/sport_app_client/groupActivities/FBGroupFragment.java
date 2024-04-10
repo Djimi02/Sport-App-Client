@@ -403,6 +403,9 @@ public class FBGroupFragment extends GroupFragment {
      */
     private void decreaseMemberStatsAfterGameDeleted(Game<?> game, List<FBStats> gameStats) {
         for (FBStats stats : gameStats) {
+            if (stats.getMember() == null) {
+                continue;
+            }
             FootballMember associatedGMember = getGroupMemberById(stats.getMember().getId());
             if (associatedGMember == null) {
                 continue;
