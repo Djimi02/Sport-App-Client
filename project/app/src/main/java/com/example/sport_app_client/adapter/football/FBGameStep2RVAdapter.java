@@ -56,7 +56,7 @@ public class FBGameStep2RVAdapter extends RecyclerView.Adapter<FBGameStep2RVAdap
 
         holder.memberNameTV.setText(member.getNickname().toString());
         holder.btn.setOnClickListener(view -> {
-            openFBMemberStatDialog.openDialog(member.getNickname(), membersWithStatsMap.get(member));
+            openFBMemberStatDialog.openDialog(membersWithStatsMap.get(member));
         });
     }
 
@@ -79,6 +79,10 @@ public class FBGameStep2RVAdapter extends RecyclerView.Adapter<FBGameStep2RVAdap
         }
 
         return output;
+    }
+
+    public void setMembers(List<FootballMember> members) {
+        this.members = members;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
