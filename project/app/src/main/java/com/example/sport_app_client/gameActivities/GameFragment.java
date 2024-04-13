@@ -23,8 +23,7 @@ import com.example.sport_app_client.adapter.GameTeamsRVAdapter;
 import com.example.sport_app_client.adapter.DraggableGroupMembersRVAdapter;
 import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.interfaces.OnGameMemberDragListener;
-import com.example.sport_app_client.interfaces.OpenFBMemberStatDialog;
-import com.example.sport_app_client.model.member.FootballMember;
+import com.example.sport_app_client.interfaces.OpenMemberStatSelectionDialog;
 import com.example.sport_app_client.model.member.Member;
 import com.example.sport_app_client.model.stats.Stats;
 
@@ -32,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public abstract class GameFragment extends Fragment implements OnGameMemberDragListener, OpenFBMemberStatDialog {
+public abstract class GameFragment extends Fragment implements OnGameMemberDragListener, OpenMemberStatSelectionDialog {
 
     protected Activity activity;
     protected View view;
@@ -49,7 +48,7 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fb_game_fragment_layout, container, false);
+        view = inflater.inflate(R.layout.game_fragment_layout, container, false);
 
         initVars();
         initViews();
@@ -99,27 +98,27 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
     protected abstract void initSportDependentVars();
 
     private void initViews() {
-        this.viewFlipper = view.findViewById(R.id.footballgameactivityVF);
+        this.viewFlipper = view.findViewById(R.id.gameFragmentVF);
 
-        this.progressBar = view.findViewById(R.id.fbGameProgressBar);
+        this.progressBar = view.findViewById(R.id.gameFragmentProgressBar);
 
-        this.backBTN = view.findViewById(R.id.footballgameactivityBackBTN);
+        this.backBTN = view.findViewById(R.id.gameFragmentBackBTN);
         backBTN.setOnClickListener((view -> {
             backBtnPressed();
         }));
         backBTN.setEnabled(false);
 
-        this.nextBTN = view.findViewById(R.id.footballgameactivityNextBTN);
+        this.nextBTN = view.findViewById(R.id.gameFragmentNextBTN);
         this.nextBTN.setText("Confirm Teams");
         nextBTN.setOnClickListener((view -> {
             nextBtnPressed();
         }));
 
-        this.step1RandomMembersLayout = view.findViewById(R.id.footballgameStep1RandomLayout);
+        this.step1RandomMembersLayout = view.findViewById(R.id.gameFragmentStep1RandomLayout);
         step1RandomMembersLayout.setVisibility(View.GONE);
 
         // I am using only this btn to get info
-        this.step1ManualSelectionRB = view.findViewById(R.id.footballgameStep1RB1);
+        this.step1ManualSelectionRB = view.findViewById(R.id.gameFragmentStep1RB1);
         step1ManualSelectionRB.setChecked(true);
         step1ManualSelectionRB.setOnCheckedChangeListener((compoundButton, b) -> {
             if (b) {
@@ -129,7 +128,7 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
             }
         });
 
-        this.step1RandomBTN = view.findViewById(R.id.footballgameStep1RandomBTN);
+        this.step1RandomBTN = view.findViewById(R.id.gameFragmentStep1RandomBTN);
         step1RandomBTN.setOnClickListener(view -> generateRandomTeams());
 
         initRecyclerViews();
@@ -137,12 +136,12 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
 
     private void initRecyclerViews() {
         // Step 1
-        this.membersRV = view.findViewById(R.id.footballgameStep1MembersRV);
+        this.membersRV = view.findViewById(R.id.gameFragmentStep1MembersRV);
         DraggableGroupMembersRVAdapter membersAdapter = new DraggableGroupMembersRVAdapter(MyGlobals.group.getMembers(), this);
         membersRV.setAdapter(membersAdapter);
         membersRV.setLayoutManager(new LinearLayoutManager(activity));
 
-        this.step1Team1RV = view.findViewById(R.id.footballgameStep1Team1RV);
+        this.step1Team1RV = view.findViewById(R.id.gameFragmentStep1Team1RV);
         GameTeamsRVAdapter step1Team1Adapter = new GameTeamsRVAdapter(team1);
         step1Team1RV.setAdapter(step1Team1Adapter);
         step1Team1RV.setLayoutManager(new LinearLayoutManager(activity));
@@ -161,7 +160,7 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
             }
         });
 
-        this.step1Team2RV = view.findViewById(R.id.footballgameStep1Team2RV);
+        this.step1Team2RV = view.findViewById(R.id.gameFragmentStep1Team2RV);
         GameTeamsRVAdapter step1Team2Adapter = new GameTeamsRVAdapter(team2);
         step1Team2RV.setAdapter(step1Team2Adapter);
         step1Team2RV.setLayoutManager(new LinearLayoutManager(activity));
@@ -180,7 +179,7 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
             }
         });
 
-        this.randomMembersRV = view.findViewById(R.id.footballgameStep1RandomMembersRV);
+        this.randomMembersRV = view.findViewById(R.id.gameFragmentStep1RandomMembersRV);
         GameTeamsRVAdapter randomMembersAdapter = new GameTeamsRVAdapter(step1RandomMembers);
         randomMembersRV.setAdapter(randomMembersAdapter);
         randomMembersRV.setLayoutManager(new LinearLayoutManager(activity));
@@ -310,7 +309,7 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
     /* ================= START LISTENER'S IMPLEMENTATION =================================== */
     @Override
     public void draggedMember(Member<?,?> member) {
-        this.draggedMember = (FootballMember) member;
+        this.draggedMember = member;
     }
 
     @Override

@@ -74,23 +74,23 @@ public class FBGameFragment extends GameFragment {
     @Override
     protected void initSportDependentRecyclerViews() {
         // Step 2
-        this.step2Team1RV = view.findViewById(R.id.footballgameStep2Team1RV);
+        this.step2Team1RV = view.findViewById(R.id.gameFragmentStep2Team1RV);
         FBGameStep2RVAdapter step2Team1Adapter = new FBGameStep2RVAdapter(fbTeam1, this);
         step2Team1RV.setAdapter(step2Team1Adapter);
         step2Team1RV.setLayoutManager(new LinearLayoutManager(activity));
 
-        this.step2Team2RV = view.findViewById(R.id.footballgameStep2Team2RV);
+        this.step2Team2RV = view.findViewById(R.id.gameFragmentStep2Team2RV);
         FBGameStep2RVAdapter step2Team2Adapter = new FBGameStep2RVAdapter(fbTeam2, this);
         step2Team2RV.setAdapter(step2Team2Adapter);
         step2Team2RV.setLayoutManager(new LinearLayoutManager(activity));
 
         // Step 3
-        this.step3Team1RV = view.findViewById(R.id.footballgameStep3Team1RV);
+        this.step3Team1RV = view.findViewById(R.id.gameFragmentStep3Team1RV);
         FBGameStep3RVAdapter step3Team1Adapter = new FBGameStep3RVAdapter(step3Team1Stats);
         step3Team1RV.setAdapter(step3Team1Adapter);
         step3Team1RV.setLayoutManager(new LinearLayoutManager(activity));
 
-        this.step3Team2RV = view.findViewById(R.id.footballgameStep3Team2RV);
+        this.step3Team2RV = view.findViewById(R.id.gameFragmentStep3Team2RV);
         FBGameStep3RVAdapter step3Team2Adapter = new FBGameStep3RVAdapter(step3Team2Stats);
         step3Team2RV.setAdapter(step3Team2Adapter);
         step3Team2RV.setLayoutManager(new LinearLayoutManager(activity));

@@ -12,7 +12,7 @@
         android:layout_height="wrap_content">
 
         <ProgressBar
-            android:id="@+id/fbGameProgressBar"
+            android:id="@+id/gameFragmentProgressBar"
             style="?android:attr/progressBarStyle"
             android:elevation="2dp"
             android:visibility="gone"
@@ -39,15 +39,15 @@
                 android:textSize="@dimen/_30sdp" />
 
             <ViewFlipper
-                android:id="@+id/footballgameactivityVF"
+                android:id="@+id/gameFragmentVF"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <include layout="@layout/fb_game_step_1" />
+                <include layout="@layout/game_step_1" />
 
-                <include layout="@layout/fb_game_step_2" />
+                <include layout="@layout/game_step_2" />
 
-                <include layout="@layout/fb_game_step_3" />
+                <include layout="@layout/game_step_3" />
 
             </ViewFlipper>
 
@@ -56,13 +56,13 @@
                 android:layout_height="wrap_content">
 
                 <Button
-                    android:id="@+id/footballgameactivityBackBTN"
+                    android:id="@+id/gameFragmentBackBTN"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="back" />
 
                 <Button
-                    android:id="@+id/footballgameactivityNextBTN"
+                    android:id="@+id/gameFragmentNextBTN"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="next" />

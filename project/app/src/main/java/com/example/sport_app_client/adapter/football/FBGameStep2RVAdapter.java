@@ -11,9 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sport_app_client.R;
-import com.example.sport_app_client.interfaces.OpenFBMemberStatDialog;
+import com.example.sport_app_client.interfaces.OpenMemberStatSelectionDialog;
 import com.example.sport_app_client.model.member.FootballMember;
-import com.example.sport_app_client.model.member.Member;
 import com.example.sport_app_client.model.stats.FBStats;
 
 import java.util.HashMap;
@@ -23,9 +22,9 @@ public class FBGameStep2RVAdapter extends RecyclerView.Adapter<FBGameStep2RVAdap
 
     private List<FootballMember> members;
     private HashMap<FootballMember, FBStats> membersWithStatsMap;
-    private OpenFBMemberStatDialog openFBMemberStatDialog;
+    private OpenMemberStatSelectionDialog openFBMemberStatDialog;
 
-    public FBGameStep2RVAdapter(List<FootballMember> members, OpenFBMemberStatDialog openFBMemberStatDialog) {
+    public FBGameStep2RVAdapter(List<FootballMember> members, OpenMemberStatSelectionDialog openFBMemberStatDialog) {
         this.members = members;
         this.openFBMemberStatDialog = openFBMemberStatDialog;
         this.membersWithStatsMap = new HashMap<>();

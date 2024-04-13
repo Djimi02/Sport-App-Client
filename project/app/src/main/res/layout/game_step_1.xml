@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:text="Members"/>
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/footballgameStep1MembersRV"
+        android:id="@+id/gameFragmentStep1MembersRV"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_150sdp"/>
 
@@ -24,13 +24,13 @@
         android:layout_gravity="center">
 
         <RadioButton
-            android:id="@+id/footballgameStep1RB1"
+            android:id="@+id/gameFragmentStep1RB1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Manual Selection"/>
 
         <RadioButton
-            android:id="@+id/footballgameStep1RB2"
+            android:id="@+id/gameFragmentStep1RB2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Random Selection"/>
@@ -38,7 +38,7 @@
     </RadioGroup>
 
     <LinearLayout
-        android:id="@+id/footballgameStep1RandomLayout"
+        android:id="@+id/gameFragmentStep1RandomLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -49,11 +49,11 @@
             android:layout_gravity="center"
             android:text="Random"/>
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/footballgameStep1RandomMembersRV"
+            android:id="@+id/gameFragmentStep1RandomMembersRV"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_100sdp"/>
         <Button
-            android:id="@+id/footballgameStep1RandomBTN"
+            android:id="@+id/gameFragmentStep1RandomBTN"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -66,7 +66,7 @@
         android:layout_height="wrap_content"
         android:text="Team1"/>
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/footballgameStep1Team1RV"
+        android:id="@+id/gameFragmentStep1Team1RV"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_100sdp"/>
 
@@ -75,7 +75,7 @@
         android:layout_height="wrap_content"
         android:text="Team2"/>
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/footballgameStep1Team2RV"
+        android:id="@+id/gameFragmentStep1Team2RV"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_100sdp"/>
 

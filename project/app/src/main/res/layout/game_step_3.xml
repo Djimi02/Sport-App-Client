@@ -16,7 +16,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="@dimen/_200sdp"
-        android:id="@+id/footballgameStep3Team1RV"/>
+        android:id="@+id/gameFragmentStep3Team1RV"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -26,7 +26,7 @@
         android:layout_gravity="center"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/footballgameStep3Team2RV"
+        android:id="@+id/gameFragmentStep3Team2RV"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_200sdp" />
 

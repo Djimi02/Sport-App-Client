@@ -14,7 +14,7 @@
         android:layout_gravity="center"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/footballgameStep2Team1RV"
+        android:id="@+id/gameFragmentStep2Team1RV"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_200sdp" />
 
@@ -26,7 +26,7 @@
         android:layout_gravity="center"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/footballgameStep2Team2RV"
+        android:id="@+id/gameFragmentStep2Team2RV"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_200sdp" />
 
