@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.ComponentActivity;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -17,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.sport_app_client.R;
 import com.example.sport_app_client.adapter.GamesRVAdapter;
@@ -51,6 +54,16 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         super.onCreate(savedInstanceState);
 
         activity = getActivity();
+        ((ComponentActivity)activity).getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (dialog == null) {}
+                else if (dialog.isShowing()) { return; }
+
+                backToHomepage();
+            }
+        });
+
     }
 
     @Override
@@ -80,6 +93,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
     protected RecyclerView gamesRV;
     protected RecyclerView membersRV;
     protected ProgressBar mainProgressBar;
+    protected Button homepageBTN;
 
     /* Join Group Dialog global views */
     protected ProgressBar joinGroupDialogPB;
@@ -125,6 +139,9 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
 
         this.settingsBTN = view.findViewById(R.id.GroupFragmentSettingsBTN);
         settingsBTN.setOnClickListener(view -> openSettings());
+
+        this.homepageBTN = view.findViewById(R.id.GroupFragmentHomepageBTN);
+        homepageBTN.setOnClickListener(v -> backToHomepage());
 
         initRecyclers();
 
@@ -400,5 +417,22 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
 
     /** This method should sort the games of sport specific group. */
     protected abstract void sortGames();
+
+    /**
+     * This method finishes the current activity, sets to null all the pointers to
+     * group related objects and calls the garbage collection.
+     */
+    private void backToHomepage() {
+        activity.finish();
+
+        MyGlobals.group = null;
+        MyGlobals.associatedMember = null;
+        MyGlobals.gameCreatedListenerGroup = null;
+        clearSportSpecificGroupData();
+
+        System.gc();
+    }
+
+    protected abstract void clearSportSpecificGroupData();
 
 }

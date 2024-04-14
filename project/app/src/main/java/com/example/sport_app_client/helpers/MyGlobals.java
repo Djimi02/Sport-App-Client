@@ -17,11 +17,14 @@ public final class MyGlobals {
     public static Group<?,?> group = null;
     public static Member<?,?> associatedMember = null;
 
+    // Used group and game activities
     public static GameCreatedListener gameCreatedListenerGroup = null;
 
+    // Used by homepage, group/game activities
     public static GameCreatedListener gameCreatedListenerHomepage = null;
 
-    public static CreateOrJoinOrLeaveGroupListener createOrJoinOrLeaveGroupListener = null;
+    // Used by homepage and group activities
+    public static CreateOrJoinOrLeaveGroupListener createJoinLeaveGroupListenerHomepageActivity = null;
 
     /* FOOTBALL */
     public static FootballGroup footballGroup = null;

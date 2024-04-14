@@ -74,12 +74,10 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         // Empty back button implementation
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
-            public void handleOnBackPressed() {
-
-            }
+            public void handleOnBackPressed() {}
         });
 
-        MyGlobals.createOrJoinOrLeaveGroupListener = this;
+        MyGlobals.createJoinLeaveGroupListenerHomepageActivity = this;
 
         initVars();
         initViews();

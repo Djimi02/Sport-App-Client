@@ -92,7 +92,7 @@ public class FBGroupFragment extends GroupFragment {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.code() == 200) { // OK
-                        MyGlobals.createOrJoinOrLeaveGroupListener.onGroupRemoved(MyGlobals.associatedFBMember.getId()); // remove from homepage
+                        MyGlobals.createJoinLeaveGroupListenerHomepageActivity.onGroupRemoved(MyGlobals.associatedFBMember.getId()); // remove from homepage
 
                         activity.finish(); // Exit activity
 
@@ -124,7 +124,7 @@ public class FBGroupFragment extends GroupFragment {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.code() == 200) { // OK
-                        MyGlobals.createOrJoinOrLeaveGroupListener.onGroupRemoved(MyGlobals.associatedFBMember.getId());
+                        MyGlobals.createJoinLeaveGroupListenerHomepageActivity.onGroupRemoved(MyGlobals.associatedFBMember.getId());
                         Toast.makeText(activity, "Group deleted successfully!", Toast.LENGTH_SHORT).show();
                         activity.finish();
                     } else {
@@ -156,7 +156,7 @@ public class FBGroupFragment extends GroupFragment {
                     MyGlobals.footballGroup.addMember(newMember);
                     MyGlobals.associatedFBMember = newMember;
                     MyGlobals.associatedMember = MyGlobals.associatedFBMember;
-                    MyGlobals.createOrJoinOrLeaveGroupListener.onGroupJoined(newMember, MyGlobals.footballGroup);
+                    MyGlobals.createJoinLeaveGroupListenerHomepageActivity.onGroupJoined(newMember, MyGlobals.footballGroup);
                     initViews();
                     dialog.dismiss();
                 } else {
@@ -326,7 +326,7 @@ public class FBGroupFragment extends GroupFragment {
                 if (response.code() == 200) { // OK
                     // A copy of the user is made so that there is no cyclic references
                     member.setUser(new User(MyAuthManager.user.getUserName(), MyAuthManager.user.getId()));
-                    MyGlobals.createOrJoinOrLeaveGroupListener.onGroupJoined(member, MyGlobals.footballGroup);
+                    MyGlobals.createJoinLeaveGroupListenerHomepageActivity.onGroupJoined(member, MyGlobals.footballGroup);
                     initViews();
                     MyGlobals.associatedFBMember = (FootballMember) member;
                     MyGlobals.associatedMember = MyGlobals.associatedFBMember;
@@ -452,5 +452,11 @@ public class FBGroupFragment extends GroupFragment {
             }
         }
         return output;
+    }
+
+    @Override
+    protected void clearSportSpecificGroupData() {
+        MyGlobals.footballGroup = null;
+        MyGlobals.associatedFBMember = null;
     }
 }
