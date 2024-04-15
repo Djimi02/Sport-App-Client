@@ -51,12 +51,12 @@ public class GroupSettingsMembersRVAdapter extends RecyclerView.Adapter<GroupSet
             holder.memberUserNameTV.setText("None");
         }
         Member<?,?> member = members.get(position);
-        if (member.getId() != userAssociatedMember.getId()) { // add func if the user is admin
-            holder.btn.setOnClickListener(view -> {
-                listener.openMemberSettingsDialog(member);
-            });
-        } else {
-            holder.btn.setVisibility(View.INVISIBLE);
+        if (member.getIsAdmin()) {
+            if (member.getId() != userAssociatedMember.getId()) { // add func if the user is admin
+                holder.btn.setOnClickListener(view -> listener.openMemberSettingsDialog(member));
+            } else {
+                holder.btn.setVisibility(View.INVISIBLE);
+            }
         }
     }
 
