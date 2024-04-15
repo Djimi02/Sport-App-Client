@@ -145,6 +145,16 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         addGameBTN.setOnClickListener((view) -> onAddGameBTNClick(MyGlobals.group.getSport()));
 
         this.drawerLayout = view.findViewById(R.id.group_drawer_layout);
+        // disabling sliding gestures
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                // disabling sliding gestures
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            }
+        });
 
         this.settingsBTN = view.findViewById(R.id.GroupFragmentSettingsBTN);
         settingsBTN.setOnClickListener(view -> openSettings());
@@ -197,6 +207,8 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         settingsMembersRV.setAdapter(settingsMembersAdapter);
         settingsMembersRV.setLayoutManager(new LinearLayoutManager(activity));
 
+        // Unlock drawer sliding gestures
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         drawerLayout.open();
     }
 
