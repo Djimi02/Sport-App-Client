@@ -53,7 +53,7 @@ public class GroupSettingsMembersRVAdapter extends RecyclerView.Adapter<GroupSet
         Member<?,?> member = members.get(position);
         if (member.getId() != userAssociatedMember.getId()) { // add func if the user is admin
             holder.btn.setOnClickListener(view -> {
-                listener.deleteMember(member);
+                listener.openMemberSettingsDialog(member);
             });
         } else {
             holder.btn.setVisibility(View.INVISIBLE);

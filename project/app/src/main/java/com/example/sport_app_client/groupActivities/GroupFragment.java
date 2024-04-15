@@ -19,7 +19,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.sport_app_client.R;
 import com.example.sport_app_client.adapter.GamesRVAdapter;
@@ -58,7 +57,10 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
             @Override
             public void handleOnBackPressed() {
                 if (dialog == null) {}
-                else if (dialog.isShowing()) { return; }
+                else if (dialog.isShowing()) {
+                    dialog.dismiss();
+                    return;
+                }
 
                 backToHomepage();
             }
@@ -103,6 +105,8 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
     protected Button leaveGroupBTN;
     protected Button deleteGroupBTN;
     protected ProgressBar settingsProgressBar;
+    protected ProgressBar memberSettingsDialogPB;
+
 
     /* Dialog */
     protected AlertDialog.Builder dialogBuilder;
@@ -320,6 +324,21 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
      */
     protected abstract void onAddMemberBTNClickSportSpecific(String memberName);
 
+    /**
+     * This method should call ConfirmActionDialog.showDialog() and pass as arguments the
+     * currently active activity, the text of the dialog and the required action. The required
+     * action is API.removeMemberFromGroup();. On successful request, the member should be
+     * removed from the global group variable and the recyclers should be updated;
+     * Also GlobalMethods.showPGAndBlockUI(); and GlobalMethods.hidePGAndEnableUi(); should be
+     * called before the request and on response/fail respectively.
+     * @param member - member to be deleted
+     */
+    protected abstract void deleteMember(Member<?,?> member);
+
+    protected abstract void promoteMemberToAdmin(Member<?,?> member);
+
+    protected abstract void demoteMember(Member<?,?> member);
+
     // ==================== END BTN IMPLEMENTATION ==========================================
 
     // ================= START LISTENER'S IMPLEMENTATION ===================================
@@ -368,17 +387,34 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
      */
     protected abstract void setUpSportSpecificGameDialog(View popupView, Button deleteBTN, Game<?> game);
 
-    /**
-     * This method should call ConfirmActionDialog.showDialog() and pass as arguments the
-     * currently active activity, the text of the dialog and the required action. The required
-     * action is API.removeMemberFromGroup();. On successful request, the member should be
-     * removed from the global group variable and the recyclers should be updated;
-     * Also GlobalMethods.showPGAndBlockUI(); and GlobalMethods.hidePGAndEnableUi(); should be
-     * called before the request and on response/fail respectively.
-     * @param member - member to be deleted
-     */
     @Override
-    public abstract void deleteMember(Member<?,?> member);
+    public void openMemberSettingsDialog(Member<?,?> member) {
+        // Build dialog
+        dialogBuilder = new AlertDialog.Builder(activity);
+        final View popupView = getLayoutInflater().inflate(R.layout.group_member_settings_dialog, null);
+
+        // Init views
+        this.memberSettingsDialogPB = popupView.findViewById(R.id.memberSettingsDialogPB);
+        TextView nameTV = popupView.findViewById(R.id.memberSettingsDialogNameTV);
+        nameTV.setText(member.getNickname());
+        Button adminBTN = popupView.findViewById(R.id.memberSettingsDialogAdminBTN);
+        if (member.getIsAdmin()) {
+            adminBTN.setText("Demote to member");
+            adminBTN.setOnClickListener(v -> demoteMember(member));
+            // TODO: Set color to red
+        } else {
+            adminBTN.setText("Promote to Admin");
+            adminBTN.setOnClickListener(v -> promoteMemberToAdmin(member));
+            // TODO: Set color to green
+        }
+        Button removeBTN = popupView.findViewById(R.id.memberSettingsDialogRemoveBTN);
+        removeBTN.setOnClickListener(v -> deleteMember(member));
+
+        // Show dialog
+        dialogBuilder.setView(popupView);
+        dialog = dialogBuilder.create();
+        dialog.show();
+    }
 
     /**
      * This method should call ConfirmActionDialog.showDialog() and pass as arguments the

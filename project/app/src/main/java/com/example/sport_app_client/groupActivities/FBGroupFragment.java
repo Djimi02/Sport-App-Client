@@ -213,6 +213,66 @@ public class FBGroupFragment extends GroupFragment {
         });
     }
 
+    @Override
+    protected void promoteMemberToAdmin(Member<?, ?> member) {
+        GlobalMethods.showPGAndBlockUI(memberSettingsDialogPB, activity);
+
+        groupAPI.promoteMemberToAdmin(member.getId()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.code() == 200) { // OK
+                    member.setIsAdmin(true);
+                    Toast.makeText(activity, member.getNickname() + " is now admin!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                }
+
+                GlobalMethods.hidePGAndEnableUi(mainProgressBar, activity);
+                dialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+
+                GlobalMethods.hidePGAndEnableUi(mainProgressBar, activity);
+                dialog.dismiss();
+            }
+        });
+    }
+
+    @Override
+    protected void demoteMember(Member<?, ?> member) {
+        GlobalMethods.showPGAndBlockUI(memberSettingsDialogPB, activity);
+
+        groupAPI.demoteMember(member.getId()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.code() == 200) { // OK
+                    member.setIsAdmin(false);
+                    Toast.makeText(activity, member.getNickname() + " was demoted!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                }
+
+                GlobalMethods.hidePGAndEnableUi(mainProgressBar, activity);
+                dialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+
+                GlobalMethods.hidePGAndEnableUi(mainProgressBar, activity);
+                dialog.dismiss();
+            }
+        });
+    }
+
     // ==================== END BTN IMPLEMENTATION ==========================================
 
     // ================= START LISTENER'S IMPLEMENTATION ===================================
