@@ -153,9 +153,9 @@ public class FBGroupFragment extends GroupFragment {
             public void onResponse(Call<FootballMember> call, Response<FootballMember> response) {
                 if (response.code() == 200) { // OK
                     FootballMember newMember = response.body();
-                    MyGlobals.footballGroup.addMember(newMember);
-                    MyGlobals.associatedFBMember = newMember;
-                    MyGlobals.associatedMember = MyGlobals.associatedFBMember;
+                    MyGlobals.footballGroup.addMember(newMember); // should be called before initViews()
+                    MyGlobals.associatedFBMember = newMember; // should be called before initViews()
+                    MyGlobals.associatedMember = MyGlobals.associatedFBMember; // should be called before initViews()
                     MyGlobals.createJoinLeaveGroupListenerHomepageActivity.onGroupJoined(newMember, MyGlobals.footballGroup);
                     initViews();
                     dialog.dismiss();
@@ -387,9 +387,9 @@ public class FBGroupFragment extends GroupFragment {
                     // A copy of the user is made so that there is no cyclic references
                     member.setUser(new User(MyAuthManager.user.getUserName(), MyAuthManager.user.getId()));
                     MyGlobals.createJoinLeaveGroupListenerHomepageActivity.onGroupJoined(member, MyGlobals.footballGroup);
+                    MyGlobals.associatedFBMember = (FootballMember) member; // should be called before initViews()
+                    MyGlobals.associatedMember = MyGlobals.associatedFBMember; // should be called before initViews()
                     initViews();
-                    MyGlobals.associatedFBMember = (FootballMember) member;
-                    MyGlobals.associatedMember = MyGlobals.associatedFBMember;
                     dialog.dismiss();
                 } else {
                     Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();

@@ -1,6 +1,9 @@
 package com.example.sport_app_client.groupActivities;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -19,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.sport_app_client.R;
 import com.example.sport_app_client.adapter.GamesRVAdapter;
@@ -104,6 +108,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
     protected RecyclerView settingsMembersRV;
     protected Button leaveGroupBTN;
     protected Button deleteGroupBTN;
+    protected Button copyGroupCodeBTN;
     protected ProgressBar settingsProgressBar;
     protected ProgressBar memberSettingsDialogPB;
 
@@ -177,6 +182,9 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         } else {
             deleteGroupBTN.setVisibility(View.GONE);
         }
+
+        this.copyGroupCodeBTN = view.findViewById(R.id.groupSettingsCopyBTN);
+        copyGroupCodeBTN.setOnClickListener(v -> copyGroupCodeToClipBoard());
     }
 
     /**
@@ -353,6 +361,19 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
      */
     protected abstract void demoteMember(Member<?,?> member);
 
+    private void copyGroupCodeToClipBoard() {
+        ClipboardManager clipboard = (ClipboardManager)
+                activity.getSystemService(Context.CLIPBOARD_SERVICE);
+
+        // Creates a new text clip to put on the clipboard.
+        ClipData clip = ClipData.newPlainText("Group code", MyGlobals.group.getUuid().toString());
+
+        // Set the clipboard's primary clip.
+        clipboard.setPrimaryClip(clip);
+
+        Toast.makeText(activity, "Group code copied!", Toast.LENGTH_SHORT).show();
+    }
+
     // ==================== END BTN IMPLEMENTATION ==========================================
 
     // ================= START LISTENER'S IMPLEMENTATION ===================================
@@ -423,7 +444,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         dialog = dialogBuilder.create();
         dialog.show();
     }
-    
+
     @Override
     public abstract void onMemberSelected(Member<?,?> member);
 

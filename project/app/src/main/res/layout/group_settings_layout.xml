@@ -24,6 +24,13 @@
         android:id="@+id/groupSettingsMembersRV"/>
 
     <Button
+        android:id="@+id/groupSettingsCopyBTN"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Copy Group code"/>
+
+    <Button
         android:id="@+id/groupSettingsLeaveBTN"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
