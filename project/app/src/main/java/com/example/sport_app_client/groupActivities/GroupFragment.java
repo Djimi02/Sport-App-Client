@@ -335,15 +335,28 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
      */
     protected abstract void deleteMember(Member<?,?> member);
 
+    /**
+     * This method should make the role of the specified member to admin by calling
+     * API.promoteMemberToAdmin(). Also GlobalMethods.showPGAndBlockUI(); and
+     * GlobalMethods.hidePGAndEnableUi(); should be called before the request
+     * and on response/fail respectively.
+     * @param member - member to be promoted to admin
+     */
     protected abstract void promoteMemberToAdmin(Member<?,?> member);
 
+    /**
+     * This method should make the role of the specified member to admin by calling
+     * API.demoteMember(). Also GlobalMethods.showPGAndBlockUI(); and
+     * GlobalMethods.hidePGAndEnableUi(); should be called before the request
+     * and on response/fail respectively.
+     * @param member - member to be demoted
+     */
     protected abstract void demoteMember(Member<?,?> member);
 
     // ==================== END BTN IMPLEMENTATION ==========================================
 
     // ================= START LISTENER'S IMPLEMENTATION ===================================
 
-    /** This method updates the recyclers in this fragment. */
     @Override
     public void onGameCreatedGroupIMPL() {
         // Update members rv with new stats after game
@@ -353,11 +366,6 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         this.gamesRV.getAdapter().notifyItemInserted(0);
     }
 
-    /**
-     * This method initializes all the views in the layout R.layout.game_stats_dialog
-     * and opens it as dialog window.
-     * @param game - game's stats to be diplayed
-     */
     @Override
     public void openGameDialog(Game<?> game) {
         // Build dialog
@@ -415,18 +423,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         dialog = dialogBuilder.create();
         dialog.show();
     }
-
-    /**
-     * This method should call ConfirmActionDialog.showDialog() and pass as arguments the
-     * currently active activity, the text of the dialog and the required action. The required
-     * action is API.joinGroupAsExistingMember();. On successful request:
-     * 1. the specified member's user attribute should be set the current user;
-     * 2. set the associated member to the specified member
-     * 3. call MyGlobals.createOrJoinOrLeaveGroupListener.onGroupJoined() and initViews();
-     * Also GlobalMethods.showPGAndBlockUI(); and GlobalMethods.hidePGAndEnableUi(); should be
-     * called before the request and on response/fail respectively.
-     * @param member - specified member
-     */
+    
     @Override
     public abstract void onMemberSelected(Member<?,?> member);
 
