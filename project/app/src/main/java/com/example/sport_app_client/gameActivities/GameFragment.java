@@ -132,6 +132,8 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
         step1RandomBTN.setOnClickListener(view -> generateRandomTeams());
 
         initRecyclerViews();
+
+        setSportSpecificDesign();
     }
 
     private void initRecyclerViews() {
@@ -199,6 +201,12 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
     }
 
     protected abstract void initSportDependentRecyclerViews();
+
+    /**
+     * This method should set the sport specific design of the views in the fragment
+     * such as background color. The position of the views are fixed.
+     */
+    protected abstract void setSportSpecificDesign();
 
     /* ==================== END CODE INITIALIZATION ========================================= */
 

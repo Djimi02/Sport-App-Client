@@ -79,6 +79,11 @@ public class FBGroupFragment extends GroupFragment {
         membersRV.setLayoutManager(new LinearLayoutManager(activity));
     }
 
+    @Override
+    protected void setSportSpecificDesign() {
+        // TODO: implement
+    }
+
     // ==================== END CODE INITIALIZATION =========================================
 
     // ==================== START BTN IMPLEMENTATION ==========================================

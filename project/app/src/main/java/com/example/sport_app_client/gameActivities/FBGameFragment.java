@@ -191,6 +191,11 @@ public class FBGameFragment extends GameFragment {
         return popupView;
     }
 
+    @Override
+    protected void setSportSpecificDesign() {
+        // TODO: implement
+    }
+
     /* ==================== END CODE INITIALIZATION ========================================= */
 
     /* ==================== START BTN IMPLEMENTATION ========================================== */

@@ -165,6 +165,8 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         initRecyclers();
 
         initSettingsViews();
+
+        setSportSpecificDesign();
     }
 
     /** This method should initialize the views that are dependent on sport specific data. */
@@ -267,6 +269,12 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         dialog = dialogBuilder.create();
         dialog.show();
     }
+
+    /**
+     * This method should set the sport specific design of the views in the fragment
+     * such as background color. The position of the views are fixed.
+     */
+    protected abstract void setSportSpecificDesign();
 
     // ==================== END CODE INITIALIZATION =========================================
 
