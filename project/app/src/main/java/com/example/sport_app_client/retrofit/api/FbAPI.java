@@ -42,11 +42,14 @@ public interface FbAPI {
     @POST("/football/member/save/{groupid}/{name}")
     Call<FootballMember> addFootballMember(@Path("groupid") Long groupID, @Path("name") String memberName);
 
-    @POST("/football/member/promote/{id}")
-    Call<Void> promoteMemberToAdmin(@Path("id") Long memberID);
+    @POST("/football/member/role/admin/{id}")
+    Call<Void> setRoleToAdmin(@Path("id") Long memberID);
 
-    @POST("/football/member/demote/{id}")
-    Call<Void> demoteMember(@Path("id") Long memberID);
+    @POST("/football/member/role/gamemaker/{id}")
+    Call<Void> setRoleToGameMaker(@Path("id") Long memberID);
+
+    @POST("/football/member/role/member/{id}")
+    Call<Void> setRoleToMember(@Path("id") Long memberID);
 
     @DELETE("/football/member/delete/{id}")
     Call<Void> removeMemberFromGroup(@Path("id") Long memberID);

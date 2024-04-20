@@ -1,5 +1,6 @@
 package com.example.sport_app_client.model.member;
 
+import com.example.sport_app_client.model.MemberRole;
 import com.example.sport_app_client.model.Sports;
 import com.example.sport_app_client.model.User;
 import com.example.sport_app_client.model.game.Game;
@@ -21,7 +22,7 @@ public abstract class Member<GroupT extends Group<?,?>, StatsT extends Stats<?,?
 
     protected StatsT stats;
 
-    protected Boolean isAdmin;
+    protected MemberRole role;
 
     public Member() {initVars();}
 
@@ -34,6 +35,6 @@ public abstract class Member<GroupT extends Group<?,?>, StatsT extends Stats<?,?
     }
 
     private void initVars() {
-        this.isAdmin = false;
+
     }
 }

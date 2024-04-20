@@ -35,6 +35,7 @@ import com.example.sport_app_client.interfaces.GameClickListener;
 import com.example.sport_app_client.interfaces.GameCreatedListener;
 import com.example.sport_app_client.interfaces.GroupMemberDeletedListener;
 import com.example.sport_app_client.interfaces.SelectMemberToJoinGroupListener;
+import com.example.sport_app_client.model.MemberRole;
 import com.example.sport_app_client.model.Sports;
 import com.example.sport_app_client.model.game.Game;
 import com.example.sport_app_client.model.member.Member;
@@ -139,10 +140,16 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         groupNameTV.setText(MyGlobals.group.getName().toString());
 
         this.addMemberBTN = view.findViewById(R.id.GroupFragmentAddMemberBTN);
-        addMemberBTN.setOnClickListener((view -> openAddMemberDialog()));
-
         this.addGameBTN = view.findViewById(R.id.GroupFragmentAddGameBTN);
-        addGameBTN.setOnClickListener((view) -> onAddGameBTNClick(MyGlobals.group.getSport()));
+
+        if (MyGlobals.associatedMember.getRole() == MemberRole.GROUP_ADMIN ||
+                MyGlobals.associatedMember.getRole() == MemberRole.GAME_MAKER) {
+            addMemberBTN.setOnClickListener((view -> openAddMemberDialog()));
+            addGameBTN.setOnClickListener((view) -> onAddGameBTNClick(MyGlobals.group.getSport()));
+        } else {
+            addMemberBTN.setVisibility(View.GONE);
+            addGameBTN.setVisibility(View.GONE);
+        }
 
         this.drawerLayout = view.findViewById(R.id.group_drawer_layout);
         // disabling sliding gestures
@@ -189,7 +196,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         leaveGroupBTN.setOnClickListener(view -> onLeaveGroupBTNClick());
 
         this.deleteGroupBTN = view.findViewById(R.id.groupSettingsDeleteBTN);
-        if (MyGlobals.associatedMember.getIsAdmin()) {
+        if (MyGlobals.associatedMember.getRole() == MemberRole.GROUP_ADMIN) {
             deleteGroupBTN.setOnClickListener(view -> onDeleteGroupBTNClick());
         } else {
             deleteGroupBTN.setVisibility(View.GONE);
@@ -365,12 +372,21 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
 
     /**
      * This method should make the role of the specified member to admin by calling
-     * API.promoteMemberToAdmin(). Also GlobalMethods.showPGAndBlockUI(); and
+     * API.setRoleToAdmin(). Also GlobalMethods.showPGAndBlockUI(); and
      * GlobalMethods.hidePGAndEnableUi(); should be called before the request
      * and on response/fail respectively.
      * @param member - member to be promoted to admin
      */
-    protected abstract void promoteMemberToAdmin(Member<?,?> member);
+    protected abstract void setRoleToAdmin(Member<?,?> member);
+
+    /**
+     * This method should make the role of the specified member to game maker by calling
+     * API.setRoleToGameMaker(). Also GlobalMethods.showPGAndBlockUI(); and
+     * GlobalMethods.hidePGAndEnableUi(); should be called before the request
+     * and on response/fail respectively.
+     * @param member - member whose role to be set to game maker
+     */
+    protected abstract void setRoleToGameMaker(Member<?,?> member);
 
     /**
      * This method should make the role of the specified member to admin by calling
@@ -379,7 +395,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
      * and on response/fail respectively.
      * @param member - member to be demoted
      */
-    protected abstract void demoteMember(Member<?,?> member);
+    protected abstract void setRoleToMember(Member<?,?> member);
 
     private void copyGroupCodeToClipBoard() {
         ClipboardManager clipboard = (ClipboardManager)
@@ -446,15 +462,34 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         this.memberSettingsDialogPB = popupView.findViewById(R.id.memberSettingsDialogPB);
         TextView nameTV = popupView.findViewById(R.id.memberSettingsDialogNameTV);
         nameTV.setText(member.getNickname());
-        Button adminBTN = popupView.findViewById(R.id.memberSettingsDialogAdminBTN);
-        if (member.getIsAdmin()) {
-            adminBTN.setText("Demote to member");
-            adminBTN.setOnClickListener(v -> demoteMember(member));
-            // TODO: Set color to red
-        } else {
-            adminBTN.setText("Promote to Admin");
-            adminBTN.setOnClickListener(v -> promoteMemberToAdmin(member));
-            // TODO: Set color to green
+        TextView roleTV = popupView.findViewById(R.id.memberSettingsDialogRoleTV);
+        roleTV.setText(member.getRole().toString());
+        Button roleBTN1 = popupView.findViewById(R.id.memberSettingsDialogRoleBTN1);
+        Button roleBTN2 = popupView.findViewById(R.id.memberSettingsDialogRoleBTN2);
+        if (member.getRole() == MemberRole.GROUP_ADMIN) {
+            roleBTN1.setText("Demote to Game Maker");
+            roleBTN1.setOnClickListener(v -> setRoleToGameMaker(member));
+
+            roleBTN2.setText("Demote to Member");
+            roleBTN2.setOnClickListener(v -> setRoleToMember(member));
+
+            // TODO: Set colors
+        } else if (member.getRole() == MemberRole.GAME_MAKER) {
+            roleBTN1.setText("Promote to Admin");
+            roleBTN1.setOnClickListener(v -> setRoleToAdmin(member));
+
+            roleBTN2.setText("Demote to Member");
+            roleBTN2.setOnClickListener(v -> setRoleToMember(member));
+
+            // TODO: Set colors
+        } else { // role is member
+            roleBTN1.setText("Promote to Admin");
+            roleBTN1.setOnClickListener(v -> setRoleToAdmin(member));
+
+            roleBTN2.setText("Promote to Game Maker");
+            roleBTN2.setOnClickListener(v -> setRoleToGameMaker(member));
+
+            // TODO: Set colors
         }
         Button removeBTN = popupView.findViewById(R.id.memberSettingsDialogRemoveBTN);
         removeBTN.setOnClickListener(v -> deleteMember(member));

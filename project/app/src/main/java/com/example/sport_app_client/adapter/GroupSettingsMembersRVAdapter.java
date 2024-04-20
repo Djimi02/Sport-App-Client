@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sport_app_client.R;
 import com.example.sport_app_client.interfaces.GroupMemberDeletedListener;
+import com.example.sport_app_client.model.MemberRole;
 import com.example.sport_app_client.model.member.Member;
 
 import java.util.List;
@@ -51,7 +52,7 @@ public class GroupSettingsMembersRVAdapter extends RecyclerView.Adapter<GroupSet
             holder.memberUserNameTV.setText("None");
         }
         Member<?,?> member = members.get(position);
-        if (member.getIsAdmin()) {
+        if (holder.btn.getVisibility() == View.VISIBLE) {
             if (member.getId() != userAssociatedMember.getId()) { // add func if the user is admin
                 holder.btn.setOnClickListener(view -> listener.openMemberSettingsDialog(member));
             } else {
@@ -77,7 +78,7 @@ public class GroupSettingsMembersRVAdapter extends RecyclerView.Adapter<GroupSet
             this.memberNameTV = view.findViewById(R.id.groupSettingsRVItemName);
             this.memberUserNameTV = view.findViewById(R.id.groupSettingsRVItemUser);
             this.btn = view.findViewById(R.id.groupSettingsRVItemBTN);
-            if (!userAssociatedMember.getIsAdmin()) {
+            if (userAssociatedMember.getRole() != MemberRole.GROUP_ADMIN) {
                 btn.setVisibility(View.GONE);
             }
         }

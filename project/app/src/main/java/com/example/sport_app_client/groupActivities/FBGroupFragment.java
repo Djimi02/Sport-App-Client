@@ -14,6 +14,7 @@ import com.example.sport_app_client.adapter.football.FBMemberAllStatsViewRVAdapt
 import com.example.sport_app_client.helpers.ConfirmActionDialog;
 import com.example.sport_app_client.helpers.GlobalMethods;
 import com.example.sport_app_client.helpers.MyGlobals;
+import com.example.sport_app_client.model.MemberRole;
 import com.example.sport_app_client.model.User;
 import com.example.sport_app_client.model.game.FootballGame;
 import com.example.sport_app_client.model.game.Game;
@@ -219,14 +220,14 @@ public class FBGroupFragment extends GroupFragment {
     }
 
     @Override
-    protected void promoteMemberToAdmin(Member<?, ?> member) {
+    protected void setRoleToAdmin(Member<?, ?> member) {
         GlobalMethods.showPGAndBlockUI(memberSettingsDialogPB, activity);
 
-        groupAPI.promoteMemberToAdmin(member.getId()).enqueue(new Callback<Void>() {
+        groupAPI.setRoleToAdmin(member.getId()).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.code() == 200) { // OK
-                    member.setIsAdmin(true);
+                    member.setRole(MemberRole.GROUP_ADMIN);
                     Toast.makeText(activity, member.getNickname() + " is now admin!", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
@@ -249,14 +250,44 @@ public class FBGroupFragment extends GroupFragment {
     }
 
     @Override
-    protected void demoteMember(Member<?, ?> member) {
+    protected void setRoleToGameMaker(Member<?, ?> member) {
         GlobalMethods.showPGAndBlockUI(memberSettingsDialogPB, activity);
 
-        groupAPI.demoteMember(member.getId()).enqueue(new Callback<Void>() {
+        groupAPI.setRoleToGameMaker(member.getId()).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.code() == 200) { // OK
-                    member.setIsAdmin(false);
+                    member.setRole(MemberRole.GAME_MAKER);
+                    Toast.makeText(activity, member.getNickname() + " is now Game Maker!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                }
+
+                GlobalMethods.hidePGAndEnableUi(mainProgressBar, activity);
+                dialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+
+                GlobalMethods.hidePGAndEnableUi(mainProgressBar, activity);
+                dialog.dismiss();
+            }
+        });
+    }
+
+    @Override
+    protected void setRoleToMember(Member<?, ?> member) {
+        GlobalMethods.showPGAndBlockUI(memberSettingsDialogPB, activity);
+
+        groupAPI.setRoleToMember(member.getId()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.code() == 200) { // OK
+                    member.setRole(MemberRole.MEMBER);
                     Toast.makeText(activity, member.getNickname() + " was demoted!", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
@@ -290,7 +321,8 @@ public class FBGroupFragment extends GroupFragment {
         List<FBStats> team2Stats = new ArrayList<>();
 
         // enable btn if member is admin
-        if (MyGlobals.associatedMember.getIsAdmin()) {
+        if (MyGlobals.associatedMember.getRole() == MemberRole.GROUP_ADMIN ||
+                MyGlobals.associatedMember.getRole() == MemberRole.GAME_MAKER) {
             deleteBTN.setVisibility(View.VISIBLE);
             deleteBTN.setOnClickListener(view -> {
                 deleteBTN.setEnabled(false);
