@@ -46,6 +46,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
 
     /* Views */
     private ProgressBar progressBar;
+    private TextView userNameTV;
     private TextView totalGroups;
     private TextView totalLosesTV;
     private TextView totalDrawsTV;
@@ -93,6 +94,9 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
 
     private void initViews() {
         this.progressBar = findViewById(R.id.homepagePB);
+
+        this.userNameTV = findViewById(R.id.homepageUserNameTV);
+        userNameTV.setText(MyAuthManager.user.getUserName().toString());
 
         this.totalGroups = findViewById(R.id.homepageTotalGroupsTV);
         this.totalWinsTV = findViewById(R.id.homepageTotalWinsTV);
