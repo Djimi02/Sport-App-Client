@@ -42,10 +42,10 @@ public class UserGroupsRVAdapter extends RecyclerView.Adapter<UserGroupsRVAdapte
     @Override
     public void onBindViewHolder(@NonNull UserGroupsRVAdapter.ViewHolder holder, int position) {
         // set values for each holder given its position
-        holder.groupName.setText("Group: " + members.get(position).getGroup().getName());
-        holder.totalWins.setText("Wins: " + members.get(position).getStats().getWins());
-        holder.totalDraws.setText("Draws: " + members.get(position).getStats().getDraws());
-        holder.totalLoses.setText("Loses: " + members.get(position).getStats().getLoses());
+        holder.groupName.setText(members.get(position).getGroup().getName().toString());
+        holder.totalWins.setText(members.get(position).getStats().getWins().toString());
+        holder.totalDraws.setText(members.get(position).getStats().getDraws().toString());
+        holder.totalLoses.setText(members.get(position).getStats().getLoses().toString());
     }
 
     @Override

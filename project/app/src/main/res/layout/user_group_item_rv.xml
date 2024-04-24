@@ -9,37 +9,113 @@
     android:paddingLeft="@dimen/_5sdp">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="2"
+        android:gravity="center_horizontal"
         android:text="name"
-        android:id="@+id/groupNameRVItem"/>
+        android:textSize="@dimen/_25sdp"
+        android:id="@+id/groupNameRVItem"
+        android:layout_marginBottom="@dimen/_5sdp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
+<!--    stats-->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="wins"
-        android:id="@+id/totalWinsRVItem"/>
+        android:layout_weight="7"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:layout_marginEnd="@dimen/_5sdp"
+        android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="draws"
-        android:id="@+id/totalDrawsRVItem"/>
+<!--        wins-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:text="loses"
-        android:layout_weight="1"
-        android:id="@+id/totalLosesRVItem"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginBottom="@dimen/_3sdp"
+                android:text="Wins"
+                android:gravity="center_vertical"/>
+
+            <TextView
+                android:id="@+id/totalWinsRVItem"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginBottom="@dimen/_3sdp"
+                android:text="0"
+                android:textSize="@dimen/_15sdp"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+<!--        draws-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginBottom="@dimen/_3sdp"
+                android:text="Draws"
+                android:gravity="center_vertical"/>
+
+            <TextView
+                android:id="@+id/totalDrawsRVItem"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginBottom="@dimen/_3sdp"
+                android:text="0"
+                android:textSize="@dimen/_15sdp"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+<!--        loses-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="Loses"
+                android:layout_weight="1"
+                android:gravity="center_vertical"/>
+
+            <TextView
+                android:id="@+id/totalLosesRVItem"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="0"
+                android:textSize="@dimen/_15sdp"
+                android:layout_weight="1"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="2"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:layout_marginEnd="@dimen/_5sdp"
+        android:layout_marginBottom="@dimen/_5sdp"
         android:id="@+id/viewBTNRVItem"
         android:text="View"/>
 
