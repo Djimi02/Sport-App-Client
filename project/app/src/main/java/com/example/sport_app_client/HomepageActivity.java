@@ -349,7 +349,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
 
     private void computeGeneralStats() {
         // Compute total groups
-        this.totalGroups.setText("Total groups: " + MyAuthManager.user.getMembers().size());
+        this.totalGroups.setText(Integer.toString(MyAuthManager.user.getMembers().size()));
 
         // Compute stats
         int wins = 0;
@@ -360,9 +360,9 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
             draws += member.getStats().getDraws();
             loses += member.getStats().getLoses();
         }
-        this.totalWinsTV.setText("Total wins: " + wins);
-        this.totalDrawsTV.setText("Total draws: " + draws);
-        this.totalLosesTV.setText("Total loses: " + loses);
+        this.totalWinsTV.setText(Integer.toString(wins));
+        this.totalDrawsTV.setText(Integer.toString(draws));
+        this.totalLosesTV.setText(Integer.toString(loses));
     }
 
     /** ================= START LISTENER'S IMPLEMENTATION =================================== */
