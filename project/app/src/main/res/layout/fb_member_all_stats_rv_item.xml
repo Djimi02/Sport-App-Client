@@ -7,6 +7,7 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="name"
         android:id="@+id/fbMemberNameTV"
         android:layout_weight="1"/>
@@ -14,6 +15,7 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="wins"
         android:id="@+id/fbMemberWinsTV"
         android:layout_weight="1"/>
@@ -21,6 +23,7 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="draws"
         android:id="@+id/fbMemberDrawsTV"
         android:layout_weight="1"/>
@@ -28,6 +31,7 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="loses"
         android:id="@+id/fbMemberLosesTV"
         android:layout_weight="1"/>
@@ -35,6 +39,7 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="goals"
         android:id="@+id/fbMemberGoalsTV"
         android:layout_weight="1"/>
@@ -42,6 +47,7 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="assists"
         android:id="@+id/fbMemberAssistsTV"
         android:layout_weight="1"/>
@@ -49,6 +55,7 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="saves"
         android:id="@+id/fbMemberSavesTV"
         android:layout_weight="1"/>
@@ -56,6 +63,7 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="fouls"
         android:id="@+id/fbMemberFoulsTV"
         android:layout_weight="1"/>
