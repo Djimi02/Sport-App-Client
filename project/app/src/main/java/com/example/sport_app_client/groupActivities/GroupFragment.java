@@ -93,6 +93,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
 
     /* Main Activity Views */
     protected TextView groupNameTV;
+    protected TextView memberNameTV;
     protected DrawerLayout drawerLayout;
     protected Button addMemberBTN;
     protected Button addGameBTN;
@@ -138,6 +139,9 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
 
         this.groupNameTV = view.findViewById(R.id.GroupFragmentNameTV);
         groupNameTV.setText(MyGlobals.group.getName().toString());
+
+        this.memberNameTV = view.findViewById(R.id.GroupFragmentMemberNameTV);
+        memberNameTV.setText(MyGlobals.associatedMember.getNickname().toString());
 
         this.addMemberBTN = view.findViewById(R.id.GroupFragmentAddMemberBTN);
         this.addGameBTN = view.findViewById(R.id.GroupFragmentAddGameBTN);
