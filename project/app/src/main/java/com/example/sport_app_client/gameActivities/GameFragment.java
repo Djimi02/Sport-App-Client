@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.ViewFlipper;
@@ -66,7 +65,7 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
     protected RecyclerView membersRV;
     protected RecyclerView randomMembersRV;
     protected RadioButton step1ManualSelectionRB; // I am using only this btn to get info
-    protected LinearLayout step1RandomMembersLayout;
+    protected View step1RandomMembersLayout;
     protected Button step1RandomBTN;
     protected RecyclerView step1Team1RV;
     protected RecyclerView step1Team2RV;
@@ -141,12 +140,12 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
         this.membersRV = view.findViewById(R.id.gameFragmentStep1MembersRV);
         DraggableGroupMembersRVAdapter membersAdapter = new DraggableGroupMembersRVAdapter(MyGlobals.group.getMembers(), this);
         membersRV.setAdapter(membersAdapter);
-        membersRV.setLayoutManager(new LinearLayoutManager(activity));
+        membersRV.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
 
         this.step1Team1RV = view.findViewById(R.id.gameFragmentStep1Team1RV);
         GameTeamsRVAdapter step1Team1Adapter = new GameTeamsRVAdapter(team1);
         step1Team1RV.setAdapter(step1Team1Adapter);
-        step1Team1RV.setLayoutManager(new LinearLayoutManager(activity));
+        step1Team1RV.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
         step1Team1RV.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View view, DragEvent dragEvent) {
@@ -165,7 +164,7 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
         this.step1Team2RV = view.findViewById(R.id.gameFragmentStep1Team2RV);
         GameTeamsRVAdapter step1Team2Adapter = new GameTeamsRVAdapter(team2);
         step1Team2RV.setAdapter(step1Team2Adapter);
-        step1Team2RV.setLayoutManager(new LinearLayoutManager(activity));
+        step1Team2RV.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
         step1Team2RV.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View view, DragEvent dragEvent) {
@@ -184,14 +183,14 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
         this.randomMembersRV = view.findViewById(R.id.gameFragmentStep1RandomMembersRV);
         GameTeamsRVAdapter randomMembersAdapter = new GameTeamsRVAdapter(step1RandomMembers);
         randomMembersRV.setAdapter(randomMembersAdapter);
-        randomMembersRV.setLayoutManager(new LinearLayoutManager(activity));
+        randomMembersRV.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
         randomMembersRV.setOnDragListener((view, dragEvent) -> {
             switch (dragEvent.getAction()) {
                 case DragEvent.ACTION_DROP:
                     if (!(step1RandomMembers.contains(draggedMember))) {
                         step1RandomMembers.add(draggedMember);
+                        randomMembersAdapter.notifyItemInserted(step1RandomMembers.size()-1);
                     }
-                    randomMembersAdapter.notifyItemInserted(step1RandomMembers.size()-1);
                     break;
             }
             return true;

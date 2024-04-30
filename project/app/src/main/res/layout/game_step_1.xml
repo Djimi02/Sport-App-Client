@@ -3,80 +3,180 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    android:layout_height="match_parent"
     tools:context=".gameActivities.GameActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Members"/>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/gameFragmentStep1MembersRV"
+    <!--    all group members rv-->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_150sdp"/>
+        android:layout_height="@dimen/_100sdp"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:layout_marginEnd="@dimen/_5sdp"
+        android:layout_marginTop="@dimen/_5sdp">
 
-    <RadioGroup
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:text="Members"
+                android:layout_marginTop="@dimen/_3sdp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/gameFragmentStep1MembersRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_marginBottom="@dimen/_3sdp"/>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!--    radio btns-->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center">
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/_5sdp">
 
-        <RadioButton
-            android:id="@+id/gameFragmentStep1RB1"
+        <RadioGroup
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Manual Selection"/>
+            android:orientation="horizontal"
+            android:layout_gravity="center">
 
-        <RadioButton
-            android:id="@+id/gameFragmentStep1RB2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Random Selection"/>
+            <RadioButton
+                android:id="@+id/gameFragmentStep1RB1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Manual Selection"/>
 
-    </RadioGroup>
+            <RadioButton
+                android:id="@+id/gameFragmentStep1RB2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Random Selection"/>
 
-    <LinearLayout
+        </RadioGroup>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!--    random selection part-->
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/gameFragmentStep1RandomLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="@dimen/_150sdp"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:layout_marginEnd="@dimen/_5sdp"
+        android:layout_marginTop="@dimen/_5sdp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Random"/>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/gameFragmentStep1RandomMembersRV"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_100sdp"/>
-        <Button
-            android:id="@+id/gameFragmentStep1RandomBTN"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Generate"/>
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_gravity="center_horizontal"
+                android:text="Random"
+                android:layout_marginTop="@dimen/_3sdp"
+                android:layout_weight="2"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Team1"/>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/gameFragmentStep1Team1RV"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/gameFragmentStep1RandomMembersRV"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_marginBottom="@dimen/_3sdp"
+                android:layout_weight="7"/>
+
+            <Button
+                android:id="@+id/gameFragmentStep1RandomBTN"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:text="Generate"
+                android:layout_weight="3"/>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!--    team 1 rv-->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_100sdp"/>
+        android:layout_height="@dimen/_100sdp"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:layout_marginEnd="@dimen/_5sdp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Team2"/>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/gameFragmentStep1Team2RV"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:text="Team1"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_3sdp"
+                android:layout_weight="1"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/gameFragmentStep1Team1RV"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_marginBottom="@dimen/_3sdp"
+                android:layout_weight="6"/>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!--    team 2 rv-->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_100sdp"/>
+        android:layout_height="@dimen/_100sdp"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:layout_marginEnd="@dimen/_5sdp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:text="Team2"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_3sdp"
+                android:layout_weight="1"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/gameFragmentStep1Team2RV"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_marginBottom="@dimen/_3sdp"
+                android:layout_weight="6"/>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+
 
 </LinearLayout>
