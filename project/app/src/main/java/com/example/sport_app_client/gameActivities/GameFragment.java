@@ -25,6 +25,7 @@ import com.example.sport_app_client.interfaces.OnGameMemberDragListener;
 import com.example.sport_app_client.interfaces.OpenMemberStatSelectionDialog;
 import com.example.sport_app_client.model.member.Member;
 import com.example.sport_app_client.model.stats.Stats;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +60,7 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
 
     /** Views */
     protected ProgressBar progressBar;
+    protected LinearProgressIndicator horizontalPB;
     protected ViewFlipper viewFlipper;
     protected Button backBTN;
     protected Button nextBTN;
@@ -100,6 +102,10 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
         this.viewFlipper = view.findViewById(R.id.gameFragmentVF);
 
         this.progressBar = view.findViewById(R.id.gameFragmentProgressBar);
+        this.horizontalPB = view.findViewById(R.id.gameFragmentPBHorizontal);
+        horizontalPB.setMin(0);
+        horizontalPB.setMax(100);
+        horizontalPB.setProgress(33);
 
         this.backBTN = view.findViewById(R.id.gameFragmentBackBTN);
         backBTN.setOnClickListener((view -> {
@@ -269,9 +275,11 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
 
         if (viewFlipper.getDisplayedChild() == 1) { // After confirm teams pressed
             nextBTN.setText("Confirm Stats");
+            horizontalPB.setProgress(66, true);
         }
         else if (viewFlipper.getDisplayedChild() == 2) { // After confirm stats pressed
             nextBTN.setText("Confirm Game");
+            horizontalPB.setProgress(100, true);
         }
     }
 
@@ -304,10 +312,12 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
         if (viewFlipper.getDisplayedChild() == 0) { // Back to step 1
             backBTN.setEnabled(false);
             nextBTN.setText("Confirm Teams");
+            horizontalPB.setProgress(33, true);
         }
 
         if (viewFlipper.getDisplayedChild() == 1) { // Back to step 2
             nextBTN.setText("Confirm Stats");
+            horizontalPB.setProgress(66, true);
         }
     }
 
