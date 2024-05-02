@@ -7,6 +7,7 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:gravity="center"
         android:text="name"
         android:id="@+id/fbMemberNameTV"
@@ -15,6 +16,7 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:gravity="center"
         android:text="wins"
         android:id="@+id/fbMemberWinsTV"
@@ -23,6 +25,7 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:gravity="center"
         android:text="draws"
         android:id="@+id/fbMemberDrawsTV"
@@ -31,6 +34,7 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:gravity="center"
         android:text="loses"
         android:id="@+id/fbMemberLosesTV"
@@ -39,6 +43,7 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:gravity="center"
         android:text="goals"
         android:id="@+id/fbMemberGoalsTV"
@@ -47,6 +52,7 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:gravity="center"
         android:text="assists"
         android:id="@+id/fbMemberAssistsTV"
@@ -55,6 +61,7 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:gravity="center"
         android:text="saves"
         android:id="@+id/fbMemberSavesTV"
@@ -63,6 +70,7 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:gravity="center"
         android:text="fouls"
         android:id="@+id/fbMemberFoulsTV"
