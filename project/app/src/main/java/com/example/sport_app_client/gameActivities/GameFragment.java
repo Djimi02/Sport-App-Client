@@ -151,7 +151,7 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
         this.step1Team1RV = view.findViewById(R.id.gameFragmentStep1Team1RV);
         GameTeamsRVAdapter step1Team1Adapter = new GameTeamsRVAdapter(team1, false);
         step1Team1RV.setAdapter(step1Team1Adapter);
-        step1Team1RV.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
+        step1Team1RV.setLayoutManager(new LinearLayoutManager(activity));
         step1Team1RV.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View view, DragEvent dragEvent) {
@@ -170,7 +170,7 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
         this.step1Team2RV = view.findViewById(R.id.gameFragmentStep1Team2RV);
         GameTeamsRVAdapter step1Team2Adapter = new GameTeamsRVAdapter(team2, false);
         step1Team2RV.setAdapter(step1Team2Adapter);
-        step1Team2RV.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
+        step1Team2RV.setLayoutManager(new LinearLayoutManager(activity));
         step1Team2RV.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View view, DragEvent dragEvent) {
