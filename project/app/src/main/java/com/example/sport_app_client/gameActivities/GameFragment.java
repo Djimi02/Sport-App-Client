@@ -149,7 +149,7 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
         membersRV.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
 
         this.step1Team1RV = view.findViewById(R.id.gameFragmentStep1Team1RV);
-        GameTeamsRVAdapter step1Team1Adapter = new GameTeamsRVAdapter(team1);
+        GameTeamsRVAdapter step1Team1Adapter = new GameTeamsRVAdapter(team1, false);
         step1Team1RV.setAdapter(step1Team1Adapter);
         step1Team1RV.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
         step1Team1RV.setOnDragListener(new View.OnDragListener() {
@@ -168,7 +168,7 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
         });
 
         this.step1Team2RV = view.findViewById(R.id.gameFragmentStep1Team2RV);
-        GameTeamsRVAdapter step1Team2Adapter = new GameTeamsRVAdapter(team2);
+        GameTeamsRVAdapter step1Team2Adapter = new GameTeamsRVAdapter(team2, false);
         step1Team2RV.setAdapter(step1Team2Adapter);
         step1Team2RV.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
         step1Team2RV.setOnDragListener(new View.OnDragListener() {
@@ -187,7 +187,7 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
         });
 
         this.randomMembersRV = view.findViewById(R.id.gameFragmentStep1RandomMembersRV);
-        GameTeamsRVAdapter randomMembersAdapter = new GameTeamsRVAdapter(step1RandomMembers);
+        GameTeamsRVAdapter randomMembersAdapter = new GameTeamsRVAdapter(step1RandomMembers, true);
         randomMembersRV.setAdapter(randomMembersAdapter);
         randomMembersRV.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
         randomMembersRV.setOnDragListener((view, dragEvent) -> {

@@ -33,7 +33,7 @@ public class DraggableGroupMembersRVAdapter extends RecyclerView.Adapter<Draggab
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        View spotView = inflater.inflate(R.layout.game_member_item_rv, parent, false);
+        View spotView = inflater.inflate(R.layout.game_member_item_rv_horizontal, parent, false);
 
         DraggableGroupMembersRVAdapter.ViewHolder viewHolder = new DraggableGroupMembersRVAdapter.ViewHolder(spotView);
         return viewHolder;

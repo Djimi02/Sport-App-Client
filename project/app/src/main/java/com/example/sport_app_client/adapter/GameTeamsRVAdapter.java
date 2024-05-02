@@ -18,9 +18,11 @@ import java.util.List;
 public class GameTeamsRVAdapter extends RecyclerView.Adapter<GameTeamsRVAdapter.ViewHolder> {
 
     private List<? extends Member<?,?>> members;
+    private boolean isRVHorizontal;
 
-    public GameTeamsRVAdapter(List<? extends Member<?,?>> members) {
+    public GameTeamsRVAdapter(List<? extends Member<?,?>> members, boolean isRVHorizontal) {
         this.members = members;
+        this.isRVHorizontal = isRVHorizontal;
     }
 
     @NonNull
@@ -29,7 +31,12 @@ public class GameTeamsRVAdapter extends RecyclerView.Adapter<GameTeamsRVAdapter.
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        View spotView = inflater.inflate(R.layout.game_member_item_rv, parent, false);
+        View spotView;
+        if (isRVHorizontal) {
+            spotView = inflater.inflate(R.layout.game_member_item_rv_horizontal, parent, false);
+        } else {
+            spotView = inflater.inflate(R.layout.game_member_item_rv_vertical, parent, false);
+        }
 
         return new GameTeamsRVAdapter.ViewHolder(spotView);
     }

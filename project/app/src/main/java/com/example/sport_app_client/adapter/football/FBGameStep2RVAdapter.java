@@ -36,7 +36,7 @@ public class FBGameStep2RVAdapter extends RecyclerView.Adapter<FBGameStep2RVAdap
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        View spotView = inflater.inflate(R.layout.game_member_item_rv, parent, false);
+        View spotView = inflater.inflate(R.layout.game_member_item_rv_vertical, parent, false);
 
         return new FBGameStep2RVAdapter.ViewHolder(spotView);
     }
