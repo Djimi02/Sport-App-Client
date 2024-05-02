@@ -8,34 +8,44 @@
         android:layout_height="wrap_content"
         android:text="name"
         android:id="@+id/footballMemberStatsItemNameTV"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:gravity="center"/>
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="goals"
         android:id="@+id/footballMemberStatsItemGoalTV"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:gravity="center"/>
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="assists"
         android:id="@+id/footballMemberStatsItemAssistsTV"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:gravity="center"/>
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="saves"
         android:id="@+id/footballMemberStatsItemSavesTV"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:gravity="center"/>
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="fouls"
         android:id="@+id/footballMemberStatsItemFoulsTV"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:gravity="center"/>
 
 </LinearLayout>
