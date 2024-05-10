@@ -14,8 +14,8 @@ public final class MyGlobals {
     public final static String ERROR_MESSAGE_2 = "Check your internet or try again later!";
 
     /* Pointers to objects */
-    public static Group<?,?> group = null;
-    public static Member<?,?> associatedMember = null;
+    public static Group group = null;
+    public static Member associatedMember = null;
 
     // Used group and game activities
     public static GameCreatedListener gameCreatedListenerGroup = null;

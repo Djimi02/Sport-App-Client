@@ -97,7 +97,7 @@ public class FBGameFragment extends GameFragment {
     }
 
     @Override
-    protected View initSportDependentDialog(Stats<?,?> stats) {
+    protected View initSportDependentDialog(Stats stats) {
         final View popupView = getLayoutInflater().inflate(R.layout.fb_member_game_stats_dialog, null);
 
         TextView name = popupView.findViewById(R.id.fbMemberGameStatsNameTV);

@@ -220,7 +220,7 @@ public class FBGroupFragment extends GroupFragment {
     }
 
     @Override
-    protected void setRoleToAdmin(Member<?, ?> member) {
+    protected void setRoleToAdmin(Member member) {
         GlobalMethods.showPGAndBlockUI(memberSettingsDialogPB, activity);
 
         groupAPI.setRoleToAdmin(member.getId()).enqueue(new Callback<Void>() {
@@ -250,7 +250,7 @@ public class FBGroupFragment extends GroupFragment {
     }
 
     @Override
-    protected void setRoleToGameMaker(Member<?, ?> member) {
+    protected void setRoleToGameMaker(Member member) {
         GlobalMethods.showPGAndBlockUI(memberSettingsDialogPB, activity);
 
         groupAPI.setRoleToGameMaker(member.getId()).enqueue(new Callback<Void>() {
@@ -280,7 +280,7 @@ public class FBGroupFragment extends GroupFragment {
     }
 
     @Override
-    protected void setRoleToMember(Member<?, ?> member) {
+    protected void setRoleToMember(Member member) {
         GlobalMethods.showPGAndBlockUI(memberSettingsDialogPB, activity);
 
         groupAPI.setRoleToMember(member.getId()).enqueue(new Callback<Void>() {
@@ -314,7 +314,7 @@ public class FBGroupFragment extends GroupFragment {
     // ================= START LISTENER'S IMPLEMENTATION ===================================
 
     @Override
-    protected void setUpSportSpecificGameDialog(View popupView, Button deleteBTN, Game<?> game) {
+    protected void setUpSportSpecificGameDialog(View popupView, Button deleteBTN, Game game) {
         // Init vars
         List<FBStats> allStats = new ArrayList<>();
         List<FBStats> team1Stats = new ArrayList<>();
@@ -382,7 +382,7 @@ public class FBGroupFragment extends GroupFragment {
     }
 
     @Override
-    public void deleteMember(Member<?,?> member) {
+    public void deleteMember(Member member) {
         ConfirmActionDialog.showDialog(activity, "Are you sure you want to delete the member?", () -> {
             GlobalMethods.showPGAndBlockUI(settingsProgressBar, activity);
             groupAPI.removeMemberFromGroup(member.getId()).enqueue(new Callback<Void>() {
@@ -414,7 +414,7 @@ public class FBGroupFragment extends GroupFragment {
     }
 
     @Override
-    public void onMemberSelected(Member<?,?> member) {
+    public void onMemberSelected(Member member) {
         GlobalMethods.showPGAndBlockUI(joinGroupDialogPB, activity);
 
         groupAPI.joinGroupAsExistingMember(MyAuthManager.user.getId(), member.getId()).enqueue(new Callback<Void>() {
@@ -455,7 +455,7 @@ public class FBGroupFragment extends GroupFragment {
      * @param game - game to be removed
      * @param gameStats - game stats
      */
-    private void removeGame(Game<?> game, List<FBStats> gameStats) {
+    private void removeGame(Game game, List<FBStats> gameStats) {
         ConfirmActionDialog.showDialog(activity, "Are you sure you want to delete this game!", () -> {
             GlobalMethods.showPGAndBlockUI(mainProgressBar, activity);
 
@@ -498,7 +498,7 @@ public class FBGroupFragment extends GroupFragment {
      * this.group.getMembers and decreases their stats;
      * @param gameStats - the list of game stats
      */
-    private void decreaseMemberStatsAfterGameDeleted(Game<?> game, List<FBStats> gameStats) {
+    private void decreaseMemberStatsAfterGameDeleted(Game game, List<FBStats> gameStats) {
         for (FBStats stats : gameStats) {
             if (stats.getMember() == null) {
                 continue;

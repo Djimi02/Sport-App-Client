@@ -177,7 +177,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
 
     /** ======================== START REQUEST DATA ======================================== */
 
-    private void requestGroupData(Member<?,?> member) {
+    private void requestGroupData(Member member) {
         if (member == null) { // Something went wrong with intent data
             Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show(); // delete later
             return;
@@ -186,11 +186,13 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         GlobalMethods.showPGAndBlockUI(progressBar, this);
 
         // Request group data
-        groupAPI.getFootballGroupByID(member.getGroup().getId()).enqueue(new Callback<FootballGroup>() {
+        groupAPI.getFootballGroupByID(member.getGroupAbs().getId()).enqueue(new Callback<FootballGroup>() {
             @Override
             public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
                 if (response.code() == 200) { // OK
                     MyGlobals.footballGroup = response.body();
+                    MyGlobals.footballGroup.setMembersAbs(MyGlobals.footballGroup.getMembers());
+                    MyGlobals.footballGroup.setGamesAbs(MyGlobals.footballGroup.getGames());
                     MyGlobals.group = MyGlobals.footballGroup;
 
                     // Start group activity
@@ -234,6 +236,8 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
                         Toast.makeText(HomepageActivity.this, "You are already in this group!", Toast.LENGTH_SHORT).show();
                     } else {
                         MyGlobals.footballGroup = response.body();
+                        MyGlobals.footballGroup.setMembersAbs(MyGlobals.footballGroup.getMembers());
+                        MyGlobals.footballGroup.setGamesAbs(MyGlobals.footballGroup.getGames());
                         MyGlobals.group = MyGlobals.footballGroup;
 
                         // Start group activity
@@ -274,6 +278,8 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
             public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
                 if (response.code() == 200) { // ok
                     MyGlobals.footballGroup = response.body();
+                    MyGlobals.footballGroup.setMembersAbs(MyGlobals.footballGroup.getMembers());
+                    MyGlobals.footballGroup.setGamesAbs(MyGlobals.footballGroup.getGames());
                     MyGlobals.group = MyGlobals.footballGroup;
 
                     FootballMember initialMember = MyGlobals.footballGroup.getMembers().get(0);
@@ -333,7 +339,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     }
 
     @Override
-    public void openGroupInActivity(Member<?,?> member) {
+    public void openGroupInActivity(Member member) {
         switch (member.getSport()) {
             case FOOTBALL:
                 requestGroupData(member);
@@ -359,10 +365,10 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         int wins = 0;
         int draws = 0;
         int loses = 0;
-        for (Member<?,?> member : MyAuthManager.user.getMembers()) {
-            wins += member.getStats().getWins();
-            draws += member.getStats().getDraws();
-            loses += member.getStats().getLoses();
+        for (Member member : MyAuthManager.user.getMembers()) {
+            wins += member.getStatsAbs().getWins();
+            draws += member.getStatsAbs().getDraws();
+            loses += member.getStatsAbs().getLoses();
         }
         this.totalWinsTV.setText(Integer.toString(wins));
         this.totalDrawsTV.setText(Integer.toString(draws));
@@ -384,24 +390,26 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     }
 
     @Override
-    public void onGroupCreated(Member<?,?> member) {
+    public void onGroupCreated(Member member) {
         MyAuthManager.user.getMembers().add(member);
         totalGroups.setText("Total groups: " + MyAuthManager.user.getMembers().size());
         userGroupsRV.getAdapter().notifyItemInserted(MyAuthManager.user.getMembers().size()-1); // update the rv
     }
 
     @Override
-    public void onGroupJoined(Member<?,?> member, Group<?,?> group) {
+    public void onGroupJoined(Member member, Group group) {
         // Create copies so that there are no cyclic references
         FootballGroup tempGroup = new FootballGroup(group.getName());
         tempGroup.setId(group.getId());
         tempGroup.setName(group.getName());
         tempGroup.setUuid(group.getUuid());
 
-        FootballMember tempMember = new FootballMember(member.getNickname(), tempGroup);
-        tempMember.getStats().setWins(member.getStats().getWins());
-        tempMember.getStats().setDraws(member.getStats().getDraws());
-        tempMember.getStats().setLoses(member.getStats().getLoses());
+        FootballMember tempMember = new FootballMember();
+        tempMember.setNickname(member.getNickname());
+        tempMember.setGroup(tempGroup);
+        tempMember.getStats().setWins(member.getStatsAbs().getWins());
+        tempMember.getStats().setDraws(member.getStatsAbs().getDraws());
+        tempMember.getStats().setLoses(member.getStatsAbs().getLoses());
         tempMember.setId(member.getId());
 
         MyAuthManager.user.getMembers().add(tempMember);
@@ -410,12 +418,12 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     }
 
     @Override
-    public void onGameCreatedOrDeletedHomepageIMPL(Member<?,?> member) {
+    public void onGameCreatedOrDeletedHomepageIMPL(Member member) {
         for (int i = 0; i < MyAuthManager.user.getMembers().size(); i++) {
             if (MyAuthManager.user.getMembers().get(i).getId() == member.getId()) {
-                MyAuthManager.user.getMembers().get(i).getStats().setWins(member.getStats().getWins());
-                MyAuthManager.user.getMembers().get(i).getStats().setDraws(member.getStats().getDraws());
-                MyAuthManager.user.getMembers().get(i).getStats().setLoses(member.getStats().getLoses());
+                MyAuthManager.user.getMembers().get(i).getStatsAbs().setWins(member.getStatsAbs().getWins());
+                MyAuthManager.user.getMembers().get(i).getStatsAbs().setDraws(member.getStatsAbs().getDraws());
+                MyAuthManager.user.getMembers().get(i).getStatsAbs().setLoses(member.getStatsAbs().getLoses());
                 userGroupsRV.getAdapter().notifyItemChanged(i);
                 break;
             }
@@ -429,8 +437,8 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     /** ================= START HELPER FUNCTIONS =================================== */
 
     private boolean isUserPartOfGroup(long groupID) {
-        for (Member<?,?> member : MyAuthManager.user.getMembers()) {
-            if (member.getGroup().getId() == groupID) {
+        for (Member member : MyAuthManager.user.getMembers()) {
+            if (member.getGroupAbs().getId() == groupID) {
                 return true;
             }
         }

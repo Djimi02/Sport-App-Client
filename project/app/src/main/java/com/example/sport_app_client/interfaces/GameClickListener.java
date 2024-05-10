@@ -8,5 +8,5 @@ public interface GameClickListener {
      * and opens it as dialog window.
      * @param game - game's stats to be displayed
      */
-    public void openGameDialog(Game<?> game);
+    public void openGameDialog(Game game);
 }

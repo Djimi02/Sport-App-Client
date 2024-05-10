@@ -14,5 +14,5 @@ public interface SelectMemberToJoinGroupListener {
      * called before the request and on response/fail respectively.
      * @param member - specified member
      */
-    public void onMemberSelected(Member<?,?> member);
+    public void onMemberSelected(Member member);
 }

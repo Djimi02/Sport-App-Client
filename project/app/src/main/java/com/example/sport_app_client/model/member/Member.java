@@ -21,7 +21,5 @@ public abstract class Member {
 
     protected MemberRole role;
 
-    protected Group groupAbs;
-
     public Member() {}
 }

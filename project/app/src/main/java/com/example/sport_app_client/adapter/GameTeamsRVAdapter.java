@@ -17,10 +17,10 @@ import java.util.List;
 
 public class GameTeamsRVAdapter extends RecyclerView.Adapter<GameTeamsRVAdapter.ViewHolder> {
 
-    private List<? extends Member<?,?>> members;
+    private List<? extends Member> members;
     private boolean isRVHorizontal;
 
-    public GameTeamsRVAdapter(List<? extends Member<?,?>> members, boolean isRVHorizontal) {
+    public GameTeamsRVAdapter(List<? extends Member> members, boolean isRVHorizontal) {
         this.members = members;
         this.isRVHorizontal = isRVHorizontal;
     }
@@ -45,7 +45,7 @@ public class GameTeamsRVAdapter extends RecyclerView.Adapter<GameTeamsRVAdapter.
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.memberNameTV.setText(members.get(position).getNickname().toString());
 
-        Member<?,?> memberToBeDeleted = members.get(position);
+        Member memberToBeDeleted = members.get(position);
         holder.removeMemberBTN.setOnClickListener(v -> {
             int position1 = members.indexOf(memberToBeDeleted);
             members.remove(memberToBeDeleted);

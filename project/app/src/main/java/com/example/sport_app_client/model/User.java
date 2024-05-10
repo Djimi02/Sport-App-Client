@@ -15,7 +15,7 @@ public class User {
     private String userName;
     private String email;
     private Roles role;
-    private List<Member<?,?>> members;
+    private List<Member> members;
 
     public User() { initVars(); }
 
@@ -39,7 +39,7 @@ public class User {
     }
 
     public boolean doesMemberExists(long memberID) {
-        for (Member<?,?> member : members) {
+        for (Member member : members) {
             if (member.getId() == memberID) {
                 return true;
             }

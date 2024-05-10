@@ -120,7 +120,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
     protected AlertDialog dialog;
 
     /* Vars */
-    protected List<Member<?,?>> membersWithoutUsers;
+    protected List<Member> membersWithoutUsers;
 
     // ==================== START CODE INITIALIZATION =======================================
 
@@ -187,7 +187,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
     private void initRecyclers() {
         this.gamesRV = view.findViewById(R.id.GroupFragmentGamesRV);
         sortGames();
-        GamesRVAdapter gamesAdapter = new GamesRVAdapter(MyGlobals.group.getGames(), this);
+        GamesRVAdapter gamesAdapter = new GamesRVAdapter(MyGlobals.group.getGamesAbs(), this);
         gamesRV.setAdapter(gamesAdapter);
         gamesRV.setLayoutManager(new LinearLayoutManager(activity));
     }
@@ -216,7 +216,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
     private void openSettings() {
         settingsMembersRV = view.findViewById(R.id.groupSettingsMembersRV);
         GroupSettingsMembersRVAdapter settingsMembersAdapter =
-                new GroupSettingsMembersRVAdapter(MyGlobals.group.getMembers(),this, MyGlobals.associatedMember);
+                new GroupSettingsMembersRVAdapter(MyGlobals.group.getMembersAbs(),this, MyGlobals.associatedMember);
         settingsMembersRV.setAdapter(settingsMembersAdapter);
         settingsMembersRV.setLayoutManager(new LinearLayoutManager(activity));
 
@@ -372,7 +372,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
      * called before the request and on response/fail respectively.
      * @param member - member to be deleted
      */
-    protected abstract void deleteMember(Member<?,?> member);
+    protected abstract void deleteMember(Member member);
 
     /**
      * This method should make the role of the specified member to admin by calling
@@ -381,7 +381,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
      * and on response/fail respectively.
      * @param member - member to be promoted to admin
      */
-    protected abstract void setRoleToAdmin(Member<?,?> member);
+    protected abstract void setRoleToAdmin(Member member);
 
     /**
      * This method should make the role of the specified member to game maker by calling
@@ -390,7 +390,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
      * and on response/fail respectively.
      * @param member - member whose role to be set to game maker
      */
-    protected abstract void setRoleToGameMaker(Member<?,?> member);
+    protected abstract void setRoleToGameMaker(Member member);
 
     /**
      * This method should make the role of the specified member to admin by calling
@@ -399,7 +399,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
      * and on response/fail respectively.
      * @param member - member to be demoted
      */
-    protected abstract void setRoleToMember(Member<?,?> member);
+    protected abstract void setRoleToMember(Member member);
 
     private void copyGroupCodeToClipBoard() {
         ClipboardManager clipboard = (ClipboardManager)
@@ -428,7 +428,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
     }
 
     @Override
-    public void openGameDialog(Game<?> game) {
+    public void openGameDialog(Game game) {
         // Build dialog
         dialogBuilder = new AlertDialog.Builder(activity);
         final View popupView = getLayoutInflater().inflate(R.layout.game_stats_dialog, null);
@@ -454,10 +454,10 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
      * @param deleteBTN - the delete btn in the view
      * @param game - the game whose stats are to be loaded.
      */
-    protected abstract void setUpSportSpecificGameDialog(View popupView, Button deleteBTN, Game<?> game);
+    protected abstract void setUpSportSpecificGameDialog(View popupView, Button deleteBTN, Game game);
 
     @Override
-    public void openMemberSettingsDialog(Member<?,?> member) {
+    public void openMemberSettingsDialog(Member member) {
         // Build dialog
         dialogBuilder = new AlertDialog.Builder(activity);
         final View popupView = getLayoutInflater().inflate(R.layout.group_member_settings_dialog, null);
@@ -505,7 +505,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
     }
 
     @Override
-    public abstract void onMemberSelected(Member<?,?> member);
+    public abstract void onMemberSelected(Member member);
 
     // ================= END LISTENER'S IMPLEMENTATION ===================================
 
@@ -521,7 +521,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         } else {
             membersWithoutUsers.clear();
         }
-        for (Member<?,?> member : MyGlobals.group.getMembers()) {
+        for (Member member : MyGlobals.group.getMembersAbs()) {
             if (member.getUser() == null) {
                 membersWithoutUsers.add(member);
             }

@@ -8,5 +8,5 @@ public interface GroupMemberDeletedListener {
      * open it as dialog.
      * @param member - member whose data to be used for the dialog
      */
-    public void openMemberSettingsDialog(Member<?,?> member);
+    public void openMemberSettingsDialog(Member member);
 }

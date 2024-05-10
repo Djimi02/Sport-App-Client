@@ -19,12 +19,12 @@ import java.util.List;
 
 public class GroupSettingsMembersRVAdapter extends RecyclerView.Adapter<GroupSettingsMembersRVAdapter.ViewHolder> {
 
-    private List<? extends Member<?,?>> members;
+    private List<? extends Member> members;
     private GroupMemberDeletedListener listener;
-    private Member<?,?> userAssociatedMember;
+    private Member userAssociatedMember;
 
-    public GroupSettingsMembersRVAdapter(List<? extends Member<?,?>> members,
-                                         GroupMemberDeletedListener listener, Member<?,?> userAssociatedMember) {
+    public GroupSettingsMembersRVAdapter(List<? extends Member> members,
+                                         GroupMemberDeletedListener listener, Member userAssociatedMember) {
         this.members = members;
         this.listener = listener;
         this.userAssociatedMember = userAssociatedMember;
@@ -51,7 +51,7 @@ public class GroupSettingsMembersRVAdapter extends RecyclerView.Adapter<GroupSet
         } else {
             holder.memberUserNameTV.setText("None");
         }
-        Member<?,?> member = members.get(position);
+        Member member = members.get(position);
         if (holder.btn.getVisibility() == View.VISIBLE) {
             if (member.getId() != userAssociatedMember.getId()) { // add func if the user is admin
                 holder.btn.setOnClickListener(view -> listener.openMemberSettingsDialog(member));

@@ -18,11 +18,11 @@ import java.util.List;
 
 public class UserGroupsRVAdapter extends RecyclerView.Adapter<UserGroupsRVAdapter.ViewHolder> {
 
-    private List<Member<?,?>> members;
+    private List<Member> members;
     private UserGroupClickListener listener;
 
 
-    public UserGroupsRVAdapter(List<Member<?,?>> members, UserGroupClickListener listener) {
+    public UserGroupsRVAdapter(List<Member> members, UserGroupClickListener listener) {
         this.members = members;
         this.listener = listener;
     }
@@ -42,10 +42,10 @@ public class UserGroupsRVAdapter extends RecyclerView.Adapter<UserGroupsRVAdapte
     @Override
     public void onBindViewHolder(@NonNull UserGroupsRVAdapter.ViewHolder holder, int position) {
         // set values for each holder given its position
-        holder.groupName.setText(members.get(position).getGroup().getName().toString());
-        holder.totalWins.setText(members.get(position).getStats().getWins().toString());
-        holder.totalDraws.setText(members.get(position).getStats().getDraws().toString());
-        holder.totalLoses.setText(members.get(position).getStats().getLoses().toString());
+        holder.groupName.setText(members.get(position).getGroupAbs().getName().toString());
+        holder.totalWins.setText(Integer.toString(members.get(position).getStatsAbs().getWins()));
+        holder.totalDraws.setText(Integer.toString(members.get(position).getStatsAbs().getDraws()));
+        holder.totalLoses.setText(Integer.toString(members.get(position).getStatsAbs().getLoses()));
     }
 
     @Override

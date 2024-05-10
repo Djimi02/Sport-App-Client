@@ -18,10 +18,10 @@ import java.util.List;
 
 public class SelectMemberToJoinGroupRVAdapter extends RecyclerView.Adapter<SelectMemberToJoinGroupRVAdapter.ViewHolder> {
 
-    private List<? extends Member<?,?>> members;
+    private List<? extends Member> members;
     private SelectMemberToJoinGroupListener listener;
 
-    public SelectMemberToJoinGroupRVAdapter(List<? extends Member<?,?>> members, SelectMemberToJoinGroupListener listener) {
+    public SelectMemberToJoinGroupRVAdapter(List<? extends Member> members, SelectMemberToJoinGroupListener listener) {
         this.members = members;
         this.listener = listener;
     }
@@ -39,7 +39,7 @@ public class SelectMemberToJoinGroupRVAdapter extends RecyclerView.Adapter<Selec
 
     @Override
     public void onBindViewHolder(@NonNull SelectMemberToJoinGroupRVAdapter.ViewHolder holder, int position) {
-        Member<?,?> member = members.get(position);
+        Member member = members.get(position);
         holder.memberNameTV.setText(member.getNickname().toString());
         holder.btn.setOnClickListener(v -> listener.onMemberSelected(member));
     }

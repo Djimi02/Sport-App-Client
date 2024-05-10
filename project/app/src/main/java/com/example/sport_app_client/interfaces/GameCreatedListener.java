@@ -6,5 +6,5 @@ public interface GameCreatedListener {
     /** This method updates the recyclers in the current fragment/activity. */
     default public void onGameCreatedGroupIMPL() {}
 
-    default public void onGameCreatedOrDeletedHomepageIMPL(Member<?,?> member) {}
+    default public void onGameCreatedOrDeletedHomepageIMPL(Member member) {}
 }

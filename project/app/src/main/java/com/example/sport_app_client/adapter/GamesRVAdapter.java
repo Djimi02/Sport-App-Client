@@ -18,10 +18,10 @@ import java.util.List;
 
 public class GamesRVAdapter extends RecyclerView.Adapter<GamesRVAdapter.ViewHolder> {
 
-    private List<? extends Game<?>> games;
+    private List<? extends Game> games;
     private GameClickListener listener;
 
-    public GamesRVAdapter(List<? extends Game<?>> members, GameClickListener listener) {
+    public GamesRVAdapter(List<? extends Game> members, GameClickListener listener) {
         this.games = members;
         this.listener = listener;
     }

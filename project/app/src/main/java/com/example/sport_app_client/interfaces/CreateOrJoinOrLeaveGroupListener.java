@@ -6,7 +6,7 @@ import com.example.sport_app_client.model.member.Member;
 public interface CreateOrJoinOrLeaveGroupListener {
     public void onGroupRemoved(long memberID);
 
-    public void onGroupCreated(Member<?,?> member);
+    public void onGroupCreated(Member member);
 
-    public void onGroupJoined(Member<?,?> member, Group<?,?> group);
+    public void onGroupJoined(Member member, Group group);
 }

@@ -81,10 +81,10 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
     protected AlertDialog dialog;
 
     /* Vars */
-    protected Member<?,?> draggedMember;
-    protected List<Member<?,?>> team1;
-    protected List<Member<?,?>> team2;
-    protected List<Member<?,?>> step1RandomMembers;
+    protected Member draggedMember;
+    protected List<Member> team1;
+    protected List<Member> team2;
+    protected List<Member> step1RandomMembers;
 
 
     /* ==================== START CODE INITIALIZATION ======================================= */
@@ -144,7 +144,7 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
     private void initRecyclerViews() {
         // Step 1
         this.membersRV = view.findViewById(R.id.gameFragmentStep1MembersRV);
-        DraggableGroupMembersRVAdapter membersAdapter = new DraggableGroupMembersRVAdapter(MyGlobals.group.getMembers(), this);
+        DraggableGroupMembersRVAdapter membersAdapter = new DraggableGroupMembersRVAdapter(MyGlobals.group.getMembersAbs(), this);
         membersRV.setAdapter(membersAdapter);
         membersRV.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
 
@@ -325,12 +325,12 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
 
     /* ================= START LISTENER'S IMPLEMENTATION =================================== */
     @Override
-    public void draggedMember(Member<?,?> member) {
+    public void draggedMember(Member member) {
         this.draggedMember = member;
     }
 
     @Override
-    public void openDialog(Stats<?,?> stats) {
+    public void openDialog(Stats stats) {
         // Build dialog
         dialogBuilder = new AlertDialog.Builder(activity);
 
@@ -348,7 +348,7 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
      * @param stats - the stats to be selected
      * @return - a view inflated with the correct layout for the dialog
      */
-    protected abstract View initSportDependentDialog(Stats<?,?> stats);
+    protected abstract View initSportDependentDialog(Stats stats);
 
     /* ================= END LISTENER'S IMPLEMENTATION =================================== */
 }
