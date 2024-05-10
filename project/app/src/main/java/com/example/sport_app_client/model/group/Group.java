@@ -13,7 +13,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public abstract class Group<MemberT extends Member<?,?>, GameT extends Game<?>> {
+public abstract class Group {
 
     protected long id;
 
@@ -23,42 +23,8 @@ public abstract class Group<MemberT extends Member<?,?>, GameT extends Game<?>> 
 
     protected Sports sport;
 
-    protected List<MemberT> members;
-
-    protected List<GameT> games;
-
-    public Group() {initVars();}
-
-    public Group(String name, Sports sport) {
-        this.name = name;
-        this.sport = sport;
-        initVars();
+    public Group() {
+        this.uuid = UUID.randomUUID();
     }
 
-    private void initVars() {
-        this.members = new ArrayList<>();
-        this.games = new ArrayList<>();
-    }
-
-    public void addMember(MemberT member) {
-        this.members.add(member);
-    }
-
-    public void removeMember(Long memberID) {
-        int memberToBeRemoved = -1;
-        for (int i = 0; i < this.members.size(); i++) {
-            if (this.members.get(i).getId() == memberID) {
-                memberToBeRemoved = i;
-                break;
-            }
-        }
-        if (memberToBeRemoved != -1) {
-            this.members.remove(memberToBeRemoved);
-        }
-    }
-
-    public void addGame(GameT game) {
-        // Adding the new game to the first position
-        this.games.add(0, game);
-    }
 }

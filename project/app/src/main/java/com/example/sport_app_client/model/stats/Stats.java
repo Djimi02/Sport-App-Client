@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public abstract class Stats<MemberT extends Member<?,?>, GameT extends Game<?>> {
+public abstract class Stats {
 
     protected Long id;
 
@@ -18,25 +18,17 @@ public abstract class Stats<MemberT extends Member<?,?>, GameT extends Game<?>> 
     protected Integer wins;
     protected Integer draws;
     protected Integer loses;
-
-    // Not used in the android app
-//    protected GameT game;
-//
-    protected MemberT member;
+    protected Boolean isPartOfTeam1; // used for games
 
     protected Sports sport;
 
     public Stats() { initVars(); }
 
-    public Stats(Sports sport) {
-        this.sport = sport;
-        initVars();
-    }
-
     private void initVars() {
         this.wins = 0;
         this.draws = 0;
         this.loses = 0;
+        this.isPartOfTeam1 = null;
     }
 
 }

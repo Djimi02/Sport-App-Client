@@ -10,13 +10,16 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class FootballMember extends Member<FootballGroup, FBStats> {
+public class FootballMember extends Member {
+
+    protected FBStats stats;
+
+    protected FootballGroup group;
 
     public FootballMember() {
-        setSport(Sports.FOOTBALL);
+        super.sport = Sports.FOOTBALL;
+        this.stats = new FBStats();
     }
 
-    public FootballMember(String nickname, FootballGroup group) {
-        super(nickname, Sports.FOOTBALL, group, new FBStats());
-    }
+
 }

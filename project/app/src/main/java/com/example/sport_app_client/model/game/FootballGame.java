@@ -6,9 +6,16 @@ import com.example.sport_app_client.model.member.FootballMember;
 
 import java.time.LocalDate;
 
-public class FootballGame extends Game<FootballGroup> {
-    public FootballGame(LocalDate date, FootballGroup group) {
-        super(date, Sports.FOOTBALL, group);
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class FootballGame extends Game {
+
+    private FootballGroup group;
+    public FootballGame() {
+        super.sport = Sports.FOOTBALL;
     }
 
 }

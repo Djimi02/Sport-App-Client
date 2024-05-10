@@ -6,6 +6,7 @@ import com.example.sport_app_client.model.member.Member;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import lombok.Getter;
@@ -13,27 +14,17 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public abstract class Game<GroupT extends Group<?,?>> {
+public abstract class Game {
 
     protected Long id;
     protected LocalDate date;
     protected Sports sport;
     protected String results;
-//    protected Integer victory; // -1 -> team 1 won, 0 -> draw, 1 -> team 2 won
 
-    protected GroupT group;
-
-    public Game() {initVars();}
-
-    public Game(LocalDate date, Sports sport, GroupT group) {
-        this.date = date;
-        this.sport = sport;
-        this.group = group;
-        initVars();
+    public Game() {
+        Calendar calendar = Calendar.getInstance();
+        this.date = LocalDate.of(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
     }
 
-    private void initVars() {
-//        this.victory = null;
-    }
 
 }

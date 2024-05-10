@@ -12,29 +12,16 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public abstract class Member<GroupT extends Group<?,?>, StatsT extends Stats<?,?>> {
+public abstract class Member {
+
     protected long id;
     protected String nickname;
     protected User user;
     protected Sports sport;
 
-    protected GroupT group;
-
-    protected StatsT stats;
-
     protected MemberRole role;
 
-    public Member() {initVars();}
+    protected Group groupAbs;
 
-    public Member(String nickname, Sports sport, GroupT group, StatsT statsT) {
-        this.nickname = nickname;
-        this.sport = sport;
-        this.group = group;
-        this.stats = statsT;
-        initVars();
-    }
-
-    private void initVars() {
-
-    }
+    public Member() {}
 }

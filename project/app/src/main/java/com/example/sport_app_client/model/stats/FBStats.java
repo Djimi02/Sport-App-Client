@@ -9,16 +9,18 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class FBStats extends Stats<FootballMember, FootballGame> {
+public class FBStats extends Stats {
 
     private int goals;
     private int assists;
     private int saves;
     private int fouls;
-    private Boolean isPartOfTeam1; // used for games
+
+    protected FootballGame game;
+    protected FootballMember member;
 
     public FBStats() {
-        super(Sports.FOOTBALL);
+        super.sport = Sports.FOOTBALL;
         initVars();
     }
 
