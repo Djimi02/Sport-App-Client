@@ -191,8 +191,6 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
             public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
                 if (response.code() == 200) { // OK
                     MyGlobals.footballGroup = response.body();
-                    MyGlobals.footballGroup.setMembersAbs(MyGlobals.footballGroup.getMembers());
-                    MyGlobals.footballGroup.setGamesAbs(MyGlobals.footballGroup.getGames());
                     MyGlobals.group = MyGlobals.footballGroup;
 
                     // Start group activity
@@ -236,8 +234,6 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
                         Toast.makeText(HomepageActivity.this, "You are already in this group!", Toast.LENGTH_SHORT).show();
                     } else {
                         MyGlobals.footballGroup = response.body();
-                        MyGlobals.footballGroup.setMembersAbs(MyGlobals.footballGroup.getMembers());
-                        MyGlobals.footballGroup.setGamesAbs(MyGlobals.footballGroup.getGames());
                         MyGlobals.group = MyGlobals.footballGroup;
 
                         // Start group activity
@@ -278,8 +274,6 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
             public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
                 if (response.code() == 200) { // ok
                     MyGlobals.footballGroup = response.body();
-                    MyGlobals.footballGroup.setMembersAbs(MyGlobals.footballGroup.getMembers());
-                    MyGlobals.footballGroup.setGamesAbs(MyGlobals.footballGroup.getGames());
                     MyGlobals.group = MyGlobals.footballGroup;
 
                     FootballMember initialMember = MyGlobals.footballGroup.getMembers().get(0);
