@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 import com.example.sport_app_client.helpers.GlobalMethods;
 import com.example.sport_app_client.helpers.MyGlobals;
-import com.example.sport_app_client.retrofit.MyAuthManager;
+import com.example.sport_app_client.helpers.UserLoadConfig;
 import com.example.sport_app_client.retrofit.RetrofitService;
 import com.example.sport_app_client.retrofit.api.AuthAPI;
 import com.example.sport_app_client.retrofit.request.SignUpRequest;
@@ -89,8 +89,10 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<JwtAuthenticationResponse> call, Response<JwtAuthenticationResponse> response) {
                 if (response.code() == 200) {
-                    MyAuthManager.token = response.body().getToken();
-                    MyAuthManager.user = response.body().getUser();
+//                    MyAuthManager.token = response.body().getToken();
+//                    MyAuthManager.user = response.body().getUser();
+                    UserLoadConfig.configureUserData(response.body());
+
                     Toast.makeText(RegisterActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
 
                     Intent intent = new Intent(RegisterActivity.this, HomepageActivity.class);

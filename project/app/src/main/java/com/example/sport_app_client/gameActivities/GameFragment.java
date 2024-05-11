@@ -144,7 +144,7 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
     private void initRecyclerViews() {
         // Step 1
         this.membersRV = view.findViewById(R.id.gameFragmentStep1MembersRV);
-        DraggableGroupMembersRVAdapter membersAdapter = new DraggableGroupMembersRVAdapter(MyGlobals.group.getMembersAbs(), this);
+        DraggableGroupMembersRVAdapter membersAdapter = new DraggableGroupMembersRVAdapter(MyGlobals.getGroup().getMembersAbs(), this);
         membersRV.setAdapter(membersAdapter);
         membersRV.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
 

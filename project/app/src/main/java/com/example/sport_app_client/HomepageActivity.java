@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.example.sport_app_client.adapter.UserGroupsRVAdapter;
 import com.example.sport_app_client.groupActivities.GroupActivity;
 import com.example.sport_app_client.helpers.GlobalMethods;
+import com.example.sport_app_client.helpers.GroupLoadConfig;
 import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.interfaces.CreateOrJoinOrLeaveGroupListener;
 import com.example.sport_app_client.interfaces.GameCreatedListener;
@@ -190,8 +191,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
             @Override
             public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
                 if (response.code() == 200) { // OK
-                    MyGlobals.footballGroup = response.body();
-                    MyGlobals.group = MyGlobals.footballGroup;
+                    GroupLoadConfig.configureGroupData(response.body());
 
                     // Start group activity
                     Intent intent = new Intent(HomepageActivity.this, GroupActivity.class);
@@ -233,8 +233,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
                     if (isUserPartOfGroup(response.body().getId())) {
                         Toast.makeText(HomepageActivity.this, "You are already in this group!", Toast.LENGTH_SHORT).show();
                     } else {
-                        MyGlobals.footballGroup = response.body();
-                        MyGlobals.group = MyGlobals.footballGroup;
+                        GroupLoadConfig.configureGroupData(response.body());
 
                         // Start group activity
                         Intent intent = new Intent(HomepageActivity.this, GroupActivity.class);
@@ -273,16 +272,9 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
             @Override
             public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
                 if (response.code() == 200) { // ok
-                    MyGlobals.footballGroup = response.body();
-                    MyGlobals.group = MyGlobals.footballGroup;
+                    GroupLoadConfig.configureGroupData(response.body());
 
-                    FootballMember initialMember = MyGlobals.footballGroup.getMembers().get(0);
-                    // Set temporary group so that they don't have cyclic references to each
-                    // other which will throw exception during request sending
-                    FootballGroup tempGroup = new FootballGroup(MyGlobals.footballGroup.getName());
-                    tempGroup.setId(MyGlobals.footballGroup.getId());
-                    initialMember.setGroup(tempGroup);
-                    onGroupCreated(initialMember);
+                    onGroupCreated(response.body());
 
                     // Start group activity
                     Intent intent = new Intent(HomepageActivity.this, GroupActivity.class);
@@ -384,26 +376,46 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     }
 
     @Override
-    public void onGroupCreated(Member member) {
-        MyAuthManager.user.getMembers().add(member);
-        totalGroups.setText("Total groups: " + MyAuthManager.user.getMembers().size());
+    public void onGroupCreated(Group group) {
+        Member initialMember1 = null;
+        if (group.getSport().equals(Sports.FOOTBALL)) {
+            // Create temporary group so that they don't have cyclic references to each
+            // other which will throw exception during request sending
+            FootballGroup tempGroup = new FootballGroup();
+            tempGroup.setName(group.getName());
+            tempGroup.setId(group.getId());
+
+            // Create temp member
+            FootballMember initialMember = new FootballMember();
+            initialMember.setNickname(MyGlobals.getFootballGroup().getMembers().get(0).getNickname());
+            initialMember.setId(MyGlobals.getFootballGroup().getMembers().get(0).getId());
+            initialMember.setGroupAbs(tempGroup); // only the abs value is used in homepage
+            initialMember.setStatsAbs(initialMember.getStats()); // only the abs value is used in homepage
+
+            initialMember1 = initialMember;
+        }
+
+        MyAuthManager.user.getMembers().add(initialMember1);
+        totalGroups.setText(Integer.toString(MyAuthManager.user.getMembers().size()));
         userGroupsRV.getAdapter().notifyItemInserted(MyAuthManager.user.getMembers().size()-1); // update the rv
     }
 
     @Override
     public void onGroupJoined(Member member, Group group) {
         // Create copies so that there are no cyclic references
-        FootballGroup tempGroup = new FootballGroup(group.getName());
+        FootballGroup tempGroup = new FootballGroup();
+        tempGroup.setName(group.getName());
         tempGroup.setId(group.getId());
         tempGroup.setName(group.getName());
         tempGroup.setUuid(group.getUuid());
 
         FootballMember tempMember = new FootballMember();
         tempMember.setNickname(member.getNickname());
-        tempMember.setGroup(tempGroup);
-        tempMember.getStats().setWins(member.getStatsAbs().getWins());
-        tempMember.getStats().setDraws(member.getStatsAbs().getDraws());
-        tempMember.getStats().setLoses(member.getStatsAbs().getLoses());
+        tempMember.setGroupAbs(tempGroup);
+        tempMember.setStatsAbs(tempMember.getStats());
+        tempMember.getStatsAbs().setWins(member.getStatsAbs().getWins());
+        tempMember.getStatsAbs().setDraws(member.getStatsAbs().getDraws());
+        tempMember.getStatsAbs().setLoses(member.getStatsAbs().getLoses());
         tempMember.setId(member.getId());
 
         MyAuthManager.user.getMembers().add(tempMember);

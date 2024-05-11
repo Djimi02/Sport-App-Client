@@ -249,7 +249,7 @@ public class FBGameFragment extends GameFragment {
 
         // Create request
         AddNewFBGameRequest request = new AddNewFBGameRequest();
-        request.setGroupID(MyGlobals.footballGroup.getId());
+        request.setGroupID(MyGlobals.getFootballGroup().getId());
         request.setGameStats(gameStats);
 
         // Send request
@@ -258,10 +258,10 @@ public class FBGameFragment extends GameFragment {
             public void onResponse(Call<FootballGame> call, Response<FootballGame> response) {
                 if (response.code() == 200) {
                     Toast.makeText(activity, "Game created successfully!", Toast.LENGTH_SHORT).show();
-                    MyGlobals.footballGroup.addGame(response.body());
+                    MyGlobals.getFootballGroup().addGame(response.body());
                     // Update group and homepage
                     MyGlobals.gameCreatedListenerGroup.onGameCreatedGroupIMPL();
-                    MyGlobals.gameCreatedListenerHomepage.onGameCreatedOrDeletedHomepageIMPL(MyGlobals.associatedFBMember);
+                    MyGlobals.gameCreatedListenerHomepage.onGameCreatedOrDeletedHomepageIMPL(MyGlobals.getAssociatedFBMember());
 
                     activity.finish();
                 } else {

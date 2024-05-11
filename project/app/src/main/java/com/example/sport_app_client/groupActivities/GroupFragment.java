@@ -39,6 +39,7 @@ import com.example.sport_app_client.model.MemberRole;
 import com.example.sport_app_client.model.Sports;
 import com.example.sport_app_client.model.game.Game;
 import com.example.sport_app_client.model.member.Member;
+import com.example.sport_app_client.retrofit.MyAuthManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,18 +139,18 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         initSportDependentViews();
 
         this.groupNameTV = view.findViewById(R.id.GroupFragmentNameTV);
-        groupNameTV.setText(MyGlobals.group.getName().toString());
+        groupNameTV.setText(MyGlobals.getGroup().getName().toString());
 
         this.memberNameTV = view.findViewById(R.id.GroupFragmentMemberNameTV);
-        memberNameTV.setText(MyGlobals.associatedMember.getNickname().toString());
+        memberNameTV.setText(MyGlobals.getAssociatedMember().getNickname().toString());
 
         this.addMemberBTN = view.findViewById(R.id.GroupFragmentAddMemberBTN);
         this.addGameBTN = view.findViewById(R.id.GroupFragmentAddGameBTN);
 
-        if (MyGlobals.associatedMember.getRole() == MemberRole.GROUP_ADMIN ||
-                MyGlobals.associatedMember.getRole() == MemberRole.GAME_MAKER) {
+        if (MyGlobals.getAssociatedMember().getRole() == MemberRole.GROUP_ADMIN ||
+                MyGlobals.getAssociatedMember().getRole() == MemberRole.GAME_MAKER) {
             addMemberBTN.setOnClickListener((view -> openAddMemberDialog()));
-            addGameBTN.setOnClickListener((view) -> onAddGameBTNClick(MyGlobals.group.getSport()));
+            addGameBTN.setOnClickListener((view) -> onAddGameBTNClick(MyGlobals.getGroup().getSport()));
         } else {
             addMemberBTN.setVisibility(View.GONE);
             addGameBTN.setVisibility(View.GONE);
@@ -187,7 +188,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
     private void initRecyclers() {
         this.gamesRV = view.findViewById(R.id.GroupFragmentGamesRV);
         sortGames();
-        GamesRVAdapter gamesAdapter = new GamesRVAdapter(MyGlobals.group.getGamesAbs(), this);
+        GamesRVAdapter gamesAdapter = new GamesRVAdapter(MyGlobals.getGroup().getGamesAbs(), this);
         gamesRV.setAdapter(gamesAdapter);
         gamesRV.setLayoutManager(new LinearLayoutManager(activity));
     }
@@ -200,7 +201,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         leaveGroupBTN.setOnClickListener(view -> onLeaveGroupBTNClick());
 
         this.deleteGroupBTN = view.findViewById(R.id.groupSettingsDeleteBTN);
-        if (MyGlobals.associatedMember.getRole() == MemberRole.GROUP_ADMIN) {
+        if (MyGlobals.getAssociatedMember().getRole() == MemberRole.GROUP_ADMIN) {
             deleteGroupBTN.setOnClickListener(view -> onDeleteGroupBTNClick());
         } else {
             deleteGroupBTN.setVisibility(View.GONE);
@@ -216,7 +217,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
     private void openSettings() {
         settingsMembersRV = view.findViewById(R.id.groupSettingsMembersRV);
         GroupSettingsMembersRVAdapter settingsMembersAdapter =
-                new GroupSettingsMembersRVAdapter(MyGlobals.group.getMembersAbs(),this, MyGlobals.associatedMember);
+                new GroupSettingsMembersRVAdapter(MyGlobals.getGroup().getMembersAbs(),this, MyGlobals.getAssociatedMember());
         settingsMembersRV.setAdapter(settingsMembersAdapter);
         settingsMembersRV.setLayoutManager(new LinearLayoutManager(activity));
 
@@ -257,7 +258,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         // Init dialog views
         this.joinGroupDialogPB = popupView.findViewById(R.id.selectMemberDialogPG);
         TextView groupName = popupView.findViewById(R.id.selectMemberDialogGroupNameTV);
-        groupName.setText(MyGlobals.group.getName().toString());
+        groupName.setText(MyGlobals.getGroup().getName().toString());
         findMembersWithoutUsers();
         RecyclerView rv = popupView.findViewById(R.id.selectMemberDialogRV);
         if (membersWithoutUsers.size() == 0) { // Hide if no members to be displayed
@@ -340,7 +341,6 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
      */
     private void onAddMemberBTNClick(View popupView, Button addBTN, EditText memberNameET) {
         GlobalMethods.hideSoftKeyboard(popupView, activity);
-        addBTN.setEnabled(false);
 
         String memberName = memberNameET.getText().toString().trim();
         if (memberName.isEmpty()) {
@@ -406,7 +406,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
                 activity.getSystemService(Context.CLIPBOARD_SERVICE);
 
         // Creates a new text clip to put on the clipboard.
-        ClipData clip = ClipData.newPlainText("Group code", MyGlobals.group.getUuid().toString());
+        ClipData clip = ClipData.newPlainText("Group code", MyGlobals.getGroup().getUuid().toString());
 
         // Set the clipboard's primary clip.
         clipboard.setPrimaryClip(clip);
@@ -521,7 +521,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         } else {
             membersWithoutUsers.clear();
         }
-        for (Member member : MyGlobals.group.getMembersAbs()) {
+        for (Member member : MyGlobals.getGroup().getMembersAbs()) {
             if (member.getUser() == null) {
                 membersWithoutUsers.add(member);
             }
@@ -538,8 +538,6 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
     private void backToHomepage() {
         activity.finish();
 
-        MyGlobals.group = null;
-        MyGlobals.associatedMember = null;
         MyGlobals.gameCreatedListenerGroup = null;
         clearSportSpecificGroupData();
 

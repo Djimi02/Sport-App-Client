@@ -18,7 +18,7 @@ public class FootballGroup extends Group {
 
     protected List<FootballMember> members;
 
-    public FootballGroup(String name) {
+    public FootballGroup() {
         super.sport = Sports.FOOTBALL;
         initVars();
     }

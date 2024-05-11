@@ -6,6 +6,7 @@ import com.example.sport_app_client.model.group.FootballGroup;
 import com.example.sport_app_client.model.group.Group;
 import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.model.member.Member;
+import com.example.sport_app_client.retrofit.MyAuthManager;
 
 public final class MyGlobals {
 
@@ -14,8 +15,14 @@ public final class MyGlobals {
     public final static String ERROR_MESSAGE_2 = "Check your internet or try again later!";
 
     /* Pointers to objects */
-    public static Group group = null;
-    public static Member associatedMember = null;
+    private static Group group = null;
+    public static Group getGroup() {
+        return group;
+    }
+    private static Member associatedMember = null;
+    public static Member getAssociatedMember() {
+        return associatedMember;
+    }
 
     // Used group and game activities
     public static GameCreatedListener gameCreatedListenerGroup = null;
@@ -27,8 +34,28 @@ public final class MyGlobals {
     public static CreateOrJoinOrLeaveGroupListener createJoinLeaveGroupListenerHomepageActivity = null;
 
     /* FOOTBALL */
-    public static FootballGroup footballGroup = null;
-    public static FootballMember associatedFBMember = null;
+    private static FootballGroup footballGroup = null;
+    public static FootballGroup getFootballGroup() {
+        return footballGroup;
+    }
+    public static void setFootballGroup(FootballGroup group1) {
+        footballGroup = group1;
+        group = group1;
+    }
+
+    private static FootballMember associatedFBMember = null;
+    public static FootballMember getAssociatedFBMember() {
+        return associatedFBMember;
+    }
+    public static void setAssociatedFBMember(FootballMember member1) {
+        associatedFBMember = member1;
+        if (member1 != null) {
+            // Set abstract values
+            associatedFBMember.setGroupAbs(associatedFBMember.getGroup());
+            associatedFBMember.setStatsAbs(associatedFBMember.getStats());
+        }
+        associatedMember = member1;
+    }
 
     private MyGlobals() {}
 }
