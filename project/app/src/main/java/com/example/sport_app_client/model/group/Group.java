@@ -16,12 +16,12 @@ import lombok.Setter;
 public abstract class Group {
 
     protected long id;
-
     protected UUID uuid;
-
     protected String name;
-
     protected Sports sport;
+
+    protected List<? extends Member> membersAbs;
+    protected List<? extends Game> gamesAbs;
 
     public Group() {
         this.uuid = UUID.randomUUID();
