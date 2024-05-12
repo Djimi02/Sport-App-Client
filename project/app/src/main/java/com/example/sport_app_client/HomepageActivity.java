@@ -179,39 +179,20 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     /** ======================== START REQUEST DATA ======================================== */
 
     private void requestGroupData(Member member) {
-        if (member == null) { // Something went wrong with intent data
+        if (member == null) {
             Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show(); // delete later
             return;
         }
 
-        GlobalMethods.showPGAndBlockUI(progressBar, this);
-
-        // Request group data
-        groupAPI.getFootballGroupByID(member.getGroupAbs().getId()).enqueue(new Callback<FootballGroup>() {
-            @Override
-            public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
-                if (response.code() == 200) { // OK
-                    GroupLoadConfig.configureGroupData(response.body());
-
-                    // Start group activity
-                    Intent intent = new Intent(HomepageActivity.this, GroupActivity.class);
-                    intent.putExtra("fragment", "FOOTBALL");
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
-                }
-                GlobalMethods.hidePGAndEnableUi(progressBar, HomepageActivity.this);
-            }
-
-            @Override
-            public void onFailure(Call<FootballGroup> call, Throwable t) {
-                Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
-                GlobalMethods.hidePGAndEnableUi(progressBar, HomepageActivity.this);
-                System.out.println(t.toString());
-            }
-        });
+        // Start group activity
+        Intent intent = new Intent(HomepageActivity.this, GroupActivity.class);
+        switch (member.getSport()) { // send sport
+            case FOOTBALL:
+                intent.putExtra("sport", "FOOTBALL");
+                break;
+        }
+        intent.putExtra("groupID", member.getGroupAbs().getId());
+        startActivity(intent);
     }
 
     private void requestGroupData(String uuid) {
