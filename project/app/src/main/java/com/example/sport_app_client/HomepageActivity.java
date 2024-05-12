@@ -22,26 +22,15 @@ import android.widget.Toast;
 import com.example.sport_app_client.adapter.UserGroupsRVAdapter;
 import com.example.sport_app_client.groupActivities.GroupActivity;
 import com.example.sport_app_client.helpers.GlobalMethods;
-import com.example.sport_app_client.helpers.GroupLoadConfig;
 import com.example.sport_app_client.helpers.MyGlobals;
+import com.example.sport_app_client.helpers.OnGroupJoinedOrCreatedListenerImpl;
 import com.example.sport_app_client.interfaces.CreateOrJoinOrLeaveGroupListener;
 import com.example.sport_app_client.interfaces.GameCreatedListener;
 import com.example.sport_app_client.interfaces.UserGroupClickListener;
 import com.example.sport_app_client.model.Sports;
-import com.example.sport_app_client.model.group.FootballGroup;
 import com.example.sport_app_client.model.group.Group;
-import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.model.member.Member;
 import com.example.sport_app_client.retrofit.MyAuthManager;
-import com.example.sport_app_client.retrofit.RetrofitService;
-import com.example.sport_app_client.retrofit.api.FbAPI;
-
-import java.io.EOFException;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
 
 public class HomepageActivity extends AppCompatActivity implements UserGroupClickListener, CreateOrJoinOrLeaveGroupListener, GameCreatedListener {
 
@@ -244,13 +233,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
 
     @Override
     public void openGroupInActivity(Member member) {
-        switch (member.getSport()) {
-            case FOOTBALL:
-                requestGroupData(member);
-                break;
-            default:
-                break;
-        }
+        requestGroupData(member);
     }
 
     private void onJoinGroupBTNClick(String uuid, Button btn) {
@@ -295,48 +278,26 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
 
     @Override
     public void onGroupCreated(Group group) {
-        Member initialMember1 = null;
-        if (group.getSport().equals(Sports.FOOTBALL)) {
-            // Create temporary group so that they don't have cyclic references to each
-            // other which will throw exception during request sending
-            FootballGroup tempGroup = new FootballGroup();
-            tempGroup.setName(group.getName());
-            tempGroup.setId(group.getId());
+        switch (group.getSport()) {
+            case FOOTBALL:
+                OnGroupJoinedOrCreatedListenerImpl.onFBGroupCreated(group);
+                break;
 
-            // Create temp member
-            FootballMember initialMember = new FootballMember();
-            initialMember.setNickname(MyGlobals.getFootballGroup().getMembers().get(0).getNickname());
-            initialMember.setId(MyGlobals.getFootballGroup().getMembers().get(0).getId());
-            initialMember.setGroupAbs(tempGroup); // only the abs value is used in homepage
-            initialMember.setStatsAbs(initialMember.getStats()); // only the abs value is used in homepage
-
-            initialMember1 = initialMember;
         }
 
-        MyAuthManager.user.getMembers().add(initialMember1);
         totalGroups.setText(Integer.toString(MyAuthManager.user.getMembers().size()));
         userGroupsRV.getAdapter().notifyItemInserted(MyAuthManager.user.getMembers().size()-1); // update the rv
     }
 
     @Override
     public void onGroupJoined(Member member, Group group) {
-        // Create copies so that there are no cyclic references
-        FootballGroup tempGroup = new FootballGroup();
-        tempGroup.setName(group.getName());
-        tempGroup.setId(group.getId());
-        tempGroup.setName(group.getName());
-        tempGroup.setUuid(group.getUuid());
+        switch (group.getSport()) {
+            case FOOTBALL:
+                OnGroupJoinedOrCreatedListenerImpl.onFBGroupJoined(member, group);
+                break;
 
-        FootballMember tempMember = new FootballMember();
-        tempMember.setNickname(member.getNickname());
-        tempMember.setGroupAbs(tempGroup);
-        tempMember.setStatsAbs(tempMember.getStats());
-        tempMember.getStatsAbs().setWins(member.getStatsAbs().getWins());
-        tempMember.getStatsAbs().setDraws(member.getStatsAbs().getDraws());
-        tempMember.getStatsAbs().setLoses(member.getStatsAbs().getLoses());
-        tempMember.setId(member.getId());
+        }
 
-        MyAuthManager.user.getMembers().add(tempMember);
         computeGeneralStats();
         userGroupsRV.getAdapter().notifyItemInserted(MyAuthManager.user.getMembers().size()-1); // update the rv
     }
