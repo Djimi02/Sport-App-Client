@@ -6,6 +6,7 @@
     android:id="@+id/fragmentContainer">
 
     <ProgressBar
+        android:visibility="gone"
         android:id="@+id/blankLayoutPG"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

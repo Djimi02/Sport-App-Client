@@ -49,16 +49,23 @@ public class GroupActivity extends AppCompatActivity {
         retrofit = new RetrofitService().getRetrofit();
 
         // Get the data from the intent
-        boolean isJoining = getIntent().getBooleanExtra("join", false);
+        boolean isJoiningGroup = getIntent().getBooleanExtra("join", false);
         String sport = getIntent().getStringExtra("sport");
         Long groupID = getIntent().getLongExtra("groupID", -1);
         String uuid = getIntent().getStringExtra("UUID");
+        boolean isCreatingGroup = getIntent().getBooleanExtra("create", false);
+        String groupNameToBeCreated = getIntent().getStringExtra("group_name");
 
-        if (uuid == null) {
-            loadGroupDataByID(sport, groupID, isJoining);
-        } else {
-            loadGroupDataByUUID(uuid, isJoining);
+        if (isCreatingGroup) { // Creating group
+            createGroup(groupNameToBeCreated, sport);
+        } else { // Loading group
+            if (uuid == null) {
+                loadGroupDataByID(sport, groupID, isJoiningGroup);
+            } else {
+                loadGroupDataByUUID(uuid, isJoiningGroup);
+            }
         }
+
     }
 
     // =================== START Load by UUID ========================================
@@ -112,6 +119,7 @@ public class GroupActivity extends AppCompatActivity {
                 if (response.code() == 200) { // OK
                     if (isUserPartOfGroup(response.body().getId())) {
                         Toast.makeText(GroupActivity.this, "You are already in this group!", Toast.LENGTH_SHORT).show();
+                        finish();
                     } else {
                         GroupLoadConfig.configureGroupData(response.body());
 
@@ -162,6 +170,8 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     private void loadFBGroupDataByID(String sport, Long groupID, boolean isJoining) {
+        this.fbGroupAPI = retrofit.create(FbAPI.class);
+
         GlobalMethods.showPGAndBlockUI(progressBar, this);
 
         // Request group data
@@ -193,6 +203,60 @@ public class GroupActivity extends AppCompatActivity {
 
     // =================== END Load by UUID ========================================
 
+    // =================== START Group Creation ===================================
+
+    private void createGroup(String groupName, String sport) {
+        if (sport == null || groupName == null) {
+            Toast.makeText(this, "Try again later!", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        switch (sport) {
+            case "FOOTBALL":
+                createFBGroup(groupName, sport);
+                break;
+            case "-":
+                break;
+        }
+    }
+
+    private void createFBGroup(String groupName, String sport) {
+        this.fbGroupAPI = retrofit.create(FbAPI.class);
+
+        GlobalMethods.showPGAndBlockUI(progressBar, this);
+
+        // Send request
+        fbGroupAPI.createFootballGroup(groupName, MyAuthManager.user.getId()).enqueue(new Callback<FootballGroup>() {
+            @Override
+            public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
+                if (response.code() == 200) { // ok
+                    GroupLoadConfig.configureGroupData(response.body());
+
+                    MyGlobals.createJoinLeaveGroupListenerHomepageActivity.onGroupCreated(response.body());
+
+                    loadFragment(sport, false);
+
+                    Toast.makeText(GroupActivity.this, "Group created successfully!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(GroupActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                    finish(); // Exit activity on failure
+                }
+                GlobalMethods.hidePGAndEnableUi(progressBar, GroupActivity.this);
+            }
+
+            @Override
+            public void onFailure(Call<FootballGroup> call, Throwable t) {
+                Toast.makeText(GroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                finish(); // Exit activity on failure
+                GlobalMethods.hidePGAndEnableUi(progressBar, GroupActivity.this);
+            }
+        });
+    }
+
+    // =================== END Group Creation ===================================
+
     private void loadFragment(String sport, boolean isJoining) {
         Fragment fragment = null;
 
@@ -212,7 +276,6 @@ public class GroupActivity extends AppCompatActivity {
                     .commit();
         }
     }
-
 
     private boolean isUserPartOfGroup(long groupID) {
         for (Member member : MyAuthManager.user.getMembers()) {

@@ -62,9 +62,6 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
 
-    /* Vars */
-    private Retrofit retrofit;
-    private FbAPI groupAPI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,10 +85,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
 
     /** ==================== START CODE INITIALIZATION ======================================= */
 
-    private void initVars() {
-        this.retrofit = new RetrofitService().getRetrofit();
-        this.groupAPI = retrofit.create(FbAPI.class);
-    }
+    private void initVars() {}
 
     private void initViews() {
         this.progressBar = findViewById(R.id.homepagePB);
@@ -212,38 +206,14 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         dialog.dismiss();
     }
 
-    private void requestGroupCreation(String groupName) {
-        GlobalMethods.showPGAndBlockUI(progressBar, this);
-
-        // Send request
-        groupAPI.createFootballGroup(groupName, MyAuthManager.user.getId()).enqueue(new Callback<FootballGroup>() {
-            @Override
-            public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
-                if (response.code() == 200) { // ok
-                    GroupLoadConfig.configureGroupData(response.body());
-
-                    onGroupCreated(response.body());
-
-                    // Start group activity
-                    Intent intent = new Intent(HomepageActivity.this, GroupActivity.class);
-                    intent.putExtra("fragment", "FOOTBALL");
-                    startActivity(intent);
-                    dialog.dismiss();
-
-                    Toast.makeText(HomepageActivity.this, "Group created successfully!", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
-                }
-                GlobalMethods.hidePGAndEnableUi(progressBar, HomepageActivity.this);
-            }
-
-            @Override
-            public void onFailure(Call<FootballGroup> call, Throwable t) {
-                Toast.makeText(HomepageActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
-                GlobalMethods.hidePGAndEnableUi(progressBar, HomepageActivity.this);
-            }
-        });
+    private void requestGroupCreation(String groupName, String sport) {
+        // Start group activity
+        Intent intent = new Intent(HomepageActivity.this, GroupActivity.class);
+        intent.putExtra("sport", sport);
+        intent.putExtra("create", true);
+        intent.putExtra("group_name", groupName);
+        startActivity(intent);
+        dialog.dismiss();
     }
 
     /** ======================== END REQUEST DATA ======================================== */
@@ -267,7 +237,7 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
 
         switch (spinner.getSelectedItem().toString()) {
             case "Football":
-                requestGroupCreation(groupName);
+                requestGroupCreation(groupName, "FOOTBALL");
                 break;
         }
     }
