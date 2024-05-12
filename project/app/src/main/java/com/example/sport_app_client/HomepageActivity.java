@@ -173,6 +173,10 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
             case FOOTBALL:
                 intent.putExtra("sport", "FOOTBALL");
                 break;
+
+            case BASKETBALL:
+                intent.putExtra("sport", "BASKETBALL");
+                break;
         }
         intent.putExtra("groupID", member.getGroupAbs().getId());
         startActivity(intent);
@@ -227,6 +231,10 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         switch (spinner.getSelectedItem().toString()) {
             case "Football":
                 requestGroupCreation(groupName, "FOOTBALL");
+                break;
+
+            case "Basketball":
+                requestGroupCreation(groupName, "BASKETBALL");
                 break;
         }
     }
@@ -283,6 +291,9 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
                 OnGroupJoinedOrCreatedListenerImpl.onFBGroupCreated(group);
                 break;
 
+            case BASKETBALL:
+                OnGroupJoinedOrCreatedListenerImpl.onBBGroupCreated(group);
+                break;
         }
 
         totalGroups.setText(Integer.toString(MyAuthManager.user.getMembers().size()));
@@ -296,6 +307,9 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
                 OnGroupJoinedOrCreatedListenerImpl.onFBGroupJoined(member, group);
                 break;
 
+            case BASKETBALL:
+                OnGroupJoinedOrCreatedListenerImpl.onBBGroupJoined(member, group);
+                break;
         }
 
         computeGeneralStats();
