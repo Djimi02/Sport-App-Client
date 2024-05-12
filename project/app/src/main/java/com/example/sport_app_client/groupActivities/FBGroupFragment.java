@@ -186,7 +186,7 @@ public class FBGroupFragment extends GroupFragment {
     protected void onAddMemberBTNClickSportSpecific(String memberName) {
         GlobalMethods.showPGAndBlockUI(mainProgressBar, activity);
 
-        groupAPI.addFootballMember(MyGlobals.getFootballGroup().getId(), memberName).enqueue(new Callback<FootballMember>() {
+        groupAPI.addMember(MyGlobals.getFootballGroup().getId(), memberName).enqueue(new Callback<FootballMember>() {
             @Override
             public void onResponse(Call<FootballMember> call, Response<FootballMember> response) {
                 if (response.code() == 200) { // OK

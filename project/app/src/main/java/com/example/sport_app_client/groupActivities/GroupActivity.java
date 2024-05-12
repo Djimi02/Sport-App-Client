@@ -3,20 +3,20 @@ package com.example.sport_app_client.groupActivities;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.example.sport_app_client.HomepageActivity;
 import com.example.sport_app_client.R;
 import com.example.sport_app_client.helpers.GlobalMethods;
 import com.example.sport_app_client.helpers.GroupLoadConfig;
 import com.example.sport_app_client.helpers.MyGlobals;
+import com.example.sport_app_client.model.group.BasketballGroup;
 import com.example.sport_app_client.model.group.FootballGroup;
 import com.example.sport_app_client.model.member.Member;
 import com.example.sport_app_client.retrofit.MyAuthManager;
 import com.example.sport_app_client.retrofit.RetrofitService;
+import com.example.sport_app_client.retrofit.api.BbApi;
 import com.example.sport_app_client.retrofit.api.FbAPI;
 import com.example.sport_app_client.retrofit.api.UuidAPI;
 import com.example.sport_app_client.retrofit.response.GroupTypeResponse;
@@ -37,6 +37,7 @@ public class GroupActivity extends AppCompatActivity {
     private Retrofit retrofit;
     private UuidAPI uuidAPI;
     private FbAPI fbGroupAPI;
+    private BbApi bbGroupAPI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +88,8 @@ public class GroupActivity extends AppCompatActivity {
                         case "FOOTBALL":
                             loadFBGroupDataByUUID(sport, uuid, isJoining);
                             break;
-                        case "-":
+                        case "BASKETBALL":
+                            loadBBGroupDataByUUID(sport, uuid, isJoining);
                             break;
                     }
                 } else {
@@ -113,7 +115,7 @@ public class GroupActivity extends AppCompatActivity {
         this.fbGroupAPI = retrofit.create(FbAPI.class);
 
         // Request group data
-        fbGroupAPI.getFootballGroupByUUID(uuid).enqueue(new Callback<FootballGroup>() {
+        fbGroupAPI.getGroupByUUID(uuid).enqueue(new Callback<FootballGroup>() {
             @Override
             public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
                 if (response.code() == 200) { // OK
@@ -121,7 +123,7 @@ public class GroupActivity extends AppCompatActivity {
                         Toast.makeText(GroupActivity.this, "You are already in this group!", Toast.LENGTH_SHORT).show();
                         finish();
                     } else {
-                        GroupLoadConfig.configureGroupData(response.body());
+                        GroupLoadConfig.configureFBGroupData(response.body());
 
                         loadFragment(sport, isJoining);
                     }
@@ -148,6 +150,45 @@ public class GroupActivity extends AppCompatActivity {
         });
     }
 
+    private void loadBBGroupDataByUUID(String sport, String uuid, boolean isJoining) {
+        this.bbGroupAPI = retrofit.create(BbApi.class);
+
+        // Request group data
+        bbGroupAPI.getGroupByUUID(uuid).enqueue(new Callback<BasketballGroup>() {
+            @Override
+            public void onResponse(Call<BasketballGroup> call, Response<BasketballGroup> response) {
+                if (response.code() == 200) { // OK
+                    if (isUserPartOfGroup(response.body().getId())) {
+                        Toast.makeText(GroupActivity.this, "You are already in this group!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        GroupLoadConfig.configureBBGroupData(response.body());
+
+                        loadFragment(sport, isJoining);
+                    }
+                } else {
+                    Toast.makeText(GroupActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                    finish();
+                }
+                GlobalMethods.hidePGAndEnableUi(progressBar, GroupActivity.this);
+            }
+
+            @Override
+            public void onFailure(Call<BasketballGroup> call, Throwable t) {
+                if (t instanceof EOFException) {
+                    Toast.makeText(GroupActivity.this, "Incorrect group code!", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(GroupActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                }
+                finish();
+                GlobalMethods.hidePGAndEnableUi(progressBar, GroupActivity.this);
+                System.out.println(t.toString());
+            }
+        });
+    }
+
     // =================== END Load by UUID ========================================
 
     // =================== START Load by ID ========================================
@@ -161,10 +202,11 @@ public class GroupActivity extends AppCompatActivity {
 
         switch (sport) {
             case "FOOTBALL":
-                this.fbGroupAPI = retrofit.create(FbAPI.class);
                 loadFBGroupDataByID(sport, groupID, isJoining);
                 break;
-            case "-":
+
+            case "BASKETBALL":
+                loadBBGroupDataByID(sport, groupID, isJoining);
                 break;
         }
     }
@@ -175,11 +217,11 @@ public class GroupActivity extends AppCompatActivity {
         GlobalMethods.showPGAndBlockUI(progressBar, this);
 
         // Request group data
-        fbGroupAPI.getFootballGroupByID(groupID).enqueue(new Callback<FootballGroup>() {
+        fbGroupAPI.getGroupByID(groupID).enqueue(new Callback<FootballGroup>() {
             @Override
             public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
                 if (response.code() == 200) { // OK
-                    GroupLoadConfig.configureGroupData(response.body());
+                    GroupLoadConfig.configureFBGroupData(response.body());
 
                     loadFragment(sport, isJoining);
                 } else {
@@ -192,6 +234,38 @@ public class GroupActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<FootballGroup> call, Throwable t) {
+                Toast.makeText(GroupActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                Toast.makeText(GroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                finish(); // Exit activity on failure
+                GlobalMethods.hidePGAndEnableUi(progressBar, GroupActivity.this);
+                System.out.println(t.toString());
+            }
+        });
+    }
+
+    private void loadBBGroupDataByID(String sport, Long groupID, boolean isJoining) {
+        this.bbGroupAPI = retrofit.create(BbApi.class);
+
+        GlobalMethods.showPGAndBlockUI(progressBar, this);
+
+        // Request group data
+        bbGroupAPI.getGroupByID(groupID).enqueue(new Callback<BasketballGroup>() {
+            @Override
+            public void onResponse(Call<BasketballGroup> call, Response<BasketballGroup> response) {
+                if (response.code() == 200) { // OK
+                    GroupLoadConfig.configureBBGroupData(response.body());
+
+                    loadFragment(sport, isJoining);
+                } else {
+                    Toast.makeText(GroupActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                    finish(); // Exit activity on failure
+                }
+                GlobalMethods.hidePGAndEnableUi(progressBar, GroupActivity.this);
+            }
+
+            @Override
+            public void onFailure(Call<BasketballGroup> call, Throwable t) {
                 Toast.makeText(GroupActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
                 Toast.makeText(GroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                 finish(); // Exit activity on failure
@@ -216,7 +290,9 @@ public class GroupActivity extends AppCompatActivity {
             case "FOOTBALL":
                 createFBGroup(groupName, sport);
                 break;
-            case "-":
+
+            case "BASKETBALL":
+                createBBGroup(groupName, sport);
                 break;
         }
     }
@@ -227,11 +303,11 @@ public class GroupActivity extends AppCompatActivity {
         GlobalMethods.showPGAndBlockUI(progressBar, this);
 
         // Send request
-        fbGroupAPI.createFootballGroup(groupName, MyAuthManager.user.getId()).enqueue(new Callback<FootballGroup>() {
+        fbGroupAPI.createGroup(groupName, MyAuthManager.user.getId()).enqueue(new Callback<FootballGroup>() {
             @Override
             public void onResponse(Call<FootballGroup> call, Response<FootballGroup> response) {
                 if (response.code() == 200) { // ok
-                    GroupLoadConfig.configureGroupData(response.body());
+                    GroupLoadConfig.configureFBGroupData(response.body());
 
                     MyGlobals.createJoinLeaveGroupListenerHomepageActivity.onGroupCreated(response.body());
 
@@ -255,6 +331,40 @@ public class GroupActivity extends AppCompatActivity {
         });
     }
 
+    private void createBBGroup(String groupName, String sport) {
+        this.bbGroupAPI = retrofit.create(BbApi.class);
+
+        GlobalMethods.showPGAndBlockUI(progressBar, this);
+
+        // Send request
+        bbGroupAPI.createGroup(groupName, MyAuthManager.user.getId()).enqueue(new Callback<BasketballGroup>() {
+            @Override
+            public void onResponse(Call<BasketballGroup> call, Response<BasketballGroup> response) {
+                if (response.code() == 200) { // ok
+                    GroupLoadConfig.configureBBGroupData(response.body());
+
+                    MyGlobals.createJoinLeaveGroupListenerHomepageActivity.onGroupCreated(response.body());
+
+                    loadFragment(sport, false);
+
+                    Toast.makeText(GroupActivity.this, "Group created successfully!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(GroupActivity.this, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                    finish(); // Exit activity on failure
+                }
+                GlobalMethods.hidePGAndEnableUi(progressBar, GroupActivity.this);
+            }
+
+            @Override
+            public void onFailure(Call<BasketballGroup> call, Throwable t) {
+                Toast.makeText(GroupActivity.this, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
+                finish(); // Exit activity on failure
+                GlobalMethods.hidePGAndEnableUi(progressBar, GroupActivity.this);
+            }
+        });
+    }
+
     // =================== END Group Creation ===================================
 
     private void loadFragment(String sport, boolean isJoining) {
@@ -265,7 +375,9 @@ public class GroupActivity extends AppCompatActivity {
             case "FOOTBALL":
                 fragment = FBGroupFragment.newInstance(isJoining);
                 break;
-            case "-":
+
+            case "BASKETBALL":
+//                fragment = BBGroupFragment.newInstance(isJoining);
                 break;
         }
 

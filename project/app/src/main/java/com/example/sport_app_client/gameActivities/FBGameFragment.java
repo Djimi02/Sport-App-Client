@@ -253,7 +253,7 @@ public class FBGameFragment extends GameFragment {
         request.setGameStats(gameStats);
 
         // Send request
-        footballGroupAPI.addNewFootballGame(request).enqueue(new Callback<FootballGame>() {
+        footballGroupAPI.addNewGame(request).enqueue(new Callback<FootballGame>() {
             @Override
             public void onResponse(Call<FootballGame> call, Response<FootballGame> response) {
                 if (response.code() == 200) {

@@ -20,13 +20,13 @@ public interface FbAPI {
     /* GROUP */
 
     @GET("/football/group/get/{id}")
-    Call<FootballGroup> getFootballGroupByID(@Path("id") Long groupID);
+    Call<FootballGroup> getGroupByID(@Path("id") Long groupID);
 
     @GET("/football/group/get/uuid/{uuid}")
-    Call<FootballGroup> getFootballGroupByUUID(@Path("uuid") String groupUUID);
+    Call<FootballGroup> getGroupByUUID(@Path("uuid") String groupUUID);
 
     @POST("/football/group/save/{name}/{userid}")
-    Call<FootballGroup> createFootballGroup(@Path("name") String name, @Path("userid") Long userID);
+    Call<FootballGroup> createGroup(@Path("name") String name, @Path("userid") Long userID);
 
     @POST("/football/group/join/notnew/{userid}/{memberid}")
     Call<Void> joinGroupAsExistingMember(@Path("userid") long userID, @Path("memberid") long memberID);
@@ -40,7 +40,7 @@ public interface FbAPI {
     /* Member */
 
     @POST("/football/member/save/{groupid}/{name}")
-    Call<FootballMember> addFootballMember(@Path("groupid") Long groupID, @Path("name") String memberName);
+    Call<FootballMember> addMember(@Path("groupid") Long groupID, @Path("name") String memberName);
 
     @POST("/football/member/role/admin/{id}")
     Call<Void> setRoleToAdmin(@Path("id") Long memberID);
@@ -60,7 +60,7 @@ public interface FbAPI {
     Call<List<FBStats>> getGameStats(@Path("id") Long gameID);
 
     @POST("/football/game/save")
-    Call<FootballGame> addNewFootballGame(@Body AddNewFBGameRequest request);
+    Call<FootballGame> addNewGame(@Body AddNewFBGameRequest request);
 
     @DELETE("/football/game/delete/{id}")
     Call<Void> deleteGame(@Path("id") Long gameID);

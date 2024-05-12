@@ -2,11 +2,12 @@ package com.example.sport_app_client.helpers;
 
 import com.example.sport_app_client.interfaces.GameCreatedListener;
 import com.example.sport_app_client.interfaces.CreateOrJoinOrLeaveGroupListener;
+import com.example.sport_app_client.model.group.BasketballGroup;
 import com.example.sport_app_client.model.group.FootballGroup;
 import com.example.sport_app_client.model.group.Group;
+import com.example.sport_app_client.model.member.BasketballMember;
 import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.model.member.Member;
-import com.example.sport_app_client.retrofit.MyAuthManager;
 
 public final class MyGlobals {
 
@@ -33,6 +34,7 @@ public final class MyGlobals {
     // Used by homepage and group activities
     public static CreateOrJoinOrLeaveGroupListener createJoinLeaveGroupListenerHomepageActivity = null;
 
+
     /* FOOTBALL */
     private static FootballGroup footballGroup = null;
     public static FootballGroup getFootballGroup() {
@@ -53,6 +55,30 @@ public final class MyGlobals {
             // Set abstract values
             associatedFBMember.setGroupAbs(associatedFBMember.getGroup());
             associatedFBMember.setStatsAbs(associatedFBMember.getStats());
+        }
+        associatedMember = member1;
+    }
+
+    /* BASKETBALL */
+    private static BasketballGroup basketballGroup = null;
+    public static BasketballGroup getBasketballGroup() {
+        return basketballGroup;
+    }
+    public static void setBasketballGroup(BasketballGroup group1) {
+        basketballGroup = group1;
+        group = group1;
+    }
+
+    private static BasketballMember associatedBBMember = null;
+    public static BasketballMember getAssociatedBBMember() {
+        return associatedBBMember;
+    }
+    public static void setAssociatedBBMember(BasketballMember member1) {
+        associatedBBMember = member1;
+        if (member1 != null) {
+            // Set abstract values
+            associatedBBMember.setGroupAbs(associatedBBMember.getGroup());
+            associatedBBMember.setStatsAbs(associatedBBMember.getStats());
         }
         associatedMember = member1;
     }
