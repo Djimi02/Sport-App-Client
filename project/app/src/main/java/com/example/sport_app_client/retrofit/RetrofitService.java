@@ -2,7 +2,9 @@ package com.example.sport_app_client.retrofit;
 
 import com.example.sport_app_client.model.group.Group;
 import com.example.sport_app_client.model.member.Member;
+import com.example.sport_app_client.retrofit.deserializers.GroupDeserializer;
 import com.example.sport_app_client.retrofit.deserializers.LocalDateDeserializer;
+import com.example.sport_app_client.retrofit.deserializers.MemberDeserializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 

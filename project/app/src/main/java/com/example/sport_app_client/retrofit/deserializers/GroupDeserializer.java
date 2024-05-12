@@ -1,5 +1,6 @@
-package com.example.sport_app_client.retrofit;
+package com.example.sport_app_client.retrofit.deserializers;
 
+import com.example.sport_app_client.model.group.BasketballGroup;
 import com.example.sport_app_client.model.group.FootballGroup;
 import com.example.sport_app_client.model.group.Group;
 import com.example.sport_app_client.model.member.FootballMember;
@@ -21,6 +22,8 @@ public class GroupDeserializer implements JsonDeserializer<Group> {
             switch (sport.getAsString()) {
                 case "FOOTBALL":
                     return context.deserialize(jsonObject, FootballGroup.class);
+                case "BASKETBALL":
+                    return context.deserialize(jsonObject, BasketballGroup.class);
             }
         }
 
