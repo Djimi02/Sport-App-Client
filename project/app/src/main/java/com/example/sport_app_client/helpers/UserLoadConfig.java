@@ -1,5 +1,6 @@
 package com.example.sport_app_client.helpers;
 
+import com.example.sport_app_client.model.member.BasketballMember;
 import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.model.member.Member;
 import com.example.sport_app_client.retrofit.MyAuthManager;
@@ -20,12 +21,14 @@ public class UserLoadConfig {
         for (Member member : MyAuthManager.user.getMembers()) {
             switch (member.getSport()){
                 case FOOTBALL:
-                    FootballMember parsedMember = (FootballMember) member;
-                    member.setGroupAbs(parsedMember.getGroup());
-                    member.setStatsAbs(parsedMember.getStats());
+                    FootballMember parsedMember1 = (FootballMember) member;
+                    member.setGroupAbs(parsedMember1.getGroup());
+                    member.setStatsAbs(parsedMember1.getStats());
                     break;
                 case BASKETBALL:
-
+                    BasketballMember parsedMember2 = (BasketballMember) member;
+                    member.setGroupAbs(parsedMember2.getGroup());
+                    member.setStatsAbs(parsedMember2.getStats());
                     break;
                 default:
                     break;
