@@ -297,8 +297,8 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
         Intent intent = new Intent(activity, GameActivity.class);
 
         switch (sport){
-            case FOOTBALL: intent.putExtra("fragment", "FOOTBALL"); break;
-            case BASKETBALL: break;
+            case FOOTBALL: intent.putExtra("sport", "FOOTBALL"); break;
+            case BASKETBALL: intent.putExtra("sport", "BASKETBALL"); break;
             case TENNIS: break;
             case TABLE_TENNIS: break;
             default: return;

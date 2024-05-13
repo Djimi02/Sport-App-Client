@@ -16,7 +16,7 @@ public class GameActivity extends AppCompatActivity {
         this.getSupportActionBar().hide();
 
         // Get the data from the intent
-        String fragmentToLoad = getIntent().getStringExtra("fragment");
+        String fragmentToLoad = getIntent().getStringExtra("sport");
         loadFragment(fragmentToLoad);
     }
 
@@ -28,7 +28,8 @@ public class GameActivity extends AppCompatActivity {
             case "FOOTBALL":
                 fragment = FBGameFragment.newInstance();
                 break;
-            case "-":
+            case "BASKETBALL":
+                fragment = BBGameFragment.newInstance();
                 break;
         }
 

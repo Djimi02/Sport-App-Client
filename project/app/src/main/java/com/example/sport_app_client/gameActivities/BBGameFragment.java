@@ -10,17 +10,17 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.sport_app_client.R;
-import com.example.sport_app_client.adapter.football.FBGameStep2RVAdapter;
-import com.example.sport_app_client.adapter.football.FBGameStep3RVAdapter;
+import com.example.sport_app_client.adapter.basketball.BBGameStep2RVAdapter;
+import com.example.sport_app_client.adapter.basketball.BBGameStep3RVAdapter;
 import com.example.sport_app_client.helpers.GlobalMethods;
 import com.example.sport_app_client.helpers.MyGlobals;
-import com.example.sport_app_client.model.game.FootballGame;
-import com.example.sport_app_client.model.member.FootballMember;
-import com.example.sport_app_client.model.stats.FBStats;
+import com.example.sport_app_client.model.game.BasketballGame;
+import com.example.sport_app_client.model.member.BasketballMember;
+import com.example.sport_app_client.model.stats.BBStats;
 import com.example.sport_app_client.model.stats.Stats;
 import com.example.sport_app_client.retrofit.RetrofitService;
-import com.example.sport_app_client.retrofit.api.FbAPI;
-import com.example.sport_app_client.retrofit.request.AddNewFBGameRequest;
+import com.example.sport_app_client.retrofit.api.BbApi;
+import com.example.sport_app_client.retrofit.request.AddNewBBGameRequest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,140 +32,159 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class FBGameFragment extends GameFragment {
+public class BBGameFragment extends GameFragment {
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     * @return A new instance of fragment FBGroupFragment.
+     * @return A new instance of fragment BBGroupFragment.
      */
     public static GameFragment newInstance() {
-        FBGameFragment fragment = new FBGameFragment();
+        BBGameFragment fragment = new BBGameFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
     }
 
-    protected final int MAX_TEAM_SIZE = 11;
+    protected final int MAX_TEAM_SIZE = 5;
 
     /** Vars */
-    private List<FootballMember> fbTeam1;
-    private List<FootballMember> fbTeam2;
-    private List<FBStats> step3Team1Stats;
-    private List<FBStats> step3Team2Stats;
-    private Map<Long, FBStats> gameStats; // key is member id and value is member stats
-    private HashMap<FootballMember, FBStats> currentGameStatsTeam1;
-    private HashMap<FootballMember, FBStats> currentGameStatsTeam2;
+    private List<BasketballMember> bbTeam1;
+    private List<BasketballMember> bbTeam2;
+    private List<BBStats> step3Team1Stats;
+    private List<BBStats> step3Team2Stats;
+    private Map<Long, BBStats> gameStats; // key is member id and value is member stats
+    private HashMap<BasketballMember, BBStats> currentGameStatsTeam1;
+    private HashMap<BasketballMember, BBStats> currentGameStatsTeam2;
 
     /** Retrofit */
-    private FbAPI footballGroupAPI;
+    private BbApi groupAPI;
 
     /* ==================== START CODE INITIALIZATION ======================================= */
 
     @Override
     protected void initSportDependentVars() {
-        this.fbTeam1 = new ArrayList<>();
-        this.fbTeam2 = new ArrayList<>();
+        this.bbTeam1 = new ArrayList<>();
+        this.bbTeam2 = new ArrayList<>();
         this.step3Team1Stats = new ArrayList<>();
         this.step3Team2Stats = new ArrayList<>();
         this.gameStats = new HashMap<>();
 
-        this.footballGroupAPI = new RetrofitService().getRetrofit().create(FbAPI.class);
+        this.groupAPI = new RetrofitService().getRetrofit().create(BbApi.class);
     }
 
     @Override
     protected void initSportDependentRecyclerViews() {
         // Step 2
         this.step2Team1RV = view.findViewById(R.id.gameFragmentStep2Team1RV);
-        FBGameStep2RVAdapter step2Team1Adapter = new FBGameStep2RVAdapter(fbTeam1, this);
+        BBGameStep2RVAdapter step2Team1Adapter = new BBGameStep2RVAdapter(bbTeam1, this);
         step2Team1RV.setAdapter(step2Team1Adapter);
         step2Team1RV.setLayoutManager(new LinearLayoutManager(activity));
 
         this.step2Team2RV = view.findViewById(R.id.gameFragmentStep2Team2RV);
-        FBGameStep2RVAdapter step2Team2Adapter = new FBGameStep2RVAdapter(fbTeam2, this);
+        BBGameStep2RVAdapter step2Team2Adapter = new BBGameStep2RVAdapter(bbTeam2, this);
         step2Team2RV.setAdapter(step2Team2Adapter);
         step2Team2RV.setLayoutManager(new LinearLayoutManager(activity));
 
         // Step 3
         this.step3Team1RV = view.findViewById(R.id.gameFragmentStep3Team1RV);
-        FBGameStep3RVAdapter step3Team1Adapter = new FBGameStep3RVAdapter(step3Team1Stats);
+        BBGameStep3RVAdapter step3Team1Adapter = new BBGameStep3RVAdapter(step3Team1Stats);
         step3Team1RV.setAdapter(step3Team1Adapter);
         step3Team1RV.setLayoutManager(new LinearLayoutManager(activity));
 
         this.step3Team2RV = view.findViewById(R.id.gameFragmentStep3Team2RV);
-        FBGameStep3RVAdapter step3Team2Adapter = new FBGameStep3RVAdapter(step3Team2Stats);
+        BBGameStep3RVAdapter step3Team2Adapter = new BBGameStep3RVAdapter(step3Team2Stats);
         step3Team2RV.setAdapter(step3Team2Adapter);
         step3Team2RV.setLayoutManager(new LinearLayoutManager(activity));
     }
 
     @Override
     protected View initSportDependentDialog(Stats stats) {
-        final View popupView = getLayoutInflater().inflate(R.layout.fb_member_game_stats_dialog, null);
+        final View popupView = getLayoutInflater().inflate(R.layout.bb_member_game_stats_dialog, null);
 
-        TextView name = popupView.findViewById(R.id.fbMemberGameStatsNameTV);
+        TextView name = popupView.findViewById(R.id.bbMemberGameStatsNameTV);
         name.setText(stats.getMemberName());
 
-        Button memberGoalsBTN1 = popupView.findViewById(R.id.fbMemberGameStatsGoalsBTN1);
-        EditText memberGoalsET = popupView.findViewById(R.id.fbMemberGameStatsGoalsET);
-        memberGoalsET.setText(Integer.toString(((FBStats)stats).getGoals()));
-        Button memberGoalsBTN2 = popupView.findViewById(R.id.fbMemberGameStatsGoalsBTN2);
-        memberGoalsBTN1.setOnClickListener(v -> {
-            int value = Integer.parseInt(memberGoalsET.getText().toString());
+        Button memberPointsBTN1 = popupView.findViewById(R.id.bbMemberGameStatsPointsBTN1);
+        EditText memberPointsET = popupView.findViewById(R.id.bbMemberGameStatsPointsET);
+        memberPointsET.setText(Integer.toString(((BBStats)stats).getPoints()));
+        Button memberPointsBTN2 = popupView.findViewById(R.id.bbMemberGameStatsPointsBTN2);
+        memberPointsBTN1.setOnClickListener(v -> {
+            int value = Integer.parseInt(memberPointsET.getText().toString());
             if (value > 0) {
                 value--;
-                memberGoalsET.setText(Integer.toString(value));
+                memberPointsET.setText(Integer.toString(value));
             }
         });
-        memberGoalsBTN2.setOnClickListener(v -> {
-            int value = Integer.parseInt(memberGoalsET.getText().toString());
+        memberPointsBTN2.setOnClickListener(v -> {
+            int value = Integer.parseInt(memberPointsET.getText().toString());
             if (value < 99) {
                 value++;
-                memberGoalsET.setText(Integer.toString(value));
+                memberPointsET.setText(Integer.toString(value));
             }
         });
 
-        Button memberAssistsBTN1 = popupView.findViewById(R.id.fbMemberGameStatsAssistsBTN1);
-        EditText memberAssistsET = popupView.findViewById(R.id.fbMemberGameStatsAssistsET);
-        memberAssistsET.setText(Integer.toString(((FBStats)stats).getAssists()));
-        Button memberAssistsBTN2 = popupView.findViewById(R.id.fbMemberGameStatsAssistsBTN2);
-        memberAssistsBTN1.setOnClickListener(v -> {
-            int value = Integer.parseInt(memberAssistsET.getText().toString());
+        Button memberNumOfThreePointsBTN1 = popupView.findViewById(R.id.bbMemberGameStatsNumOfThreePointsBTN1);
+        EditText memberNumOfThreePointsET = popupView.findViewById(R.id.bbMemberGameStatsNumOfThreePointsET);
+        memberNumOfThreePointsET.setText(Integer.toString(((BBStats)stats).getNumberOfThreePoints()));
+        Button memberNumOfThreePointsBTN2 = popupView.findViewById(R.id.bbMemberGameStatsNumOfThreePointsBTN2);
+        memberNumOfThreePointsBTN1.setOnClickListener(v -> {
+            int value = Integer.parseInt(memberNumOfThreePointsET.getText().toString());
             if (value > 0) {
                 value--;
-                memberAssistsET.setText(Integer.toString(value));
+                memberNumOfThreePointsET.setText(Integer.toString(value));
             }
         });
-        memberAssistsBTN2.setOnClickListener(v -> {
-            int value = Integer.parseInt(memberAssistsET.getText().toString());
+        memberNumOfThreePointsBTN2.setOnClickListener(v -> {
+            int value = Integer.parseInt(memberNumOfThreePointsET.getText().toString());
             if (value < 99) {
                 value++;
-                memberAssistsET.setText(Integer.toString(value));
+                memberNumOfThreePointsET.setText(Integer.toString(value));
             }
         });
 
-        Button memberSavesBTN1 = popupView.findViewById(R.id.fbMemberGameStatsSavesBTN1);
-        EditText memberSavesET = popupView.findViewById(R.id.fbMemberGameStatsSavesET);
-        memberSavesET.setText(Integer.toString(((FBStats)stats).getSaves()));
-        Button memberSavesBTN2 = popupView.findViewById(R.id.fbMemberGameStatsSavesBTN2);
-        memberSavesBTN1.setOnClickListener(v -> {
-            int value = Integer.parseInt(memberSavesET.getText().toString());
+        Button memberDunksBTN1 = popupView.findViewById(R.id.bbMemberGameStatsDunksBTN1);
+        EditText memberDunksET = popupView.findViewById(R.id.bbMemberGameStatsDunksET);
+        memberDunksET.setText(Integer.toString(((BBStats)stats).getNumOfDunks()));
+        Button memberDunksBTN2 = popupView.findViewById(R.id.bbMemberGameStatsDunksBTN2);
+        memberDunksBTN1.setOnClickListener(v -> {
+            int value = Integer.parseInt(memberDunksET.getText().toString());
             if (value > 0) {
                 value--;
-                memberSavesET.setText(Integer.toString(value));
+                memberDunksET.setText(Integer.toString(value));
             }
         });
-        memberSavesBTN2.setOnClickListener(v -> {
-            int value = Integer.parseInt(memberSavesET.getText().toString());
+        memberDunksBTN2.setOnClickListener(v -> {
+            int value = Integer.parseInt(memberDunksET.getText().toString());
             if (value < 99) {
                 value++;
-                memberSavesET.setText(Integer.toString(value));
+                memberDunksET.setText(Integer.toString(value));
             }
         });
 
-        Button memberFoulsBTN1 = popupView.findViewById(R.id.fbMemberGameStatsFoulsBTN1);
-        EditText memberFoulsET = popupView.findViewById(R.id.fbMemberGameStatsFoulsET);
-        memberFoulsET.setText(Integer.toString(((FBStats)stats).getFouls()));
-        Button memberFoulsBTN2 = popupView.findViewById(R.id.fbMemberGameStatsFoulsBTN2);
+        Button memberBlocksBTN1 = popupView.findViewById(R.id.bbMemberGameStatsBlocksBTN1);
+        EditText memberBlocksET = popupView.findViewById(R.id.bbMemberGameStatsBlocksET);
+        memberBlocksET.setText(Integer.toString(((BBStats)stats).getBlocks()));
+        Button memberBlocksBTN2 = popupView.findViewById(R.id.bbMemberGameStatsBlocksBTN2);
+        memberBlocksBTN1.setOnClickListener(v -> {
+            int value = Integer.parseInt(memberBlocksET.getText().toString());
+            if (value > 0) {
+                value--;
+                memberBlocksET.setText(Integer.toString(value));
+            }
+        });
+        memberBlocksBTN2.setOnClickListener(v -> {
+            int value = Integer.parseInt(memberBlocksET.getText().toString());
+            if (value < 99) {
+                value++;
+                memberBlocksET.setText(Integer.toString(value));
+            }
+        });
+
+        Button memberFoulsBTN1 = popupView.findViewById(R.id.bbMemberGameStatsFoulsBTN1);
+        EditText memberFoulsET = popupView.findViewById(R.id.bbMemberGameStatsFoulsET);
+        memberFoulsET.setText(Integer.toString(((BBStats)stats).getFouls()));
+        Button memberFoulsBTN2 = popupView.findViewById(R.id.bbMemberGameStatsFoulsBTN2);
         memberFoulsBTN1.setOnClickListener(v -> {
             int value = Integer.parseInt(memberFoulsET.getText().toString());
             if (value > 0) {
@@ -181,12 +200,13 @@ public class FBGameFragment extends GameFragment {
             }
         });
 
-        Button saveStatsBTN = popupView.findViewById(R.id.fbMemberGameStatsSaveStatsBTN);
+        Button saveStatsBTN = popupView.findViewById(R.id.bbMemberGameStatsSaveStatsBTN);
         saveStatsBTN.setOnClickListener(v -> {
-            ((FBStats)stats).setGoals(Integer.parseInt(memberGoalsET.getText().toString()));
-            ((FBStats)stats).setAssists(Integer.parseInt(memberAssistsET.getText().toString()));
-            ((FBStats)stats).setSaves(Integer.parseInt(memberSavesET.getText().toString()));
-            ((FBStats)stats).setFouls(Integer.parseInt(memberFoulsET.getText().toString()));
+            ((BBStats)stats).setPoints(Integer.parseInt(memberPointsET.getText().toString()));
+            ((BBStats)stats).setNumberOfThreePoints(Integer.parseInt(memberNumOfThreePointsET.getText().toString()));
+            ((BBStats)stats).setNumOfDunks(Integer.parseInt(memberDunksET.getText().toString()));
+            ((BBStats)stats).setBlocks(Integer.parseInt(memberBlocksET.getText().toString()));
+            ((BBStats)stats).setFouls(Integer.parseInt(memberFoulsET.getText().toString()));
             dialog.dismiss();
         });
 
@@ -216,10 +236,10 @@ public class FBGameFragment extends GameFragment {
         }
 
         // Get and parse members from step1 RVs
-        ((FBGameStep2RVAdapter) step2Team1RV.getAdapter())
-                .setMembers(team1.stream().map(member -> (FootballMember)member).collect(Collectors.toList()));
-        ((FBGameStep2RVAdapter) step2Team2RV.getAdapter())
-                .setMembers(team2.stream().map(member -> (FootballMember)member).collect(Collectors.toList()));
+        ((BBGameStep2RVAdapter) step2Team1RV.getAdapter())
+                .setMembers(team1.stream().map(member -> (BasketballMember)member).collect(Collectors.toList()));
+        ((BBGameStep2RVAdapter) step2Team2RV.getAdapter())
+                .setMembers(team2.stream().map(member -> (BasketballMember)member).collect(Collectors.toList()));
 
         step2Team1RV.getAdapter().notifyDataSetChanged();
         step2Team2RV.getAdapter().notifyDataSetChanged();
@@ -231,15 +251,15 @@ public class FBGameFragment extends GameFragment {
     protected void goFromStep2ToStep3() {
         // update step 3 based on step 2
         step3Team1Stats.clear();
-        step3Team1Stats.addAll(((FBGameStep2RVAdapter)step2Team1RV.getAdapter()).getCurrentGameStats().values());
+        step3Team1Stats.addAll(((BBGameStep2RVAdapter)step2Team1RV.getAdapter()).getCurrentGameStats().values());
         currentGameStatsTeam1 =
-                ((FBGameStep2RVAdapter) step2Team1RV.getAdapter()).getCurrentGameStats();
+                ((BBGameStep2RVAdapter) step2Team1RV.getAdapter()).getCurrentGameStats();
         step3Team1RV.getAdapter().notifyDataSetChanged();
 
         step3Team2Stats.clear();
-        step3Team2Stats.addAll(((FBGameStep2RVAdapter)step2Team2RV.getAdapter()).getCurrentGameStats().values());
+        step3Team2Stats.addAll(((BBGameStep2RVAdapter)step2Team2RV.getAdapter()).getCurrentGameStats().values());
         currentGameStatsTeam2 =
-                ((FBGameStep2RVAdapter) step2Team2RV.getAdapter()).getCurrentGameStats();
+                ((BBGameStep2RVAdapter) step2Team2RV.getAdapter()).getCurrentGameStats();
         step3Team2RV.getAdapter().notifyDataSetChanged();
     }
 
@@ -250,20 +270,20 @@ public class FBGameFragment extends GameFragment {
         collectAndUpdateGameStats(); // Collect game stats
 
         // Create request
-        AddNewFBGameRequest request = new AddNewFBGameRequest();
-        request.setGroupID(MyGlobals.getFootballGroup().getId());
+        AddNewBBGameRequest request = new AddNewBBGameRequest();
+        request.setGroupID(MyGlobals.getBasketballGroup().getId());
         request.setGameStats(gameStats);
 
         // Send request
-        footballGroupAPI.addNewGame(request).enqueue(new Callback<FootballGame>() {
+        groupAPI.addNewGame(request).enqueue(new Callback<BasketballGame>() {
             @Override
-            public void onResponse(Call<FootballGame> call, Response<FootballGame> response) {
+            public void onResponse(Call<BasketballGame> call, Response<BasketballGame> response) {
                 if (response.code() == 200) {
                     Toast.makeText(activity, "Game created successfully!", Toast.LENGTH_SHORT).show();
-                    MyGlobals.getFootballGroup().addGame(response.body());
+                    MyGlobals.getBasketballGroup().addGame(response.body());
                     // Update group and homepage
                     MyGlobals.gameCreatedListenerGroup.onGameCreatedGroupIMPL();
-                    MyGlobals.gameCreatedListenerHomepage.onGameCreatedOrDeletedHomepageIMPL(MyGlobals.getAssociatedFBMember());
+                    MyGlobals.gameCreatedListenerHomepage.onGameCreatedOrDeletedHomepageIMPL(MyGlobals.getAssociatedBBMember());
 
                     activity.finish();
                 } else {
@@ -276,7 +296,7 @@ public class FBGameFragment extends GameFragment {
             }
 
             @Override
-            public void onFailure(Call<FootballGame> call, Throwable t) {
+            public void onFailure(Call<BasketballGame> call, Throwable t) {
                 Toast.makeText(activity, "Game creation failed!", Toast.LENGTH_SHORT).show();
                 Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_SHORT).show();
                 undoCollectGameStats();
@@ -291,7 +311,6 @@ public class FBGameFragment extends GameFragment {
 
     /* ===================== START HELPER METHODS ============================================*/
 
-
     /**
      * Updates all selected members with their new stat selected in step 2
      * and adds them in this.allMembersWithUpdatedStats and adds all game stats
@@ -299,39 +318,41 @@ public class FBGameFragment extends GameFragment {
      */
     private void collectAndUpdateGameStats() {
         // Collect and update team1 members with stats from the game
-        int team1TotalGoals = 0;
-        for (FootballMember member : currentGameStatsTeam1.keySet()) {
-            FBStats tempStats = currentGameStatsTeam1.get(member);
+        int team1TotalPoints = 0;
+        for (BasketballMember member : currentGameStatsTeam1.keySet()) {
+            BBStats tempStats = currentGameStatsTeam1.get(member);
             tempStats.setIsPartOfTeam1(true);
 
-            member.getStats().setGoals(member.getStats().getGoals() + tempStats.getGoals());
-            member.getStats().setAssists(member.getStats().getAssists() + tempStats.getAssists());
-            member.getStats().setSaves(member.getStats().getSaves() + tempStats.getSaves());
+            member.getStats().setPoints(member.getStats().getPoints() + tempStats.getPoints());
+            member.getStats().setNumberOfThreePoints(member.getStats().getNumberOfThreePoints() + tempStats.getNumberOfThreePoints());
+            member.getStats().setNumOfDunks(member.getStats().getNumOfDunks() + tempStats.getNumOfDunks());
+            member.getStats().setBlocks(member.getStats().getBlocks() + tempStats.getBlocks());
             member.getStats().setFouls(member.getStats().getFouls() + tempStats.getFouls());
 
             gameStats.put(member.getId(), tempStats);
 
-            team1TotalGoals += tempStats.getGoals();
+            team1TotalPoints += tempStats.getPoints();
         }
 
         // Collect and update team2 members with stats from the game
-        int team2TotalGoals = 0;
-        for (FootballMember member : currentGameStatsTeam2.keySet()) {
-            FBStats tempStats = currentGameStatsTeam2.get(member);
+        int team2TotalPoints = 0;
+        for (BasketballMember member : currentGameStatsTeam2.keySet()) {
+            BBStats tempStats = currentGameStatsTeam2.get(member);
             tempStats.setIsPartOfTeam1(false);
 
-            member.getStats().setGoals(member.getStats().getGoals() + tempStats.getGoals());
-            member.getStats().setAssists(member.getStats().getAssists() + tempStats.getAssists());
-            member.getStats().setSaves(member.getStats().getSaves() + tempStats.getSaves());
+            member.getStats().setPoints(member.getStats().getPoints() + tempStats.getPoints());
+            member.getStats().setNumberOfThreePoints(member.getStats().getNumberOfThreePoints() + tempStats.getNumberOfThreePoints());
+            member.getStats().setNumOfDunks(member.getStats().getNumOfDunks() + tempStats.getNumOfDunks());
+            member.getStats().setBlocks(member.getStats().getBlocks() + tempStats.getBlocks());
             member.getStats().setFouls(member.getStats().getFouls() + tempStats.getFouls());
 
             gameStats.put(member.getId(), tempStats);
 
-            team2TotalGoals += tempStats.getGoals();
+            team2TotalPoints += tempStats.getPoints();
         }
 
         // Increment wins/draws/loses of members and temp stats
-        if (team1TotalGoals > team2TotalGoals) {
+        if (team1TotalPoints > team2TotalPoints) {
             new ArrayList<>(currentGameStatsTeam1.keySet()).forEach((member) -> {
                 member.getStats().setWins(member.getStats().getWins() + 1);
                 currentGameStatsTeam1.get(member).setWins(1);
@@ -340,7 +361,7 @@ public class FBGameFragment extends GameFragment {
                 member.getStats().setLoses(member.getStats().getLoses()+1);
                 currentGameStatsTeam2.get(member).setLoses(1);
             });
-        } else if (team2TotalGoals > team1TotalGoals) {
+        } else if (team2TotalPoints > team1TotalPoints) {
             new ArrayList<>(currentGameStatsTeam2.keySet()).forEach((member) -> {
                 member.getStats().setWins(member.getStats().getWins() + 1);
                 currentGameStatsTeam2.get(member).setWins(1);
@@ -367,34 +388,33 @@ public class FBGameFragment extends GameFragment {
      * and clears this.allMembersWithUpdatedStats and this.allTemporaryMembers.
      */
     private void undoCollectGameStats() {
-//        currentGameStatsTeam1 =
-//                ((FBGameStep2RVAdapter) step2Team1RV.getAdapter()).getCurrentGameStats();
-        for (FootballMember member : currentGameStatsTeam1.keySet()) {
-            FBStats tempStats = currentGameStatsTeam1.get(member);
+        for (BasketballMember member : currentGameStatsTeam1.keySet()) {
+            BBStats tempStats = currentGameStatsTeam1.get(member);
 
             member.getStats().setWins(member.getStats().getWins() - tempStats.getWins());
             member.getStats().setDraws(member.getStats().getDraws() - tempStats.getDraws());
             member.getStats().setLoses(member.getStats().getLoses() - tempStats.getLoses());
-            member.getStats().setGoals(member.getStats().getGoals() - tempStats.getGoals());
-            member.getStats().setAssists(member.getStats().getAssists() - tempStats.getAssists());
-            member.getStats().setSaves(member.getStats().getSaves() - tempStats.getSaves());
+            member.getStats().setPoints(member.getStats().getPoints() - tempStats.getPoints());
+            member.getStats().setNumberOfThreePoints(member.getStats().getNumberOfThreePoints() - tempStats.getNumberOfThreePoints());
+            member.getStats().setNumOfDunks(member.getStats().getNumOfDunks() - tempStats.getNumOfDunks());
+            member.getStats().setBlocks(member.getStats().getBlocks() - tempStats.getBlocks());
             member.getStats().setFouls(member.getStats().getFouls() - tempStats.getFouls());
         }
 
-//        currentGameStatsTeam2 =
-//                ((FBGameStep2RVAdapter) step2Team2RV.getAdapter()).getCurrentGameStats();
-        for (FootballMember member : currentGameStatsTeam2.keySet()) {
-            FBStats tempStats = currentGameStatsTeam2.get(member);
+        for (BasketballMember member : currentGameStatsTeam2.keySet()) {
+            BBStats tempStats = currentGameStatsTeam2.get(member);
 
             member.getStats().setWins(member.getStats().getWins() - tempStats.getWins());
             member.getStats().setDraws(member.getStats().getDraws() - tempStats.getDraws());
             member.getStats().setLoses(member.getStats().getLoses() - tempStats.getLoses());
-            member.getStats().setGoals(member.getStats().getGoals() - tempStats.getGoals());
-            member.getStats().setAssists(member.getStats().getAssists() - tempStats.getAssists());
-            member.getStats().setSaves(member.getStats().getSaves() - tempStats.getSaves());
+            member.getStats().setPoints(member.getStats().getPoints() - tempStats.getPoints());
+            member.getStats().setNumberOfThreePoints(member.getStats().getNumberOfThreePoints() - tempStats.getNumberOfThreePoints());
+            member.getStats().setNumOfDunks(member.getStats().getNumOfDunks() - tempStats.getNumOfDunks());
+            member.getStats().setBlocks(member.getStats().getBlocks() - tempStats.getBlocks());
             member.getStats().setFouls(member.getStats().getFouls() - tempStats.getFouls());
         }
 
         this.gameStats.clear();
     }
+
 }

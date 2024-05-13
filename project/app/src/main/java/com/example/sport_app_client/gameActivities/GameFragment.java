@@ -56,8 +56,6 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
         return view;
     }
 
-    protected final int MAX_TEAM_SIZE = 11;
-
     /** Views */
     protected ProgressBar progressBar;
     protected LinearProgressIndicator horizontalPB;
