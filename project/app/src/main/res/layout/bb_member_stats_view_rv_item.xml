@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="name"
+        android:id="@+id/bbMemberStatsItemNameTV"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="points"
+        android:id="@+id/bbMemberStatsItemPointsTV"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="3-points"
+        android:id="@+id/bbMemberStatsItemNumOfThreePointsTV"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="dunks"
+        android:id="@+id/bbMemberStatsItemDunksTV"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="blocks"
+        android:id="@+id/bbMemberStatsItemBlocksTV"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="fouls"
+        android:id="@+id/bbMemberStatsItemFoulsTV"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:gravity="center"/>
+
+</LinearLayout>

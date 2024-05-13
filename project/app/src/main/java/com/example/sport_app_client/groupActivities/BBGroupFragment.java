@@ -1,29 +1,31 @@
 package com.example.sport_app_client.groupActivities;
 
 import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.sport_app_client.R;
-import com.example.sport_app_client.adapter.football.FBGameStep3RVAdapter;
-import com.example.sport_app_client.adapter.football.FBMemberAllStatsViewRVAdapter;
+import com.example.sport_app_client.adapter.basketball.BBGameStep3RVAdapter;
+import com.example.sport_app_client.adapter.basketball.BBMemberAllStatsViewRVAdapter;
 import com.example.sport_app_client.helpers.ConfirmActionDialog;
 import com.example.sport_app_client.helpers.GlobalMethods;
 import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.model.MemberRole;
 import com.example.sport_app_client.model.User;
-import com.example.sport_app_client.model.game.FootballGame;
+import com.example.sport_app_client.model.game.BasketballGame;
 import com.example.sport_app_client.model.game.Game;
-import com.example.sport_app_client.model.member.FootballMember;
+import com.example.sport_app_client.model.member.BasketballMember;
 import com.example.sport_app_client.model.member.Member;
-import com.example.sport_app_client.model.stats.FBStats;
+import com.example.sport_app_client.model.stats.BBStats;
 import com.example.sport_app_client.retrofit.MyAuthManager;
 import com.example.sport_app_client.retrofit.RetrofitService;
-import com.example.sport_app_client.retrofit.api.FbAPI;
+import com.example.sport_app_client.retrofit.api.BbApi;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -34,35 +36,40 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class FBGroupFragment extends GroupFragment {
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link BBGroupFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class BBGroupFragment extends GroupFragment {
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     * @return A new instance of fragment FBGroupFragment.
+     * @return A new instance of fragment BBGroupFragment.
      */
-    public static FBGroupFragment newInstance(boolean isJoining) {
-        FBGroupFragment fragment = new FBGroupFragment(isJoining);
+    public static BBGroupFragment newInstance(boolean isJoining) {
+        BBGroupFragment fragment = new BBGroupFragment(isJoining);
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
     }
 
-    public FBGroupFragment(boolean isJoining) {
+    public BBGroupFragment(boolean isJoining) {
         super(isJoining);
     }
 
     /* Vars */
-    private FbAPI groupAPI;
+    private BbApi groupAPI;
 
     // ==================== START CODE INITIALIZATION =======================================
 
     @Override
     protected void initSportDependentVars() {
-        this.groupAPI = new RetrofitService().getRetrofit().create(FbAPI.class);
+        this.groupAPI = new RetrofitService().getRetrofit().create(BbApi.class);
         if (!isJoining) { // get associated member if not new user
-            MyGlobals.setAssociatedFBMember(getAssociatedMember());
-            if (MyGlobals.getAssociatedFBMember() == null) { // should not happen
+            MyGlobals.setAssociatedBBMember(getAssociatedMember());
+            if (MyGlobals.getAssociatedBBMember() == null) { // should not happen
                 Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
                 Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
                 activity.finish();
@@ -74,7 +81,7 @@ public class FBGroupFragment extends GroupFragment {
     @Override
     protected void initSportDependentViews() {
         this.membersRV = view.findViewById(R.id.GroupFragmentMembersRV);
-        FBMemberAllStatsViewRVAdapter membersAdapter = new FBMemberAllStatsViewRVAdapter(MyGlobals.getFootballGroup().getMembers());
+        BBMemberAllStatsViewRVAdapter membersAdapter = new BBMemberAllStatsViewRVAdapter(MyGlobals.getBasketballGroup().getMembers());
         membersRV.setAdapter(membersAdapter);
         membersRV.setLayoutManager(new LinearLayoutManager(activity));
     }
@@ -93,11 +100,11 @@ public class FBGroupFragment extends GroupFragment {
         ConfirmActionDialog.showDialog(activity, "Are you sure you want to leave the group?", () -> {
             GlobalMethods.showPGAndBlockUI(settingsProgressBar, activity);
 
-            groupAPI.removeMemberFromGroup(MyGlobals.getAssociatedFBMember().getId()).enqueue(new Callback<Void>() {
+            groupAPI.removeMemberFromGroup(MyGlobals.getAssociatedBBMember().getId()).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.code() == 200) { // OK
-                        MyGlobals.createJoinLeaveGroupListenerHomepageActivity.onGroupRemoved(MyGlobals.getAssociatedFBMember().getId()); // remove from homepage
+                        MyGlobals.createJoinLeaveGroupListenerHomepageActivity.onGroupRemoved(MyGlobals.getAssociatedBBMember().getId()); // remove from homepage
 
                         activity.finish(); // Exit activity
 
@@ -125,11 +132,11 @@ public class FBGroupFragment extends GroupFragment {
             GlobalMethods.showPGAndBlockUI(settingsProgressBar, activity);
 
             // Send request
-            groupAPI.deleteGroup(MyGlobals.getFootballGroup().getId()).enqueue(new Callback<Void>() {
+            groupAPI.deleteGroup(MyGlobals.getBasketballGroup().getId()).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.code() == 200) { // OK
-                        MyGlobals.createJoinLeaveGroupListenerHomepageActivity.onGroupRemoved(MyGlobals.getAssociatedFBMember().getId());
+                        MyGlobals.createJoinLeaveGroupListenerHomepageActivity.onGroupRemoved(MyGlobals.getAssociatedBBMember().getId());
                         Toast.makeText(activity, "Group deleted successfully!", Toast.LENGTH_SHORT).show();
                         activity.finish();
                     } else {
@@ -153,15 +160,15 @@ public class FBGroupFragment extends GroupFragment {
     protected void onJoinAsNewMemberBTNClicked() {
         GlobalMethods.showPGAndBlockUI(joinGroupDialogPB, activity);
 
-        groupAPI.joinGroupAsNewMember(MyAuthManager.user.getId(), MyGlobals.getFootballGroup().getId()).enqueue(new Callback<FootballMember>() {
+        groupAPI.joinGroupAsNewMember(MyAuthManager.user.getId(), MyGlobals.getBasketballGroup().getId()).enqueue(new Callback<BasketballMember>() {
             @Override
-            public void onResponse(Call<FootballMember> call, Response<FootballMember> response) {
+            public void onResponse(Call<BasketballMember> call, Response<BasketballMember> response) {
                 if (response.code() == 200) { // OK
-                    FootballMember newMember = response.body();
-                    MyGlobals.getFootballGroup().addMember(newMember); // should be called before initViews()
-                    MyGlobals.setAssociatedFBMember(newMember);
+                    BasketballMember newMember = response.body();
+                    MyGlobals.getBasketballGroup().addMember(newMember); // should be called before initViews()
+                    MyGlobals.setAssociatedBBMember(newMember);
 
-                    MyGlobals.createJoinLeaveGroupListenerHomepageActivity.onGroupJoined(newMember, MyGlobals.getFootballGroup());
+                    MyGlobals.createJoinLeaveGroupListenerHomepageActivity.onGroupJoined(newMember, MyGlobals.getBasketballGroup());
                     initViews();
                     dialog.dismiss();
                 } else {
@@ -173,7 +180,7 @@ public class FBGroupFragment extends GroupFragment {
             }
 
             @Override
-            public void onFailure(Call<FootballMember> call, Throwable t) {
+            public void onFailure(Call<BasketballMember> call, Throwable t) {
                 Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
                 Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_SHORT).show();
 
@@ -186,12 +193,12 @@ public class FBGroupFragment extends GroupFragment {
     protected void onAddMemberBTNClickSportSpecific(String memberName) {
         GlobalMethods.showPGAndBlockUI(mainProgressBar, activity);
 
-        groupAPI.addMember(MyGlobals.getFootballGroup().getId(), memberName).enqueue(new Callback<FootballMember>() {
+        groupAPI.addMember(MyGlobals.getBasketballGroup().getId(), memberName).enqueue(new Callback<BasketballMember>() {
             @Override
-            public void onResponse(Call<FootballMember> call, Response<FootballMember> response) {
+            public void onResponse(Call<BasketballMember> call, Response<BasketballMember> response) {
                 if (response.code() == 200) { // OK
-                    MyGlobals.getFootballGroup().addMember(response.body());
-                    membersRV.getAdapter().notifyItemInserted(MyGlobals.getFootballGroup().getMembers().size());
+                    MyGlobals.getBasketballGroup().addMember(response.body());
+                    membersRV.getAdapter().notifyItemInserted(MyGlobals.getBasketballGroup().getMembers().size());
                     Toast.makeText(activity, "Member added successfully!", Toast.LENGTH_SHORT).show();
                 } else if (response.code() == 400) {
                     try {
@@ -208,7 +215,7 @@ public class FBGroupFragment extends GroupFragment {
             }
 
             @Override
-            public void onFailure(Call<FootballMember> call, Throwable t) {
+            public void onFailure(Call<BasketballMember> call, Throwable t) {
                 Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
                 Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
 
@@ -315,9 +322,9 @@ public class FBGroupFragment extends GroupFragment {
     @Override
     protected void setUpSportSpecificGameDialog(View popupView, Button deleteBTN, Game game) {
         // Init vars
-        List<FBStats> allStats = new ArrayList<>();
-        List<FBStats> team1Stats = new ArrayList<>();
-        List<FBStats> team2Stats = new ArrayList<>();
+        List<BBStats> allStats = new ArrayList<>();
+        List<BBStats> team1Stats = new ArrayList<>();
+        List<BBStats> team2Stats = new ArrayList<>();
 
         // enable btn if member is admin
         if (MyGlobals.getAssociatedMember().getRole() == MemberRole.GROUP_ADMIN ||
@@ -331,25 +338,25 @@ public class FBGroupFragment extends GroupFragment {
 
         // Init recyclers
         RecyclerView team1RV = popupView.findViewById(R.id.GameDialogTeam1RV);
-        FBGameStep3RVAdapter team1Adapter = new FBGameStep3RVAdapter(team1Stats);
+        BBGameStep3RVAdapter team1Adapter = new BBGameStep3RVAdapter(team1Stats);
         team1RV.setAdapter(team1Adapter);
         team1RV.setLayoutManager(new LinearLayoutManager(activity));
 
         RecyclerView team2RV = popupView.findViewById(R.id.GameDialogTeam2RV);
-        FBGameStep3RVAdapter team2Adapter = new FBGameStep3RVAdapter(team2Stats);
+        BBGameStep3RVAdapter team2Adapter = new BBGameStep3RVAdapter(team2Stats);
         team2RV.setAdapter(team2Adapter);
         team2RV.setLayoutManager(new LinearLayoutManager(activity));
 
         GlobalMethods.showPGAndBlockUI(mainProgressBar, activity);
 
         // Request game stats
-        groupAPI.getGameStats(game.getId()).enqueue(new Callback<List<FBStats>>() {
+        groupAPI.getGameStats(game.getId()).enqueue(new Callback<List<BBStats>>() {
             @Override
-            public void onResponse(Call<List<FBStats>> call, Response<List<FBStats>> response) {
+            public void onResponse(Call<List<BBStats>> call, Response<List<BBStats>> response) {
                 if (response.code() == 200) { // OK
                     allStats.addAll(response.body());
                     // Split game members into teams
-                    for (FBStats stats : response.body()) {
+                    for (BBStats stats : response.body()) {
                         if (stats.getIsPartOfTeam1()) {
                             team1Stats.add(stats);
                         } else {
@@ -370,7 +377,7 @@ public class FBGroupFragment extends GroupFragment {
             }
 
             @Override
-            public void onFailure(Call<List<FBStats>> call, Throwable t) {
+            public void onFailure(Call<List<BBStats>> call, Throwable t) {
                 Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_1, Toast.LENGTH_SHORT).show();
                 Toast.makeText(activity, MyGlobals.ERROR_MESSAGE_2, Toast.LENGTH_LONG).show();
 
@@ -388,7 +395,7 @@ public class FBGroupFragment extends GroupFragment {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.code() == 200) { // OK
-                        MyGlobals.getFootballGroup().removeMember(member.getId());
+                        MyGlobals.getBasketballGroup().removeMember(member.getId());
 
                         // Update recyclers
                         membersRV.getAdapter().notifyDataSetChanged();
@@ -423,8 +430,8 @@ public class FBGroupFragment extends GroupFragment {
                 if (response.code() == 200) { // OK
                     // A copy of the user is made so that there is no cyclic references
                     member.setUser(new User(MyAuthManager.user.getUserName(), MyAuthManager.user.getId()));
-                    MyGlobals.createJoinLeaveGroupListenerHomepageActivity.onGroupJoined(member, MyGlobals.getFootballGroup());
-                    MyGlobals.setAssociatedFBMember((FootballMember) member); // should be called before initViews()
+                    MyGlobals.createJoinLeaveGroupListenerHomepageActivity.onGroupJoined(member, MyGlobals.getBasketballGroup());
+                    MyGlobals.setAssociatedBBMember((BasketballMember) member); // should be called before initViews()
                     initViews();
                     dialog.dismiss();
                 } else {
@@ -454,7 +461,7 @@ public class FBGroupFragment extends GroupFragment {
      * @param game - game to be removed
      * @param gameStats - game stats
      */
-    private void removeGame(Game game, List<FBStats> gameStats) {
+    private void removeGame(Game game, List<BBStats> gameStats) {
         ConfirmActionDialog.showDialog(activity, "Are you sure you want to delete this game!", () -> {
             GlobalMethods.showPGAndBlockUI(mainProgressBar, activity);
 
@@ -464,8 +471,8 @@ public class FBGroupFragment extends GroupFragment {
                     if (response.code() == 200) { // OK
                         // Update current data
                         decreaseMemberStatsAfterGameDeleted(game, gameStats);
-                        MyGlobals.getFootballGroup().getGames().remove(game);
-                        MyGlobals.gameCreatedListenerHomepage.onGameCreatedOrDeletedHomepageIMPL(MyGlobals.getAssociatedFBMember());
+                        MyGlobals.getBasketballGroup().getGames().remove(game);
+                        MyGlobals.gameCreatedListenerHomepage.onGameCreatedOrDeletedHomepageIMPL(MyGlobals.getAssociatedBBMember());
 
                         // Update recyclers
                         membersRV.getAdapter().notifyDataSetChanged();
@@ -497,12 +504,12 @@ public class FBGroupFragment extends GroupFragment {
      * this.group.getMembers and decreases their stats;
      * @param gameStats - the list of game stats
      */
-    private void decreaseMemberStatsAfterGameDeleted(Game game, List<FBStats> gameStats) {
-        for (FBStats stats : gameStats) {
+    private void decreaseMemberStatsAfterGameDeleted(Game game, List<BBStats> gameStats) {
+        for (BBStats stats : gameStats) {
             if (stats.getMember() == null) {
                 continue;
             }
-            FootballMember associatedGMember = getGroupMemberById(stats.getMember().getId());
+            BasketballMember associatedGMember = getGroupMemberById(stats.getMember().getId());
             if (associatedGMember == null) {
                 continue;
             }
@@ -510,15 +517,16 @@ public class FBGroupFragment extends GroupFragment {
             associatedGMember.getStats().setWins(associatedGMember.getStats().getWins() - stats.getWins());
             associatedGMember.getStats().setDraws(associatedGMember.getStats().getDraws() - stats.getDraws());
             associatedGMember.getStats().setLoses(associatedGMember.getStats().getLoses() - stats.getLoses());
-            associatedGMember.getStats().setGoals(associatedGMember.getStats().getGoals() - stats.getGoals());
-            associatedGMember.getStats().setAssists(associatedGMember.getStats().getAssists() - stats.getAssists());
-            associatedGMember.getStats().setSaves(associatedGMember.getStats().getSaves() - stats.getSaves());
+            associatedGMember.getStats().setPoints(associatedGMember.getStats().getPoints() - stats.getPoints());
+            associatedGMember.getStats().setNumberOfThreePoints(associatedGMember.getStats().getNumberOfThreePoints() - stats.getNumberOfThreePoints());
+            associatedGMember.getStats().setNumOfDunks(associatedGMember.getStats().getNumOfDunks() - stats.getNumOfDunks());
+            associatedGMember.getStats().setBlocks(associatedGMember.getStats().getBlocks() - stats.getBlocks());
             associatedGMember.getStats().setFouls(associatedGMember.getStats().getFouls() - stats.getFouls());
         }
     }
 
-    private FootballMember getGroupMemberById(long memberID) {
-        for (FootballMember member : MyGlobals.getFootballGroup().getMembers()) {
+    private BasketballMember getGroupMemberById(long memberID) {
+        for (BasketballMember member : MyGlobals.getBasketballGroup().getMembers()) {
             if (member.getId() == memberID) {
                 return member;
             }
@@ -528,10 +536,10 @@ public class FBGroupFragment extends GroupFragment {
 
     @Override
     protected void sortGames() {
-        List<FootballGame> sortedGames = MyGlobals.getFootballGroup().getGames().stream()
-                .sorted(Comparator.comparing(FootballGame::getDate).reversed()) // Sort by releaseDate in descending order
+        List<BasketballGame> sortedGames = MyGlobals.getBasketballGroup().getGames().stream()
+                .sorted(Comparator.comparing(BasketballGame::getDate).reversed()) // Sort by releaseDate in descending order
                 .collect(Collectors.toList());
-        MyGlobals.getFootballGroup().setGames(sortedGames);
+        MyGlobals.getBasketballGroup().setGames(sortedGames);
         MyGlobals.getGroup().setGamesAbs(sortedGames);
     }
 
@@ -539,12 +547,12 @@ public class FBGroupFragment extends GroupFragment {
      * This method returns the member that is associated with the currently
      * logged in user.
      */
-    private FootballMember getAssociatedMember() {
-        FootballMember output = null;
-        for (FootballMember fbMember : MyGlobals.getFootballGroup().getMembers()) {
-            if (fbMember.getUser() == null) { } // skip
-            else if (fbMember.getUser().getId() == MyAuthManager.user.getId()) {
-                output = fbMember;
+    private BasketballMember getAssociatedMember() {
+        BasketballMember output = null;
+        for (BasketballMember bbMember : MyGlobals.getBasketballGroup().getMembers()) {
+            if (bbMember.getUser() == null) { } // skip
+            else if (bbMember.getUser().getId() == MyAuthManager.user.getId()) {
+                output = bbMember;
                 break;
             }
         }
@@ -553,7 +561,7 @@ public class FBGroupFragment extends GroupFragment {
 
     @Override
     protected void clearSportSpecificGroupData() {
-        MyGlobals.setFootballGroup(null);
-        MyGlobals.setAssociatedFBMember(null);
+        MyGlobals.setBasketballGroup(null);
+        MyGlobals.setAssociatedBBMember(null);
     }
 }

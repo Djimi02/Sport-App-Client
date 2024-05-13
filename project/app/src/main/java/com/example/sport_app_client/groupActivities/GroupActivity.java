@@ -377,7 +377,7 @@ public class GroupActivity extends AppCompatActivity {
                 break;
 
             case "BASKETBALL":
-//                fragment = BBGroupFragment.newInstance(isJoining);
+                fragment = BBGroupFragment.newInstance(isJoining);
                 break;
         }
 

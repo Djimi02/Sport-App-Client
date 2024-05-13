@@ -37,8 +37,8 @@ public class OnGroupJoinedOrCreatedListenerImpl {
 
         // Create temp member
         BasketballMember initialMember = new BasketballMember();
-        initialMember.setNickname(MyGlobals.getFootballGroup().getMembers().get(0).getNickname());
-        initialMember.setId(MyGlobals.getFootballGroup().getMembers().get(0).getId());
+        initialMember.setNickname(MyGlobals.getBasketballGroup().getMembers().get(0).getNickname());
+        initialMember.setId(MyGlobals.getBasketballGroup().getMembers().get(0).getId());
         initialMember.setGroupAbs(tempGroup); // only the abs value is used in homepage
         initialMember.setStatsAbs(initialMember.getStats()); // only the abs value is used in homepage
 
