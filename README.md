@@ -27,29 +27,36 @@ NOTE: The current version of the application is just a demo and the UI is yet to
 ### Homepage
 
 <div align="center">
-	<img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/homepage.jpg">
-    <img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/homepage_add_group.jpg">
+	<img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/homepage.jpg" alt = "Homepage Overview">
+    <img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/homepage_add_group.jpg" alt = "Creating Group">
 </div>
 
 ### Football Group
 
 <div align="center">
-	<img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/fb_group.jpg">
-    <img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/group_settings.jpg">
+	<img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/fb_group.jpg" alt = "FB Group Overview">
+    <img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/group_settings.jpg" alt = "Group Settings">
 </div>
 
+In settings, the admin of the group can change other members' roles or delete the group. A member can be: Member, Game-Maker (allowed to create/delete games) or Admin(allowed to kick members, delete group, change other member's roles).
+
 <div align="center">
-	<img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/game_view.jpg">
-    <img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/group_add_member.jpg">
+	<img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/game_view.jpg" alt = "Viewing a saved game">
+    <img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/group_add_member.jpg" alt = "Adding Member">
 </div>
 
 ### Game Creation
 
 <div align="center">
-	<img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/game_step_1.jpg">
-    <img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/game_step_2.jpg">
+	<img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/game_step_1.jpg" alt = "Choosing Teams">
+    <img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/game_step_2.jpg" alt = "Game Creation Step 2">
 </div>
 
+Teams can be selected manually or randomly.
+
 <div align="center">
-	<img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/game_step_2_stat_selection.jpg">
-    <img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/game_step_3.jpg">
+	<img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/game_step_2_stat_selection.jpg" alt = "Selecting Sport Specific Stats for each member">
+    <img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/game_step_3.jpg" alt = "Finalizing Game Creating">
+</div>
+
+## Technical desciption
