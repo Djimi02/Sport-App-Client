@@ -1,7 +1,8 @@
 # TeamTally - Track your Sport Game Statistics with Friends
 
 Technologies: Android Studio(with java), Retrofit, Spring Boot
-This is the client side of my project. If you want to see the back-end server you can check it at <LINK!
+
+This is the client side of my project. If you want to see the back-end server you can check my [repository](https://github.com/Djimi02/Sport-App-Server). 
 
 First, I will describe the purpose of the app and what it looks like. For technical information please scroll down.
 
@@ -52,7 +53,7 @@ In settings, the admin of the group can change other members' roles or delete th
     <img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/game_step_2.jpg" alt = "Game Creation Step 2">
 </div>
 
-Teams can be selected manually or randomly.
+Teams can be selected manually(drag&drop in the desired team column) or randomly(drag&drop the desired players to additional column and then pressing "Generate" button).
 
 <div align="center">
 	<img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/game_step_2_stat_selection.jpg" alt = "Selecting Sport Specific Stats for each member">
@@ -60,3 +61,5 @@ Teams can be selected manually or randomly.
 </div>
 
 ## Technical desciption
+
+This application is the client side of the project. It communicates with a Spring Boot server containing PostgreSQL database using http requests. For more information, you can check my [repository](https://github.com/Djimi02/Sport-App-Server).
