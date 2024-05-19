@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sport_app_client.R;
 import com.example.sport_app_client.interfaces.UserGroupClickListener;
+import com.example.sport_app_client.model.Sports;
 import com.example.sport_app_client.model.member.Member;
 
 import java.util.List;
@@ -46,6 +48,11 @@ public class UserGroupsRVAdapter extends RecyclerView.Adapter<UserGroupsRVAdapte
         holder.totalWins.setText(Integer.toString(members.get(position).getStatsAbs().getWins()));
         holder.totalDraws.setText(Integer.toString(members.get(position).getStatsAbs().getDraws()));
         holder.totalLoses.setText(Integer.toString(members.get(position).getStatsAbs().getLoses()));
+        if (members.get(position).getSport().equals(Sports.FOOTBALL)) {
+            holder.sportIcon.setBackgroundResource(R.drawable.football_icon);
+        } else if (members.get(position).getSport().equals(Sports.BASKETBALL)) {
+            holder.sportIcon.setBackgroundResource(R.drawable.basketball_icon);
+        }
     }
 
     @Override
@@ -59,6 +66,7 @@ public class UserGroupsRVAdapter extends RecyclerView.Adapter<UserGroupsRVAdapte
         private final TextView totalWins;
         private final TextView totalDraws;
         private final TextView totalLoses;
+        private final ImageView sportIcon;
 
 
         private final Button viewBTN;
@@ -71,6 +79,7 @@ public class UserGroupsRVAdapter extends RecyclerView.Adapter<UserGroupsRVAdapte
             this.totalDraws = view.findViewById(R.id.totalDrawsRVItem);
             this.totalLoses = view.findViewById(R.id.totalLosesRVItem);
             this.viewBTN = view.findViewById(R.id.viewBTNRVItem);
+            this.sportIcon = view.findViewById(R.id.groupSportRVItemIV);
 
             viewBTN.setOnClickListener(new View.OnClickListener() {
                 @Override

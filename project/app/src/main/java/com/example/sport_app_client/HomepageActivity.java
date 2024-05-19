@@ -3,6 +3,7 @@ package com.example.sport_app_client;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -90,7 +91,8 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         this.userGroupsRV = findViewById(R.id.homepageGroupsRV);
         UserGroupsRVAdapter userGroupsRVAdapter = new UserGroupsRVAdapter(MyAuthManager.user.getMembers(), this);
         userGroupsRV.setAdapter(userGroupsRVAdapter);
-        userGroupsRV.setLayoutManager(new LinearLayoutManager(this));
+//        userGroupsRV.setLayoutManager(new LinearLayoutManager(this));
+        userGroupsRV.setLayoutManager(new GridLayoutManager(this, 2));
 
         this.settingsBTN = findViewById(R.id.homepageSettingsBTN);
         settingsBTN.setOnClickListener((view -> {

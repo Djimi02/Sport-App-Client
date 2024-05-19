@@ -1,104 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingTop="@dimen/_5sdp"
-    android:paddingBottom="@dimen/_5sdp"
-    android:paddingLeft="@dimen/_5sdp">
+    android:layout_gravity="center"
+    android:layout_marginTop="@dimen/_5sdp"
+    android:layout_marginBottom="@dimen/_5sdp"
+    android:layout_marginStart="@dimen/_5sdp"
+    android:layout_marginEnd="@dimen/_5sdp">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:gravity="center_horizontal"
-        android:text="name"
-        android:textSize="@dimen/_25sdp"
-        android:id="@+id/groupNameRVItem"
-        android:layout_marginBottom="@dimen/_5sdp"/>
-
-<!--    stats-->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="7"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         android:layout_marginStart="@dimen/_5sdp"
         android:layout_marginEnd="@dimen/_5sdp"
-        android:orientation="vertical">
+        android:layout_marginTop="@dimen/_5sdp">
 
-<!--        wins-->
+<!--        name and sport icon-->
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="name"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="@dimen/_10sdp"
+                android:autoSizeMaxTextSize="@dimen/_25sdp"
+                android:autoSizeStepGranularity="@dimen/_2sdp"
+                android:id="@+id/groupNameRVItem"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:layout_weight="4"/>
+
+            <ImageView
+                android:id="@+id/groupSportRVItemIV"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:minWidth="@dimen/_30sdp"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/_5sdp"
                 android:layout_weight="1"
-                android:layout_marginBottom="@dimen/_3sdp"
+                />
+
+        </LinearLayout>
+
+        <!--    stat labels-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="Wins"
-                android:gravity="center_vertical"/>
+                android:gravity="center"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Draws"
+                android:gravity="center"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Loses"
+                android:layout_weight="1"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+<!--        actual stats-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/totalWinsRVItem"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginBottom="@dimen/_3sdp"
                 android:text="0"
                 android:textSize="@dimen/_15sdp"
                 android:gravity="center"/>
-
-        </LinearLayout>
-
-<!--        draws-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginBottom="@dimen/_3sdp"
-                android:text="Draws"
-                android:gravity="center_vertical"/>
 
             <TextView
                 android:id="@+id/totalDrawsRVItem"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginBottom="@dimen/_3sdp"
                 android:text="0"
                 android:textSize="@dimen/_15sdp"
                 android:gravity="center"/>
-
-        </LinearLayout>
-
-<!--        loses-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:text="Loses"
-                android:layout_weight="1"
-                android:gravity="center_vertical"/>
 
             <TextView
                 android:id="@+id/totalLosesRVItem"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:text="0"
                 android:textSize="@dimen/_15sdp"
                 android:layout_weight="1"
@@ -106,17 +115,16 @@
 
         </LinearLayout>
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:id="@+id/viewBTNRVItem"
+            android:text="View"/>
+
     </LinearLayout>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:layout_marginTop="@dimen/_5sdp"
-        android:layout_marginStart="@dimen/_5sdp"
-        android:layout_marginEnd="@dimen/_5sdp"
-        android:layout_marginBottom="@dimen/_5sdp"
-        android:id="@+id/viewBTNRVItem"
-        android:text="View"/>
-
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>
