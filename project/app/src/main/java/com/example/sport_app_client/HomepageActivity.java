@@ -91,7 +91,6 @@ public class HomepageActivity extends AppCompatActivity implements UserGroupClic
         this.userGroupsRV = findViewById(R.id.homepageGroupsRV);
         UserGroupsRVAdapter userGroupsRVAdapter = new UserGroupsRVAdapter(MyAuthManager.user.getMembers(), this);
         userGroupsRV.setAdapter(userGroupsRVAdapter);
-//        userGroupsRV.setLayoutManager(new LinearLayoutManager(this));
         userGroupsRV.setLayoutManager(new GridLayoutManager(this, 2));
 
         this.settingsBTN = findViewById(R.id.homepageSettingsBTN);

@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
     android:layout_marginTop="@dimen/_5sdp"
     android:layout_marginBottom="@dimen/_5sdp"
     android:layout_marginStart="@dimen/_5sdp"
@@ -18,36 +17,40 @@
         android:layout_marginTop="@dimen/_5sdp">
 
 <!--        name and sport icon-->
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             >
 
             <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="name"
-                android:autoSizeTextType="uniform"
-                android:autoSizeMinTextSize="@dimen/_10sdp"
-                android:autoSizeMaxTextSize="@dimen/_25sdp"
-                android:autoSizeStepGranularity="@dimen/_2sdp"
                 android:id="@+id/groupNameRVItem"
-                android:layout_marginBottom="@dimen/_5sdp"
-                android:layout_weight="4"/>
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="4"
+                android:gravity="center"
+                android:autoSizeMaxTextSize="@dimen/_25sdp"
+                android:autoSizeMinTextSize="@dimen/_10sdp"
+                android:autoSizeStepGranularity="@dimen/_2sdp"
+                android:autoSizeTextType="uniform"
+                android:text="name"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/groupSportRVItemIV"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginEnd="@dimen/_5sdp"
+                />
 
             <ImageView
                 android:id="@+id/groupSportRVItemIV"
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
                 android:minWidth="@dimen/_30sdp"
-                android:layout_gravity="center"
-                android:layout_marginStart="@dimen/_5sdp"
-                android:layout_weight="1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!--    stat labels-->
         <LinearLayout
@@ -123,7 +126,8 @@
             android:layout_marginEnd="@dimen/_5sdp"
             android:layout_marginBottom="@dimen/_5sdp"
             android:id="@+id/viewBTNRVItem"
-            android:text="View"/>
+            android:text="View"
+            android:layout_gravity="center"/>
 
     </LinearLayout>
 
