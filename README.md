@@ -61,5 +61,6 @@ Teams can be selected manually(drag&drop in the desired team column) or randomly
 </div>
 
 ## Technical desciption
-
 This application is the client side of the project. It communicates with a Spring Boot server containing PostgreSQL database using http requests. For more information, you can check my [repository](https://github.com/Djimi02/Sport-App-Server).
+
+Since the idea of the application is to include multiple sports, I tried to make my code as extendable as I could. For this reason, I used Strategy Design pattern for loading the sport specific group/game fragment in the group/game activity. Furthermore, since much of the functionality between the different sports in the game and group fragmnets overlap, Template Design Pattern is appliad to minimize the code duplication.
