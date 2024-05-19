@@ -19,6 +19,6 @@ NOTE: The current version of the application is just a demo and the UI is yet to
 ### Register/Login
 
 <div align="center">
-	<img src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/register.jpg">
-    <img src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/login.jpg">
+	<img width = "33%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/register.jpg">
+    <img width = "33%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/login.jpg">
 </div>
