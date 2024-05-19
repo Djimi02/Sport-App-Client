@@ -19,6 +19,37 @@ NOTE: The current version of the application is just a demo and the UI is yet to
 ### Register/Login
 
 <div align="center">
-	<img width = "33%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/register.jpg">
-    <img width = "33%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/login.jpg">
+	<img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/register.jpg">
+    <img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/login.jpg">
 </div>
+
+
+### Homepage
+
+<div align="center">
+	<img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/homepage.jpg">
+    <img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/homepage_add_group.jpg">
+</div>
+
+### Football Group
+
+<div align="center">
+	<img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/fb_group.jpg">
+    <img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/group_settings.jpg">
+</div>
+
+<div align="center">
+	<img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/game_view.jpg">
+    <img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/group_add_member.jpg">
+</div>
+
+### Game Creation
+
+<div align="center">
+	<img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/game_step_1.jpg">
+    <img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/game_step_2.jpg">
+</div>
+
+<div align="center">
+	<img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/game_step_2_stat_selection.jpg">
+    <img width = "20%" src="https://github.com/Djimi02/Sport-App-Client/blob/main/images/game_step_3.jpg">
