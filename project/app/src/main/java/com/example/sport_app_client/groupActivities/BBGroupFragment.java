@@ -576,7 +576,8 @@ public class BBGroupFragment extends GroupFragment {
 
     /**
      * Sorts the list of members by statistic, given the lambda function of the
-     * getter of the statistic.
+     * getter of the statistic. Moreover, the method updates the references to the list
+     * of members and updates the members rv.
      * @param getter - lambda function of the getter of the statistic to be used for sorting
      */
     private void sortMembersByStat(Function<BasketballMember, Integer> getter) {
