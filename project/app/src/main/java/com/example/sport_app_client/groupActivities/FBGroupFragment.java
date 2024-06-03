@@ -2,6 +2,8 @@ package com.example.sport_app_client.groupActivities;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -10,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sport_app_client.R;
 import com.example.sport_app_client.adapter.football.FBGameStep3RVAdapter;
-import com.example.sport_app_client.adapter.football.FBMemberAllStatsViewRVAdapter;
+import com.example.sport_app_client.adapter.football.FBMemberSingleStatRVAdapter;
 import com.example.sport_app_client.helpers.ConfirmActionDialog;
 import com.example.sport_app_client.helpers.GlobalMethods;
 import com.example.sport_app_client.helpers.MyGlobals;
@@ -28,6 +30,7 @@ import com.example.sport_app_client.retrofit.api.FbAPI;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
@@ -74,9 +77,36 @@ public class FBGroupFragment extends GroupFragment {
     @Override
     protected void initSportDependentViews() {
         this.membersRV = view.findViewById(R.id.GroupFragmentMembersRV);
-        FBMemberAllStatsViewRVAdapter membersAdapter = new FBMemberAllStatsViewRVAdapter(MyGlobals.getFootballGroup().getMembers());
+        FBMemberSingleStatRVAdapter membersAdapter = new FBMemberSingleStatRVAdapter(
+                MyGlobals.getFootballGroup().getMembers(),
+                (member -> member.getStats().getWins())
+        );
         membersRV.setAdapter(membersAdapter);
         membersRV.setLayoutManager(new LinearLayoutManager(activity));
+
+        this.filterMembersSpinner = view.findViewById(R.id.GroupFragmentMembersSpinner);
+        String[] filterableStats = new String[] {"Wins", "Draws", "Loses", "Goals", "Assists", "Fouls", "Saves"};
+        filterMembersSpinner.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, filterableStats));
+        filterMembersSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position){
+                    case 0: sortMembersByStat((member) -> member.getStats().getWins()); break;
+                    case 1: sortMembersByStat((member) -> member.getStats().getDraws()); break;
+                    case 2: sortMembersByStat((member) -> member.getStats().getLoses()); break;
+                    case 3: sortMembersByStat((member) -> member.getStats().getGoals()); break;
+                    case 4: sortMembersByStat((member) -> member.getStats().getAssists()); break;
+                    case 5: sortMembersByStat((member) -> member.getStats().getFouls()); break;
+                    case 6: sortMembersByStat((member) -> member.getStats().getSaves()); break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        sortMembersByStat((member -> member.getStats().getWins())); // initial sort
     }
 
     @Override
@@ -533,6 +563,17 @@ public class FBGroupFragment extends GroupFragment {
                 .collect(Collectors.toList());
         MyGlobals.getFootballGroup().setGames(sortedGames);
         MyGlobals.getGroup().setGamesAbs(sortedGames);
+    }
+
+    private void sortMembersByStat(Function<FootballMember, Integer> getter) {
+        List<FootballMember> sortedMembers = MyGlobals.getFootballGroup().getMembers().stream()
+                .sorted(Comparator.comparing(getter).reversed()).collect(Collectors.toList());
+
+        MyGlobals.getFootballGroup().setMembers(sortedMembers);
+        MyGlobals.getGroup().setMembersAbs(sortedMembers);
+        ((FBMemberSingleStatRVAdapter)(membersRV.getAdapter())).setMembers(sortedMembers);
+        ((FBMemberSingleStatRVAdapter)(membersRV.getAdapter())).setGetter(getter);
+        membersRV.getAdapter().notifyDataSetChanged();
     }
 
     /**

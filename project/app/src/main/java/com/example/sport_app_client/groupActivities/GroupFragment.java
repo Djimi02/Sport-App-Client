@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -103,6 +104,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
     protected RecyclerView membersRV;
     protected ProgressBar mainProgressBar;
     protected Button homepageBTN;
+    protected Spinner filterMembersSpinner;
 
     /* Join Group Dialog global views */
     protected ProgressBar joinGroupDialogPB;

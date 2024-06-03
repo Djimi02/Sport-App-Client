@@ -7,12 +7,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.sport_app_client.R;
 import com.example.sport_app_client.adapter.basketball.BBGameStep3RVAdapter;
-import com.example.sport_app_client.adapter.basketball.BBMemberAllStatsViewRVAdapter;
+import com.example.sport_app_client.adapter.basketball.BBMemberSingleStatRVAdapter;
 import com.example.sport_app_client.helpers.ConfirmActionDialog;
 import com.example.sport_app_client.helpers.GlobalMethods;
 import com.example.sport_app_client.helpers.MyGlobals;
@@ -30,6 +32,7 @@ import com.example.sport_app_client.retrofit.api.BbApi;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
@@ -81,9 +84,37 @@ public class BBGroupFragment extends GroupFragment {
     @Override
     protected void initSportDependentViews() {
         this.membersRV = view.findViewById(R.id.GroupFragmentMembersRV);
-        BBMemberAllStatsViewRVAdapter membersAdapter = new BBMemberAllStatsViewRVAdapter(MyGlobals.getBasketballGroup().getMembers());
+        BBMemberSingleStatRVAdapter membersAdapter = new BBMemberSingleStatRVAdapter(
+                MyGlobals.getBasketballGroup().getMembers(),
+                (member -> member.getStats().getWins())
+        );
         membersRV.setAdapter(membersAdapter);
         membersRV.setLayoutManager(new LinearLayoutManager(activity));
+
+        this.filterMembersSpinner = view.findViewById(R.id.GroupFragmentMembersSpinner);
+        String[] filterableStats = new String[] {"Wins", "Draws", "Loses", "Points", "ThreePoints", "Dunks", "Blocks", "Fouls"};
+        filterMembersSpinner.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, filterableStats));
+        filterMembersSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position){
+                    case 0: sortMembersByStat((member) -> member.getStats().getWins()); break;
+                    case 1: sortMembersByStat((member) -> member.getStats().getDraws()); break;
+                    case 2: sortMembersByStat((member) -> member.getStats().getLoses()); break;
+                    case 3: sortMembersByStat((member) -> member.getStats().getPoints()); break;
+                    case 4: sortMembersByStat((member) -> member.getStats().getNumberOfThreePoints()); break;
+                    case 5: sortMembersByStat((member) -> member.getStats().getNumOfDunks()); break;
+                    case 6: sortMembersByStat((member) -> member.getStats().getBlocks()); break;
+                    case 7: sortMembersByStat((member) -> member.getStats().getFouls()); break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        sortMembersByStat((member -> member.getStats().getWins())); // initial sort
     }
 
     @Override
@@ -541,6 +572,17 @@ public class BBGroupFragment extends GroupFragment {
                 .collect(Collectors.toList());
         MyGlobals.getBasketballGroup().setGames(sortedGames);
         MyGlobals.getGroup().setGamesAbs(sortedGames);
+    }
+
+    private void sortMembersByStat(Function<BasketballMember, Integer> getter) {
+        List<BasketballMember> sortedMembers = MyGlobals.getBasketballGroup().getMembers().stream()
+                .sorted(Comparator.comparing(getter).reversed()).collect(Collectors.toList());
+
+        MyGlobals.getBasketballGroup().setMembers(sortedMembers);
+        MyGlobals.getGroup().setMembersAbs(sortedMembers);
+        ((BBMemberSingleStatRVAdapter)(membersRV.getAdapter())).setMembers(sortedMembers);
+        ((BBMemberSingleStatRVAdapter)(membersRV.getAdapter())).setGetter(getter);
+        membersRV.getAdapter().notifyDataSetChanged();
     }
 
     /**

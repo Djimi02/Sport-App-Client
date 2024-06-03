@@ -93,8 +93,10 @@
                         android:layout_marginBottom="@dimen/_5sdp"
                         android:text="Members" />
 
-                    <!--stat labels-->
-                    <include layout="@layout/fb_member_all_stats_rv_item"/>
+                    <Spinner
+                        android:id="@+id/GroupFragmentMembersSpinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/GroupFragmentMembersRV"
