@@ -39,7 +39,7 @@ public class BBMemberSingleStatRVAdapter extends RecyclerView.Adapter<BBMemberSi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.memberPositionTV.setText(Integer.toString(position));
+        holder.memberPositionTV.setText(Integer.toString(position + 1));
         holder.memberNameTV.setText(members.get(position).getNickname());
         holder.memberStatTV.setText(Integer.toString(getter.apply(members.get(position))));
         holder.viewAllStatsBTN.setOnClickListener((view) -> {});

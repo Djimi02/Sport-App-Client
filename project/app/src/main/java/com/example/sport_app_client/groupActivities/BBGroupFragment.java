@@ -574,14 +574,21 @@ public class BBGroupFragment extends GroupFragment {
         MyGlobals.getGroup().setGamesAbs(sortedGames);
     }
 
+    /**
+     * Sorts the list of members by statistic, given the lambda function of the
+     * getter of the statistic.
+     * @param getter - lambda function of the getter of the statistic to be used for sorting
+     */
     private void sortMembersByStat(Function<BasketballMember, Integer> getter) {
         List<BasketballMember> sortedMembers = MyGlobals.getBasketballGroup().getMembers().stream()
                 .sorted(Comparator.comparing(getter).reversed()).collect(Collectors.toList());
 
+        // Update references with the new list
         MyGlobals.getBasketballGroup().setMembers(sortedMembers);
         MyGlobals.getGroup().setMembersAbs(sortedMembers);
         ((BBMemberSingleStatRVAdapter)(membersRV.getAdapter())).setMembers(sortedMembers);
         ((BBMemberSingleStatRVAdapter)(membersRV.getAdapter())).setGetter(getter);
+
         membersRV.getAdapter().notifyDataSetChanged();
     }
 
