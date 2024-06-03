@@ -486,6 +486,11 @@ public class BBGroupFragment extends GroupFragment {
         });
     }
 
+    @Override
+    public void onGameCreated() {
+        sortMembersByStat(null); // updates recycler as well
+    }
+
     // ================= END LISTENER'S IMPLEMENTATION ===================================
 
     // ================= START HELPER FUNCTIONS ===================================
@@ -509,7 +514,8 @@ public class BBGroupFragment extends GroupFragment {
                         MyGlobals.gameCreatedListenerHomepage.onGameCreatedOrDeletedHomepageIMPL(MyGlobals.getAssociatedBBMember());
 
                         // Update recyclers
-                        membersRV.getAdapter().notifyDataSetChanged();
+//                        membersRV.getAdapter().notifyDataSetChanged();
+                        sortMembersByStat(null); // updates recycler as well
                         gamesRV.getAdapter().notifyDataSetChanged();
                         Toast.makeText(activity, "Game deleted successfully!", Toast.LENGTH_SHORT).show();
                     } else {

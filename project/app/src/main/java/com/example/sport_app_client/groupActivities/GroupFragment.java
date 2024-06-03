@@ -422,12 +422,16 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
 
     @Override
     public void onGameCreatedGroupIMPL() {
-        // Update members rv with new stats after game
-        this.membersRV.getAdapter().notifyDataSetChanged();
+//        // Update members rv with new stats after game
+//        this.membersRV.getAdapter().notifyDataSetChanged();
 
         // Update games rv with new game
         this.gamesRV.getAdapter().notifyItemInserted(0);
+
+        onGameCreated();
     }
+
+    public abstract void onGameCreated();
 
     @Override
     public void openGameDialog(Game game) {
