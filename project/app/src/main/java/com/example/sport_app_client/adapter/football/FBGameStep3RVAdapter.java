@@ -10,10 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sport_app_client.R;
-import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.model.stats.FBStats;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class FBGameStep3RVAdapter extends RecyclerView.Adapter<FBGameStep3RVAdapter.ViewHolder> {
@@ -31,7 +29,7 @@ public class FBGameStep3RVAdapter extends RecyclerView.Adapter<FBGameStep3RVAdap
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        View spotView = inflater.inflate(R.layout.fb_member_stats_view_rv_item, parent, false);
+        View spotView = inflater.inflate(R.layout.fb_member_game_stats_rv_item, parent, false);
 
         FBGameStep3RVAdapter.ViewHolder viewHolder = new FBGameStep3RVAdapter.ViewHolder(spotView);
         return viewHolder;

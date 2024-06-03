@@ -1,7 +1,5 @@
 package com.example.sport_app_client.gameActivities;
 
-import static android.content.Context.LAYOUT_INFLATER_SERVICE;
-
 import android.app.Activity;
 import android.os.Bundle;
 
@@ -224,13 +222,13 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
 
         switch (sport) {
             case FOOTBALL:
-                statLabelsTeam1 = inflater.inflate(R.layout.fb_member_stats_view_rv_item, statLabelsTeam1FL, false);
-                statLabelsTeam2 = inflater.inflate(R.layout.fb_member_stats_view_rv_item, statLabelsTeam2FL, false);
+                statLabelsTeam1 = inflater.inflate(R.layout.fb_member_game_stats_rv_item, statLabelsTeam1FL, false);
+                statLabelsTeam2 = inflater.inflate(R.layout.fb_member_game_stats_rv_item, statLabelsTeam2FL, false);
                 break;
 
             case BASKETBALL:
-                statLabelsTeam1 = inflater.inflate(R.layout.bb_member_stats_view_rv_item, statLabelsTeam1FL, false);
-                statLabelsTeam2 = inflater.inflate(R.layout.bb_member_stats_view_rv_item, statLabelsTeam2FL, false);
+                statLabelsTeam1 = inflater.inflate(R.layout.bb_member_game_stats_rv_item, statLabelsTeam1FL, false);
+                statLabelsTeam2 = inflater.inflate(R.layout.bb_member_game_stats_rv_item, statLabelsTeam2FL, false);
                 break;
         }
         statLabelsTeam1FL.addView(statLabelsTeam1);

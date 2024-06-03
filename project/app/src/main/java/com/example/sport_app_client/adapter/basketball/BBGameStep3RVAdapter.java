@@ -28,7 +28,7 @@ public class BBGameStep3RVAdapter extends RecyclerView.Adapter<BBGameStep3RVAdap
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        View spotView = inflater.inflate(R.layout.bb_member_stats_view_rv_item, parent, false);
+        View spotView = inflater.inflate(R.layout.bb_member_game_stats_rv_item, parent, false);
 
         BBGameStep3RVAdapter.ViewHolder viewHolder = new BBGameStep3RVAdapter.ViewHolder(spotView);
         return viewHolder;
