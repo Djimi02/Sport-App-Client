@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.example.sport_app_client.R;
@@ -369,6 +370,15 @@ public class BBGroupFragment extends GroupFragment {
                 removeGame(game, allStats);
             });
         }
+
+        // Inflate correct stat labels
+        FrameLayout statLabelsTeam1FL = popupView.findViewById(R.id.GameDialogTeam1FL);
+        View statLabelsTeam1 = inflater.inflate(R.layout.bb_member_game_stats_rv_item, statLabelsTeam1FL, false);
+        statLabelsTeam1FL.addView(statLabelsTeam1);
+
+        FrameLayout statLabelsTeam2FL = popupView.findViewById(R.id.GameDialogTeam2FL);
+        View statLabelsTeam2 = inflater.inflate(R.layout.bb_member_game_stats_rv_item, statLabelsTeam2FL, false);
+        statLabelsTeam2FL.addView(statLabelsTeam2);
 
         // Init recyclers
         RecyclerView team1RV = popupView.findViewById(R.id.GameDialogTeam1RV);

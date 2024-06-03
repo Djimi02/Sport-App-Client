@@ -40,7 +40,6 @@ import com.example.sport_app_client.model.MemberRole;
 import com.example.sport_app_client.model.Sports;
 import com.example.sport_app_client.model.game.Game;
 import com.example.sport_app_client.model.member.Member;
-import com.example.sport_app_client.retrofit.MyAuthManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +47,7 @@ import java.util.List;
 public abstract class GroupFragment extends Fragment implements GameCreatedListener, GameClickListener, GroupMemberDeletedListener, SelectMemberToJoinGroupListener {
     protected Activity activity;
     protected View view;
+    protected LayoutInflater inflater;
 
     protected boolean isJoining;
 
@@ -79,6 +79,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        this.inflater = inflater;
         view = inflater.inflate(R.layout.group_fragment_layout, container, false);
 
         this.mainProgressBar = view.findViewById(R.id.GroupProgressBar);
@@ -434,7 +435,7 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
     public void openGameDialog(Game game) {
         // Build dialog
         dialogBuilder = new AlertDialog.Builder(activity);
-        final View popupView = getLayoutInflater().inflate(R.layout.game_stats_dialog, null);
+        final View popupView = getLayoutInflater().inflate(R.layout.game_dialog, null);
 
         // Init general views views
         TextView date = popupView.findViewById(R.id.GameDialogDate);
