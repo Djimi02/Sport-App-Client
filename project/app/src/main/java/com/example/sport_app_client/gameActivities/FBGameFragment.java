@@ -14,6 +14,7 @@ import com.example.sport_app_client.adapter.football.FBGameStep2RVAdapter;
 import com.example.sport_app_client.adapter.football.FBGameStep3RVAdapter;
 import com.example.sport_app_client.helpers.GlobalMethods;
 import com.example.sport_app_client.helpers.MyGlobals;
+import com.example.sport_app_client.model.Sports;
 import com.example.sport_app_client.model.game.FootballGame;
 import com.example.sport_app_client.model.member.FootballMember;
 import com.example.sport_app_client.model.stats.FBStats;
@@ -34,13 +35,17 @@ import retrofit2.Response;
 
 public class FBGameFragment extends GameFragment {
 
+    public FBGameFragment(Sports sport) {
+        super(sport);
+    }
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      * @return A new instance of fragment FBGroupFragment.
      */
-    public static GameFragment newInstance() {
-        FBGameFragment fragment = new FBGameFragment();
+    public static GameFragment newInstance(Sports sport) {
+        FBGameFragment fragment = new FBGameFragment(sport);
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;

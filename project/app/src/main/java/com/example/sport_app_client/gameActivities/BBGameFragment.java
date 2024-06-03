@@ -14,6 +14,7 @@ import com.example.sport_app_client.adapter.basketball.BBGameStep2RVAdapter;
 import com.example.sport_app_client.adapter.basketball.BBGameStep3RVAdapter;
 import com.example.sport_app_client.helpers.GlobalMethods;
 import com.example.sport_app_client.helpers.MyGlobals;
+import com.example.sport_app_client.model.Sports;
 import com.example.sport_app_client.model.game.BasketballGame;
 import com.example.sport_app_client.model.member.BasketballMember;
 import com.example.sport_app_client.model.stats.BBStats;
@@ -34,13 +35,17 @@ import retrofit2.Response;
 
 public class BBGameFragment extends GameFragment {
 
+    public BBGameFragment(Sports sport) {
+        super(sport);
+    }
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      * @return A new instance of fragment BBGroupFragment.
      */
-    public static GameFragment newInstance() {
-        BBGameFragment fragment = new BBGameFragment();
+    public static GameFragment newInstance(Sports sport) {
+        BBGameFragment fragment = new BBGameFragment(sport);
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;

@@ -1,5 +1,7 @@
 package com.example.sport_app_client.gameActivities;
 
+import static android.content.Context.LAYOUT_INFLATER_SERVICE;
+
 import android.app.Activity;
 import android.os.Bundle;
 
@@ -13,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.ViewFlipper;
@@ -23,6 +26,7 @@ import com.example.sport_app_client.adapter.DraggableGroupMembersRVAdapter;
 import com.example.sport_app_client.helpers.MyGlobals;
 import com.example.sport_app_client.interfaces.OnGameMemberDragListener;
 import com.example.sport_app_client.interfaces.OpenMemberStatSelectionDialog;
+import com.example.sport_app_client.model.Sports;
 import com.example.sport_app_client.model.member.Member;
 import com.example.sport_app_client.model.stats.Stats;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
@@ -35,8 +39,12 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
 
     protected Activity activity;
     protected View view;
+    protected Sports sport;
+    protected LayoutInflater inflater;
 
-    public GameFragment() {}
+    public GameFragment(Sports sport) {
+        this.sport = sport;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,6 +56,7 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        this.inflater = inflater;
         view = inflater.inflate(R.layout.game_fragment_layout, container, false);
 
         initVars();
@@ -97,6 +106,8 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
     protected abstract void initSportDependentVars();
 
     private void initViews() {
+        inflateCorrectStatLabelsAtStep3();
+
         this.viewFlipper = view.findViewById(R.id.gameFragmentVF);
 
         this.progressBar = view.findViewById(R.id.gameFragmentProgressBar);
@@ -204,6 +215,27 @@ public abstract class GameFragment extends Fragment implements OnGameMemberDragL
     }
 
     protected abstract void initSportDependentRecyclerViews();
+
+    private void inflateCorrectStatLabelsAtStep3() {
+        FrameLayout statLabelsTeam1FL = view.findViewById(R.id.gameFragmentStep3Team1FL);
+        FrameLayout statLabelsTeam2FL = view.findViewById(R.id.gameFragmentStep3Team2FL);
+        View statLabelsTeam1 = null;
+        View statLabelsTeam2 = null;
+
+        switch (sport) {
+            case FOOTBALL:
+                statLabelsTeam1 = inflater.inflate(R.layout.fb_member_stats_view_rv_item, statLabelsTeam1FL, false);
+                statLabelsTeam2 = inflater.inflate(R.layout.fb_member_stats_view_rv_item, statLabelsTeam2FL, false);
+                break;
+
+            case BASKETBALL:
+                statLabelsTeam1 = inflater.inflate(R.layout.bb_member_stats_view_rv_item, statLabelsTeam1FL, false);
+                statLabelsTeam2 = inflater.inflate(R.layout.bb_member_stats_view_rv_item, statLabelsTeam2FL, false);
+                break;
+        }
+        statLabelsTeam1FL.addView(statLabelsTeam1);
+        statLabelsTeam2FL.addView(statLabelsTeam2);
+    }
 
     /**
      * This method should set the sport specific design of the views in the fragment

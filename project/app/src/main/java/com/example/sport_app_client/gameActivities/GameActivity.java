@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import android.os.Bundle;
 
 import com.example.sport_app_client.R;
+import com.example.sport_app_client.model.Sports;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -26,10 +27,10 @@ public class GameActivity extends AppCompatActivity {
         // Determine which fragment to load based on the data
         switch (fragmentToLoad) {
             case "FOOTBALL":
-                fragment = FBGameFragment.newInstance();
+                fragment = FBGameFragment.newInstance(Sports.FOOTBALL);
                 break;
             case "BASKETBALL":
-                fragment = BBGameFragment.newInstance();
+                fragment = BBGameFragment.newInstance(Sports.BASKETBALL);
                 break;
         }
 
