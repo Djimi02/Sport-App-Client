@@ -46,6 +46,6 @@ public class BasketballGroup extends Group {
     }
 
     public void addGame(BasketballGame game) {
-        this.games.add(game);
+        this.games.add(0, game);
     }
 }
