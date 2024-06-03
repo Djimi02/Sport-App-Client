@@ -57,6 +57,7 @@ public class FBGroupFragment extends GroupFragment {
 
     /* Vars */
     private FbAPI groupAPI;
+    private Function<FootballMember, Integer> lastGetter;
 
     // ==================== START CODE INITIALIZATION =======================================
 
@@ -72,6 +73,8 @@ public class FBGroupFragment extends GroupFragment {
                 return;
             }
         }
+        // Initial getter, used for sorting
+        this.lastGetter = (member -> member.getStats().getWins());
     }
 
     @Override
@@ -106,7 +109,7 @@ public class FBGroupFragment extends GroupFragment {
 
             }
         });
-        sortMembersByStat((member -> member.getStats().getWins())); // initial sort
+        sortMembersByStat(null); // initial sort
     }
 
     @Override
@@ -569,17 +572,22 @@ public class FBGroupFragment extends GroupFragment {
      * Sorts the list of members by statistic, given the lambda function of the
      * getter of the statistic. Moreover, the method updates the references to the list
      * of members and updates the members rv.
-     * @param getter - lambda function of the getter of the statistic to be used for sorting
+     * @param getter - lambda function of the getter of the statistic to be used for sorting.
+     * If getter is null then it uses the last used getter.
      */
     private void sortMembersByStat(Function<FootballMember, Integer> getter) {
+        if (getter != null) {
+            this.lastGetter = getter;
+        }
+
         List<FootballMember> sortedMembers = MyGlobals.getFootballGroup().getMembers().stream()
-                .sorted(Comparator.comparing(getter).reversed()).collect(Collectors.toList());
+                .sorted(Comparator.comparing(lastGetter).reversed()).collect(Collectors.toList());
 
         // Update references with the new list
         MyGlobals.getFootballGroup().setMembers(sortedMembers);
         MyGlobals.getGroup().setMembersAbs(sortedMembers);
         ((FBMemberSingleStatRVAdapter)(membersRV.getAdapter())).setMembers(sortedMembers);
-        ((FBMemberSingleStatRVAdapter)(membersRV.getAdapter())).setGetter(getter);
+        ((FBMemberSingleStatRVAdapter)(membersRV.getAdapter())).setGetter(lastGetter);
 
         membersRV.getAdapter().notifyDataSetChanged();
     }

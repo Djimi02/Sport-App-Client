@@ -64,6 +64,7 @@ public class BBGroupFragment extends GroupFragment {
 
     /* Vars */
     private BbApi groupAPI;
+    private Function<BasketballMember, Integer> lastGetter;
 
     // ==================== START CODE INITIALIZATION =======================================
 
@@ -79,6 +80,8 @@ public class BBGroupFragment extends GroupFragment {
                 return;
             }
         }
+        // Initial getter, used for sorting
+        this.lastGetter = (member -> member.getStats().getWins());
     }
 
     @Override
@@ -114,7 +117,7 @@ public class BBGroupFragment extends GroupFragment {
 
             }
         });
-        sortMembersByStat((member -> member.getStats().getWins())); // initial sort
+        sortMembersByStat(null); // initial sort
     }
 
     @Override
@@ -578,17 +581,22 @@ public class BBGroupFragment extends GroupFragment {
      * Sorts the list of members by statistic, given the lambda function of the
      * getter of the statistic. Moreover, the method updates the references to the list
      * of members and updates the members rv.
-     * @param getter - lambda function of the getter of the statistic to be used for sorting
+     * @param getter - lambda function of the getter of the statistic to be used for sorting.
+     * If getter is null then it uses the last used getter.
      */
     private void sortMembersByStat(Function<BasketballMember, Integer> getter) {
+        if (getter != null) {
+            this.lastGetter = getter;
+        }
+
         List<BasketballMember> sortedMembers = MyGlobals.getBasketballGroup().getMembers().stream()
-                .sorted(Comparator.comparing(getter).reversed()).collect(Collectors.toList());
+                .sorted(Comparator.comparing(lastGetter).reversed()).collect(Collectors.toList());
 
         // Update references with the new list
         MyGlobals.getBasketballGroup().setMembers(sortedMembers);
         MyGlobals.getGroup().setMembersAbs(sortedMembers);
         ((BBMemberSingleStatRVAdapter)(membersRV.getAdapter())).setMembers(sortedMembers);
-        ((BBMemberSingleStatRVAdapter)(membersRV.getAdapter())).setGetter(getter);
+        ((BBMemberSingleStatRVAdapter)(membersRV.getAdapter())).setGetter(lastGetter);
 
         membersRV.getAdapter().notifyDataSetChanged();
     }
