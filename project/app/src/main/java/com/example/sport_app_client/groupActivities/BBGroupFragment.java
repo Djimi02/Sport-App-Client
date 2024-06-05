@@ -2,6 +2,7 @@ package com.example.sport_app_client.groupActivities;
 
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sport_app_client.R;
@@ -90,6 +92,7 @@ public class BBGroupFragment extends GroupFragment {
         this.membersRV = view.findViewById(R.id.GroupFragmentMembersRV);
         BBMemberSingleStatRVAdapter membersAdapter = new BBMemberSingleStatRVAdapter(
                 MyGlobals.getBasketballGroup().getMembers(),
+                this,
                 (member -> member.getStats().getWins())
         );
         membersRV.setAdapter(membersAdapter);
@@ -499,6 +502,32 @@ public class BBGroupFragment extends GroupFragment {
     @Override
     public void onGameCreatedSportSpecific() {
         sortMembersByStat(null); // updates recycler as well
+    }
+
+    @Override
+    public void onViewAllStatsClicked(Member member) {
+        BasketballMember bbMember = (BasketballMember) member;
+
+        // Build dialog
+        dialogBuilder = new AlertDialog.Builder(activity);
+        final View popupView = getLayoutInflater().inflate(R.layout.bb_member_all_stats, null);
+
+        // Set stats
+        ((TextView)popupView.findViewById(R.id.bbMemberNameTV)).setText(bbMember.getNickname());
+        ((TextView)popupView.findViewById(R.id.bbMemberWinsTV)).setText(Integer.toString(bbMember.getStats().getWins()));
+        ((TextView)popupView.findViewById(R.id.bbMemberDrawsTV)).setText(Integer.toString(bbMember.getStats().getDraws()));
+        ((TextView)popupView.findViewById(R.id.bbMemberLosesTV)).setText(Integer.toString(bbMember.getStats().getLoses()));
+        ((TextView)popupView.findViewById(R.id.bbMemberPointsTV)).setText(Integer.toString(bbMember.getStats().getPoints()));
+        ((TextView)popupView.findViewById(R.id.bbMemberNumberThreePointsTV)).setText(Integer.toString(bbMember.getStats().getNumberOfThreePoints()));
+        ((TextView)popupView.findViewById(R.id.bbMemberDunksTV)).setText(Integer.toString(bbMember.getStats().getNumOfDunks()));
+        ((TextView)popupView.findViewById(R.id.bbMemberBlocksTV)).setText(Integer.toString(bbMember.getStats().getBlocks()));
+        ((TextView)popupView.findViewById(R.id.bbMemberFoulsTV)).setText(Integer.toString(bbMember.getStats().getFouls()));
+
+        // Show dialog
+        dialogBuilder.setView(popupView);
+//        dialogBuilder.setCancelable(false);
+        dialog = dialogBuilder.create();
+        dialog.show();
     }
 
     // ================= END LISTENER'S IMPLEMENTATION ===================================

@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sport_app_client.R;
+import com.example.sport_app_client.interfaces.ViewAllStatsListener;
 import com.example.sport_app_client.model.member.BasketballMember;
 
 import java.util.List;
@@ -19,10 +20,16 @@ import java.util.function.Function;
 public class BBMemberSingleStatRVAdapter extends RecyclerView.Adapter<BBMemberSingleStatRVAdapter.ViewHolder> {
 
     private List<BasketballMember> members;
+
+    private ViewAllStatsListener listener;
+
     private Function<BasketballMember, Integer> getter;
 
-    public BBMemberSingleStatRVAdapter(List<BasketballMember> members, Function<BasketballMember, Integer> getter) {
+    public BBMemberSingleStatRVAdapter(List<BasketballMember> members,
+                                       ViewAllStatsListener listener,
+                                       Function<BasketballMember, Integer> getter) {
         this.members = members;
+        this.listener = listener;
         this.getter = getter;
     }
 
@@ -42,7 +49,7 @@ public class BBMemberSingleStatRVAdapter extends RecyclerView.Adapter<BBMemberSi
         holder.memberPositionTV.setText(Integer.toString(position + 1));
         holder.memberNameTV.setText(members.get(position).getNickname());
         holder.memberStatTV.setText(Integer.toString(getter.apply(members.get(position))));
-        holder.viewAllStatsBTN.setOnClickListener((view) -> {});
+        holder.viewAllStatsBTN.setOnClickListener(view -> listener.onViewAllStatsClicked(members.get(position)));
     }
 
     @Override

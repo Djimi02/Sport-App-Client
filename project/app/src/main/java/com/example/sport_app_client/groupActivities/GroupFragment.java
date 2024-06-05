@@ -36,6 +36,7 @@ import com.example.sport_app_client.interfaces.GameClickListener;
 import com.example.sport_app_client.interfaces.GameCreatedListener;
 import com.example.sport_app_client.interfaces.GroupMemberDeletedListener;
 import com.example.sport_app_client.interfaces.SelectMemberToJoinGroupListener;
+import com.example.sport_app_client.interfaces.ViewAllStatsListener;
 import com.example.sport_app_client.model.MemberRole;
 import com.example.sport_app_client.model.Sports;
 import com.example.sport_app_client.model.game.Game;
@@ -44,7 +45,13 @@ import com.example.sport_app_client.model.member.Member;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class GroupFragment extends Fragment implements GameCreatedListener, GameClickListener, GroupMemberDeletedListener, SelectMemberToJoinGroupListener {
+public abstract class GroupFragment extends Fragment implements
+        GameCreatedListener,
+        GameClickListener,
+        GroupMemberDeletedListener,
+        SelectMemberToJoinGroupListener,
+        ViewAllStatsListener
+{
     protected Activity activity;
     protected View view;
     protected LayoutInflater inflater;
@@ -510,6 +517,9 @@ public abstract class GroupFragment extends Fragment implements GameCreatedListe
 
     @Override
     public abstract void onMemberSelected(Member member);
+
+    @Override
+    public abstract void onViewAllStatsClicked(Member member);
 
     // ================= END LISTENER'S IMPLEMENTATION ===================================
 

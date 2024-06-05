@@ -6,8 +6,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -83,6 +85,7 @@ public class FBGroupFragment extends GroupFragment {
         this.membersRV = view.findViewById(R.id.GroupFragmentMembersRV);
         FBMemberSingleStatRVAdapter membersAdapter = new FBMemberSingleStatRVAdapter(
                 MyGlobals.getFootballGroup().getMembers(),
+                this,
                 (member -> member.getStats().getWins())
         );
         membersRV.setAdapter(membersAdapter);
@@ -491,6 +494,31 @@ public class FBGroupFragment extends GroupFragment {
     @Override
     public void onGameCreatedSportSpecific() {
         sortMembersByStat(null); // updates recycler as well
+    }
+
+    @Override
+    public void onViewAllStatsClicked(Member member) {
+        FootballMember fbMember = (FootballMember) member;
+
+        // Build dialog
+        dialogBuilder = new AlertDialog.Builder(activity);
+        final View popupView = getLayoutInflater().inflate(R.layout.fb_member_all_stats, null);
+
+        // Set stats
+        ((TextView)popupView.findViewById(R.id.fbMemberNameTV)).setText(fbMember.getNickname());
+        ((TextView)popupView.findViewById(R.id.fbMemberWinsTV)).setText(Integer.toString(fbMember.getStats().getWins()));
+        ((TextView)popupView.findViewById(R.id.fbMemberDrawsTV)).setText(Integer.toString(fbMember.getStats().getDraws()));
+        ((TextView)popupView.findViewById(R.id.fbMemberLosesTV)).setText(Integer.toString(fbMember.getStats().getLoses()));
+        ((TextView)popupView.findViewById(R.id.fbMemberGoalsTV)).setText(Integer.toString(fbMember.getStats().getGoals()));
+        ((TextView)popupView.findViewById(R.id.fbMemberAssistsTV)).setText(Integer.toString(fbMember.getStats().getAssists()));
+        ((TextView)popupView.findViewById(R.id.fbMemberSavesTV)).setText(Integer.toString(fbMember.getStats().getSaves()));
+        ((TextView)popupView.findViewById(R.id.fbMemberFoulsTV)).setText(Integer.toString(fbMember.getStats().getFouls()));
+
+        // Show dialog
+        dialogBuilder.setView(popupView);
+//        dialogBuilder.setCancelable(false);
+        dialog = dialogBuilder.create();
+        dialog.show();
     }
 
     // ================= END LISTENER'S IMPLEMENTATION ===================================
