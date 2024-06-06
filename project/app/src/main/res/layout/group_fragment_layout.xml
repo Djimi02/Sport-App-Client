@@ -86,22 +86,40 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:layout_marginEnd="@dimen/_5sdp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Sort By"
+                            android:gravity="center"
+                            android:layout_weight="1"/>
+
+                        <Spinner
+                            android:id="@+id/GroupFragmentMembersSpinner"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"/>
+
+                    </LinearLayout>
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginBottom="@dimen/_5sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
                         android:text="Members" />
 
-                    <Spinner
-                        android:id="@+id/GroupFragmentMembersSpinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                    <include layout="@layout/group_member_filtered_stat"/>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/GroupFragmentMembersRV"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/_200sdp" />
+                        android:layout_height="wrap_content" />
 
                 </LinearLayout>
 
@@ -127,7 +145,7 @@
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/GroupFragmentGamesRV"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/_200sdp" />
+                        android:layout_height="wrap_content" />
 
                 </LinearLayout>
 

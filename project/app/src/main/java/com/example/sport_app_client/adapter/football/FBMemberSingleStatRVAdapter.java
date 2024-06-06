@@ -80,6 +80,7 @@ public class FBMemberSingleStatRVAdapter extends RecyclerView.Adapter<FBMemberSi
             this.memberNameTV = view.findViewById(R.id.filteredStatMemberNameTV);
             this.memberStatTV = view.findViewById(R.id.filteredStatStatTV);
             this.viewAllStatsBTN = view.findViewById(R.id.filteredStatViewBTN);
+            viewAllStatsBTN.setVisibility(View.VISIBLE);
         }
     }
 }
